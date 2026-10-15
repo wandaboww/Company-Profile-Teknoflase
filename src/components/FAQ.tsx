@@ -109,24 +109,24 @@ export default function FAQ({ content }: { content: LandingPageContent }) {
   }
 
   return (
-    <section id="faq" className="py-20 sm:py-28 bg-slate-50/70 border-b border-slate-200/80 transition-colors duration-200 scroll-mt-16 section-faq">
-      <div className="mx-auto max-w-7xl px-6 sm:px-8">
+    <section id="faq" className="faq-section section-faq py-20 sm:py-28 bg-slate-50/70 border-b border-slate-200/80 transition-colors duration-200 scroll-mt-16">
+      <div className="faq-container mx-auto max-w-7xl px-6 sm:px-8">
 
         {/* Section Header */}
-        <div className="mx-auto max-w-3xl text-center mb-12 sm:mb-16">
-          <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+        <div className="faq-header mx-auto max-w-3xl text-center mb-12 sm:mb-16">
+          <h2 className="faq-title text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
             {content.faqHeading || 'Tanya Jawab Seputar Layanan Pembuatan Website'}
           </h2>
-          <p className="mt-4 text-base text-slate-600 leading-relaxed max-w-2xl mx-auto">
+          <p className="faq-description mt-4 text-base text-slate-600 leading-relaxed max-w-2xl mx-auto">
             {content.faqDescription || `Temukan jawaban lengkap seputar estimasi waktu pengerjaan, kepemilikan source code, optimasi SEO Google, hingga kemudahan pengelolaan website Anda di ${content.brandName || 'TEKNOFLASE'}.`}
           </p>
         </div>
 
         {/* Filter and Search Bar Row */}
-        <div className="max-w-4xl mx-auto mb-10 space-y-4">
+        <div className="faq-controls max-w-4xl mx-auto mb-10 space-y-4">
           
           {/* Search Input */}
-          <div className="relative">
+          <div className="faq-search-wrapper relative">
             <label htmlFor={searchInputId} className="sr-only">Cari pertanyaan</label>
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -139,13 +139,13 @@ export default function FAQ({ content }: { content: LandingPageContent }) {
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="Cari pertanyaan teknis, NDA, source code, timeline..."
-              className="w-full rounded-2xl bg-white border border-slate-200/90 shadow-2xs pl-12 pr-4 py-3.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all font-medium"
+              className="faq-search-input w-full rounded-2xl bg-white border border-slate-200/90 shadow-2xs pl-12 pr-4 py-3.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all font-medium"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 hover:text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-full px-2 py-0.5 cursor-pointer"
+                className="faq-search-clear-btn absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 hover:text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-full px-2 py-0.5 cursor-pointer"
               >
                 Clear
               </button>
@@ -153,11 +153,11 @@ export default function FAQ({ content }: { content: LandingPageContent }) {
           </div>
 
           {/* Category Filter Tablist (Single-Row Horizontal Slide di Semua Tampilan Device) */}
-          <div className="w-full overflow-hidden">
+          <div className="faq-categories-wrapper w-full overflow-hidden">
             <div
               role="tablist"
               aria-label="Kategori FAQ"
-              className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1 px-1 touch-pan-x"
+              className="faq-categories-track flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1 px-1 touch-pan-x"
               style={{ justifyContent: 'safe center' }}
             >
               {categories.map((cat, idx) => {
@@ -170,7 +170,7 @@ export default function FAQ({ content }: { content: LandingPageContent }) {
                     aria-selected={isSelected}
                     type="button"
                     onClick={(e) => handleCategoryClick(cat, e)}
-                    className={`px-4 py-2.5 rounded-xl text-xs font-semibold shrink-0 whitespace-nowrap transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-600 select-none ${
+                    className={`faq-category-btn px-4 py-2.5 rounded-xl text-xs font-semibold shrink-0 whitespace-nowrap transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-600 select-none ${
                       isSelected
                         ? 'bg-slate-900 text-white shadow-xs font-semibold border border-slate-900'
                         : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 hover:text-slate-900'
@@ -186,7 +186,7 @@ export default function FAQ({ content }: { content: LandingPageContent }) {
         </div>
 
         {/* Accordion FAQ List (Horizontal Slide di Mobile, Stack Vertikal di Tablet & Monitor) */}
-        <div className="max-w-4xl mx-auto">
+        <div className="faq-accordion-container max-w-4xl mx-auto">
           {filteredFAQs.length === 0 ? (
             <div className="text-center py-12 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-2xs">
               <span className="text-3xl mb-2 block">🔍</span>
@@ -205,14 +205,14 @@ export default function FAQ({ content }: { content: LandingPageContent }) {
               <div
                 ref={faqScrollRef}
                 onScroll={handleFaqScroll}
-                className="flex items-start overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory gap-3 py-2 px-6 -mx-6 sm:mx-0 sm:px-0 sm:flex-col sm:items-stretch sm:overflow-visible sm:space-y-3.5 sm:gap-0"
+                className="faq-accordion-track flex items-start overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory gap-3 py-2 px-6 -mx-6 sm:mx-0 sm:px-0 sm:flex-col sm:items-stretch sm:overflow-visible sm:space-y-3.5 sm:gap-0"
               >
                 {filteredFAQs.map((faq, idx) => {
                   const isOpen = openIndex === idx
                   return (
                     <div
                       key={idx}
-                      className={`w-[86vw] max-w-[340px] shrink-0 snap-start sm:w-full sm:max-w-none sm:shrink border rounded-2xl transition-all duration-200 overflow-hidden ${
+                      className={`faq-accordion-item w-[86vw] max-w-[340px] shrink-0 snap-start sm:w-full sm:max-w-none sm:shrink border rounded-2xl transition-all duration-200 overflow-hidden ${
                         isOpen
                           ? 'bg-white border-slate-300/90 shadow-md'
                           : 'bg-white border-slate-200/90 shadow-2xs hover:border-slate-300 hover:shadow-xs'
@@ -222,19 +222,19 @@ export default function FAQ({ content }: { content: LandingPageContent }) {
                       <button
                         type="button"
                         onClick={() => toggleAccordion(idx)}
-                        className="w-full px-5 sm:px-6 py-4.5 sm:py-5 text-left flex items-center justify-between gap-3 sm:gap-4 cursor-pointer focus:outline-none outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 rounded-2xl select-none"
+                        className="faq-accordion-trigger w-full px-5 sm:px-6 py-4.5 sm:py-5 text-left flex items-center justify-between gap-3 sm:gap-4 cursor-pointer focus:outline-none outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 rounded-2xl select-none"
                         aria-expanded={isOpen}
                       >
                         <div className="flex flex-col items-start gap-1.5 sm:gap-2 flex-1">
-                          <span className="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-100 shrink-0">
+                          <span className="faq-item-category text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-100 shrink-0">
                             {faq.category}
                           </span>
-                          <span className="text-sm sm:text-base font-bold text-slate-900 leading-snug">
+                          <span className="faq-item-question text-sm sm:text-base font-bold text-slate-900 leading-snug">
                             {faq.question}
                           </span>
                         </div>
 
-                        <div className={`flex h-8 w-8 items-center justify-center rounded-xl transition-transform duration-200 shrink-0 ${
+                        <div className={`faq-item-icon-box flex h-8 w-8 items-center justify-center rounded-xl transition-transform duration-200 shrink-0 ${
                           isOpen ? 'bg-blue-600 text-white rotate-180' : 'bg-slate-100 text-slate-600'
                         }`}>
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -245,8 +245,8 @@ export default function FAQ({ content }: { content: LandingPageContent }) {
 
                       {/* Accordion Body / Answer */}
                       {isOpen && (
-                        <div className="px-5 sm:px-6 pb-5 sm:pb-6 pt-1 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100">
-                          <p className="mt-2">{faq.answer}</p>
+                        <div className="faq-accordion-body px-5 sm:px-6 pb-5 sm:pb-6 pt-1 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100">
+                          <p className="faq-item-answer mt-2">{faq.answer}</p>
                         </div>
                       )}
                     </div>

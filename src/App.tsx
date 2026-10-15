@@ -9,6 +9,7 @@ import AdminPanel from './components/AdminPanel'
 import AdminLogin from './components/AdminLogin'
 import FAQ, { DEFAULT_FAQ_ITEMS } from './components/FAQ'
 import SEO from './components/SEO'
+import PrivacyPolicy, { DEFAULT_PRIVACY_POLICY } from './components/PrivacyPolicy'
 import type { LandingPageContent } from './components/AdminPanel'
 
 const DEFAULT_CONTENT: LandingPageContent = {
@@ -110,7 +111,7 @@ const DEFAULT_CONTENT: LandingPageContent = {
 
   ctaTitle: 'Konsultasi Langsung via WhatsApp',
   ctaDescription: 'Diskusikan rencana dan kebutuhan fitur website Anda langsung dengan tim teknis kami. Kami siap memberikan rekomendasi solusi, estimasi biaya, dan jadwal pengerjaan secara transparan.',
-  ctaButtonText: 'Mulai Percakapan WhatsApp Sekarang',
+  ctaButtonText: 'WhatsApp Sekarang',
 
   teamMembers: [
     { name: 'Muhammad Farhan', role: 'Project Director & Lead Strategist', initials: 'MF', desc: 'Mengarahkan strategi pengembangan web, arsitektur solusi bisnis, dan kepuasan hasil proyek klien.', linkedin: 'https://linkedin.com' },
@@ -120,12 +121,24 @@ const DEFAULT_CONTENT: LandingPageContent = {
   ],
 
   portfolioItems: [
-    { title: 'Website Perusahaan Konsultasi & Bisnis Korporat', category: 'Company Profile', tag: 'Corporate Profile', description: 'Website resmi profil perusahaan dengan tata letak kredibel, navigasi cepat, dan integrasi formulir penawaran kerja sama.', features: ['Waktu Muat < 1.5 Detik', 'Panel CMS Kelola Konten', 'Struktur SEO Terindeks Google'], image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80' },
-    { title: 'Landing Page Penjualan Produk & Jasa Premium', category: 'Landing Page', tag: 'High-Conversion Page', description: 'Halaman penawaran terfokus dengan narasi persuasif dan alur tindakan terarah langsung ke kontak WhatsApp resmi tim sales.', features: ['Direct WhatsApp Leads', 'Mobile-First Responsive Layout', 'Piksel Analitik Terpasang'], image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80' },
-    { title: 'Website Toko Online Fashion & Katalog WhatsApp', category: 'Toko Online (E-Commerce)', tag: 'E-Commerce Store', description: 'Platform toko online modern dengan etalase produk responsif, kalkulasi ongkir, dan checkout langsung ke chat WhatsApp kasir.', features: ['Checkout WhatsApp Cepat', 'Manajemen Stok Produk', 'Tampilan Mobile Optimal'], image: 'https://images.unsplash.com/photo-1556742049-0a67c5574f73?auto=format&fit=crop&w=1200&q=80' },
-    { title: 'Portal Web Katalog Interaktif & Sistem Pemesanan', category: 'Web Portal & Katalog', tag: 'Web Portal', description: 'Website katalog produk dengan pencarian cepat, filter kategori multi-level, dan alur permohonan penawaran harga instan.', features: ['Filter Produk Real-Time', 'Dashboard Manajemen Katalog', 'Desain Modern & Ringan'], image: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80' },
-    { title: 'Aplikasi Web SaaS & Dashboard Internal Bisnis', category: 'Aplikasi Web (Web App)', tag: 'Custom Web Application', description: 'Sistem berbasis web dengan otentikasi login pengguna, hak akses peran (RBAC), serta pencatatan data operasional terpadu.', features: ['Keamanan Enkripsi Akun', 'Laporan Data Terpusat', 'Arsitektur Siap Berkembang'], image: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=80' },
-    { title: 'Portal Media Informasi & Website Publikasi Berita', category: 'Blog & Portal Berita', tag: 'News & Media Portal', description: 'Website publikasi artikel dan media berita yang ringan, teroptimasi Google News, dan dilengkapi modul manajemen kontributor.', features: ['Google Discover Ready', 'Pemuatan Halaman Kilat', 'Manajemen Kategori Artikel'], image: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80' },
+    {
+      title: 'Website Perusahaan Konsultasi & Bisnis Korporat',
+      category: 'Company Profile',
+      tag: 'Corporate Profile',
+      description: 'Website resmi profil perusahaan dengan tata letak kredibel, navigasi cepat, dan integrasi formulir penawaran kerja sama.',
+      features: ['Waktu Muat < 1.5 Detik', 'Panel CMS Kelola Konten', 'Struktur SEO Terindeks Google'],
+      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
+      images: [
+        'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80',
+      ],
+    },
+    { title: 'Landing Page Penjualan Produk & Jasa Premium', category: 'Landing Page', tag: 'High-Conversion Page', description: 'Halaman penawaran terfokus dengan narasi persuasif dan alur tindakan terarah langsung ke kontak WhatsApp resmi tim sales.', features: ['Direct WhatsApp Leads', 'Mobile-First Responsive Layout', 'Piksel Analitik Terpasang'], image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80', images: ['https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80'] },
+    { title: 'Website Toko Online Fashion & Katalog WhatsApp', category: 'Toko Online (E-Commerce)', tag: 'E-Commerce Store', description: 'Platform toko online modern dengan etalase produk responsif, kalkulasi ongkir, dan checkout langsung ke chat WhatsApp kasir.', features: ['Checkout WhatsApp Cepat', 'Manajemen Stok Produk', 'Tampilan Mobile Optimal'], image: 'https://images.unsplash.com/photo-1556742049-0a67c5574f73?auto=format&fit=crop&w=1200&q=80', images: ['https://images.unsplash.com/photo-1556742049-0a67c5574f73?auto=format&fit=crop&w=1200&q=80'] },
+    { title: 'Portal Web Katalog Interaktif & Sistem Pemesanan', category: 'Web Portal & Katalog', tag: 'Web Portal', description: 'Website katalog produk dengan pencarian cepat, filter kategori multi-level, dan alur permohonan penawaran harga instan.', features: ['Filter Produk Real-Time', 'Dashboard Manajemen Katalog', 'Desain Modern & Ringan'], image: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80', images: ['https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80'] },
+    { title: 'Aplikasi Web SaaS & Dashboard Internal Bisnis', category: 'Aplikasi Web (Web App)', tag: 'Custom Web Application', description: 'Sistem berbasis web dengan otentikasi login pengguna, hak akses peran (RBAC), serta pencatatan data operasional terpadu.', features: ['Keamanan Enkripsi Akun', 'Laporan Data Terpusat', 'Arsitektur Siap Berkembang'], image: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=80', images: ['https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=80'] },
+    { title: 'Portal Media Informasi & Website Publikasi Berita', category: 'Blog & Portal Berita', tag: 'News & Media Portal', description: 'Website publikasi artikel dan media berita yang ringan, teroptimasi Google News, dan dilengkapi modul manajemen kontributor.', features: ['Google Discover Ready', 'Pemuatan Halaman Kilat', 'Manajemen Kategori Artikel'], image: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80', images: ['https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80'] },
   ],
 
   faqItems: DEFAULT_FAQ_ITEMS,
@@ -147,7 +160,7 @@ const DEFAULT_CONTENT: LandingPageContent = {
     showInstagram: true,
     showTiktok: true,
     faqLink: '#faq',
-    privacyLink: '#',
+    privacyLink: '#privacy',
     termsLink: '#',
     copyrightSuffix: 'Hak cipta dilindungi.',
   },
@@ -231,6 +244,7 @@ const DEFAULT_CONTENT: LandingPageContent = {
       demoActive: false,
     },
   ],
+  privacyPolicy: DEFAULT_PRIVACY_POLICY,
 }
 
 function App() {
@@ -292,29 +306,64 @@ function App() {
             parsed.footerServices = DEFAULT_CONTENT.footerServices
             localStorage.setItem('landing_page_content', JSON.stringify(parsed))
           }
-          // Migrate: ensure existing saved portfolio items have images
+          // Migrate: ensure existing saved portfolio items have images array
           if (parsed.portfolioItems && Array.isArray(parsed.portfolioItems)) {
             let hasImageUpdates = false
             parsed.portfolioItems = parsed.portfolioItems.map((item: Record<string, unknown>, idx: number) => {
-              if (!item.image) {
+              let updated = { ...item }
+              if (!updated.image) {
                 hasImageUpdates = true
                 const defaultItem = DEFAULT_CONTENT.portfolioItems[idx]
-                return {
-                  ...item,
-                  image: defaultItem?.image || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
-                }
+                updated.image = defaultItem?.image || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80'
               }
-              return item
+              const defaultItem = DEFAULT_CONTENT.portfolioItems[idx]
+              if (!Array.isArray(updated.images) || updated.images.length === 0) {
+                hasImageUpdates = true
+                updated.images = defaultItem?.images || (updated.image ? [updated.image as string] : [])
+              } else if (idx === 0 && updated.images.length === 1 && defaultItem?.images && defaultItem.images.length > 1) {
+                // Populate default multi-images for demo if first item only has 1 image
+                hasImageUpdates = true
+                updated.images = defaultItem.images
+              }
+              return updated
             })
             if (hasImageUpdates) {
               localStorage.setItem('landing_page_content', JSON.stringify(parsed))
             }
           }
 
+          // Migrate: ensure privacyPolicy exists
+          if (!parsed.privacyPolicy || !Array.isArray(parsed.privacyPolicy.sections)) {
+            parsed.privacyPolicy = DEFAULT_CONTENT.privacyPolicy
+            localStorage.setItem('landing_page_content', JSON.stringify(parsed))
+          }
+
+          // Migrate: ensure footer.privacyLink points to #privacy
+          if (parsed.footer && (parsed.footer.privacyLink === '#' || !parsed.footer.privacyLink)) {
+            parsed.footer.privacyLink = '#privacy'
+            localStorage.setItem('landing_page_content', JSON.stringify(parsed))
+          }
+
+          // Migrate: update old default ctaButtonText to 'WhatsApp Sekarang'
+          if (parsed.ctaButtonText === 'Mulai Percakapan WhatsApp Sekarang') {
+            parsed.ctaButtonText = 'WhatsApp Sekarang'
+            localStorage.setItem('landing_page_content', JSON.stringify(parsed))
+          }
+
           // Migrate: merge missing keys from DEFAULT_CONTENT so new fields populate
           return {
             ...DEFAULT_CONTENT,
             ...parsed,
+            privacyPolicy: (parsed.privacyPolicy && Array.isArray(parsed.privacyPolicy.sections) && parsed.privacyPolicy.sections.length > 0)
+              ? parsed.privacyPolicy
+              : DEFAULT_CONTENT.privacyPolicy,
+            footer: {
+              ...DEFAULT_CONTENT.footer,
+              ...(parsed.footer || {}),
+              privacyLink: (parsed.footer?.privacyLink && parsed.footer.privacyLink !== '#')
+                ? parsed.footer.privacyLink
+                : '#privacy',
+            },
             footerServices: (Array.isArray(parsed.footerServices) && parsed.footerServices.length > 0)
               ? parsed.footerServices
               : DEFAULT_CONTENT.footerServices,
@@ -350,13 +399,18 @@ function App() {
     return false
   })
 
-  // Hash-based Route State ('landing' | 'admin')
-  const [currentRoute, setCurrentRoute] = useState<'landing' | 'admin'>(() => {
-    if (typeof window !== 'undefined') {
-      return window.location.hash === '#admin' ? 'admin' : 'landing'
-    }
+  // Hash-based Route State ('landing' | 'admin' | 'privacy')
+  type RouteType = 'landing' | 'admin' | 'privacy'
+
+  const getRouteFromHash = (): RouteType => {
+    if (typeof window === 'undefined') return 'landing'
+    const hash = window.location.hash.toLowerCase()
+    if (hash === '#admin') return 'admin'
+    if (hash === '#privacy' || hash === '#kebijakan-privasi') return 'privacy'
     return 'landing'
-  })
+  }
+
+  const [currentRoute, setCurrentRoute] = useState<RouteType>(getRouteFromHash)
 
   useEffect(() => {
     // Lighting aesthetic concept: Clean, luminous public page
@@ -364,16 +418,36 @@ function App() {
     localStorage.setItem('theme', 'light')
   }, [])
 
-  // Sync document title dynamically with content.brandName
+  // Sync document title dynamically with content.brandName & currentRoute
   useEffect(() => {
     if (content.brandName) {
-      document.title = `${content.brandName} | Jasa Pembuatan Website Profesional & Aplikasi Web Modern`
+      if (currentRoute === 'privacy') {
+        document.title = `Kebijakan Privasi | ${content.brandName}`
+      } else if (currentRoute === 'admin') {
+        document.title = `Admin CMS | ${content.brandName}`
+      } else {
+        document.title = `${content.brandName} | Jasa Pembuatan Website Profesional & Aplikasi Web Modern`
+      }
     }
-  }, [content.brandName])
+  }, [content.brandName, currentRoute])
 
   useEffect(() => {
     const handleHashChange = () => {
-      setCurrentRoute(window.location.hash === '#admin' ? 'admin' : 'landing')
+      const nextRoute = getRouteFromHash()
+      setCurrentRoute(nextRoute)
+      const currentHash = window.location.hash
+      if (nextRoute === 'landing' && currentHash && currentHash !== '#' && currentHash.length > 1) {
+        setTimeout(() => {
+          const el = document.querySelector(currentHash)
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth' })
+          } else {
+            window.scrollTo({ top: 0, behavior: 'instant' })
+          }
+        }, 120)
+      } else {
+        window.scrollTo({ top: 0, behavior: 'instant' })
+      }
     }
     window.addEventListener('hashchange', handleHashChange)
     return () => window.removeEventListener('hashchange', handleHashChange)
@@ -409,9 +483,25 @@ function App() {
     )
   }
 
+  // ── Privacy Policy Route ───────────────────────────────────────────────────
+  if (currentRoute === 'privacy') {
+    return (
+      <div className="app-layout min-h-screen bg-white text-slate-900 transition-colors duration-200">
+        <SEO content={content} />
+        <PrivacyPolicy
+          content={content}
+          onBack={() => {
+            window.location.hash = ''
+            setCurrentRoute('landing')
+          }}
+        />
+      </div>
+    )
+  }
+
   // ── Landing Page Route (Lighting Aesthetic) ─────────────────────────────────
   return (
-    <div className="min-h-screen bg-white text-slate-900 transition-colors duration-200">
+    <div className="app-layout min-h-screen bg-white text-slate-900 transition-colors duration-200">
       <SEO content={content} />
       <Navbar brandName={content.brandName} />
       <Hero content={content} />

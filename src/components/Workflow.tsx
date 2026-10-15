@@ -55,49 +55,49 @@ export default function Workflow({ content }: { content: LandingPageContent }) {
   const steps = content.workflowSteps || []
 
   return (
-    <section id="workflow" className="py-20 sm:py-28 bg-white border-b border-slate-200/80 transition-colors duration-200 section-workflow">
-      <div className="mx-auto max-w-7xl px-6 sm:px-8">
+    <section id="workflow" className="workflow-section section-workflow py-20 sm:py-28 bg-white border-b border-slate-200/80 transition-colors duration-200">
+      <div className="workflow-container mx-auto max-w-7xl px-6 sm:px-8">
         
         {/* Section Heading */}
-        <div className="mx-auto max-w-3xl text-center mb-16 flex flex-col items-center">
-          <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+        <div className="workflow-header mx-auto max-w-3xl text-center mb-16 flex flex-col items-center">
+          <h2 className="workflow-title text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
             Metodologi Rekayasa Sistem yang Terukur
           </h2>
-          <p className="mt-4 text-base text-slate-600 leading-relaxed max-w-2xl">
+          <p className="workflow-description mt-4 text-base text-slate-600 leading-relaxed max-w-2xl">
             Dari formulasi arsitektur spesifikasi hingga pengujian beban hardware dan deployment cloud, setiap tahap dikawal dengan standar engineering industri.
           </p>
         </div>
 
         {/* Clean Responsive Step Grid */}
-        <div ref={ref} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+        <div ref={ref} className="workflow-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
           {steps.map((step, idx) => (
             <div
               key={idx}
-              className={`flex flex-col items-start bg-slate-50/70 border border-slate-200/90 p-6 rounded-2xl transition-all duration-300 shadow-xs hover:border-slate-300 hover:shadow-md hover:bg-white ${
+              className={`workflow-card flex flex-col items-start bg-slate-50/70 border border-slate-200/90 p-6 rounded-2xl transition-all duration-300 shadow-xs hover:border-slate-300 hover:shadow-md hover:bg-white ${
                 isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
               }`}
               style={{ transitionDelay: `${idx * 100}ms` }}
             >
               {/* Header Badge Row */}
-              <div className="w-full flex justify-between items-center mb-5">
+              <div className="workflow-card-badge-row w-full flex justify-between items-center mb-5">
                 {/* Step Number Badge */}
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white font-extrabold text-sm shadow-xs">
+                <div className="workflow-step-badge flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white font-extrabold text-sm shadow-xs">
                   {step.no}
                 </div>
 
                 {/* Step Visual Icon container */}
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 border border-blue-100">
+                <div className="workflow-step-icon-box flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 border border-blue-100">
                   {stepIcons[idx]}
                 </div>
               </div>
 
               {/* Step Title */}
-              <h3 className="text-base font-bold text-slate-900">
+              <h3 className="workflow-step-title text-base font-bold text-slate-900">
                 {step.title}
               </h3>
 
               {/* Step Description */}
-              <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
+              <p className="workflow-step-desc mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
                 {step.description}
               </p>
             </div>

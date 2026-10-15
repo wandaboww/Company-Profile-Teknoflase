@@ -31,20 +31,7 @@ export default function About({ content }: { content: LandingPageContent }) {
     ? content.featuresItems
     : defaultPillars
 
-  // Mobile & tablet horizontal scroll indicators
-  const [activePillarIdx, setActivePillarIdx] = useState(0)
-  const pillarsScrollRef = useRef<HTMLDivElement>(null)
 
-  const handlePillarsScroll = () => {
-    if (!pillarsScrollRef.current) return
-    const { scrollLeft, scrollWidth } = pillarsScrollRef.current
-    const count = servicePillars.length || 4
-    const cardWidth = scrollWidth / count
-    if (cardWidth > 0) {
-      const newIdx = Math.round(scrollLeft / cardWidth)
-      setActivePillarIdx(Math.min(Math.max(0, newIdx), count - 1))
-    }
-  }
 
   const [activeTeamIdx, setActiveTeamIdx] = useState(0)
   const teamScrollRef = useRef<HTMLDivElement>(null)
@@ -93,90 +80,69 @@ export default function About({ content }: { content: LandingPageContent }) {
   const teamMembers = content.teamMembers
 
   return (
-    <section id="about" className="py-20 sm:py-28 bg-slate-50/70 border-b border-slate-200/80 transition-colors duration-200 scroll-mt-16 section-about overflow-hidden">
-      <div className="mx-auto max-w-7xl px-6 sm:px-8">
+    <section id="about" className="about-section section-about py-20 sm:py-28 bg-slate-50/70 border-b border-slate-200/80 transition-colors duration-200 scroll-mt-16 overflow-hidden">
+      <div className="about-container mx-auto max-w-7xl px-6 sm:px-8">
         
         {/* Section Editorial Header */}
-        <div className="mx-auto max-w-3xl text-center mb-16 flex flex-col items-center">
-          <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+        <div className="about-header mx-auto max-w-3xl text-center mb-16 flex flex-col items-center">
+          <h2 className="about-title text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
             {content.aboutTitle || 'Standar Pembuatan Website yang Berorientasi pada Hasil Nyata'}
           </h2>
-          <p className="mt-4 text-base text-slate-600 leading-relaxed max-w-2xl mx-auto">
+          <p className="about-description mt-4 text-base text-slate-600 leading-relaxed max-w-2xl mx-auto">
             {content.aboutDescription || content.featuresDescription}
           </p>
         </div>
 
         {/* 2-Column Content Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="about-grid grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* Core Services Stack (Horizontal Scroll di Mobile & Tablet, 2-Col Grid di Desktop) */}
-          <div className="lg:col-span-7 w-full">
-            <div
-              ref={pillarsScrollRef}
-              onScroll={handlePillarsScroll}
-              className="flex overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory gap-4 sm:gap-5 py-2 px-1 lg:px-0 lg:py-0 lg:grid lg:grid-cols-2 lg:gap-5"
-            >
+          <div className="about-pillars-column lg:col-span-7 w-full">
+            <div className="about-pillars-track flex overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory gap-4 sm:gap-5 py-2 px-1 lg:px-0 lg:py-0 lg:grid lg:grid-cols-2 lg:gap-5">
               {servicePillars.map((val, i) => (
                 <div
                   key={i}
-                  className="flex flex-col p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-200 w-[280px] sm:w-[320px] lg:w-auto shrink-0 snap-start select-none"
+                  className="about-pillar-card flex flex-col p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-200 w-[280px] sm:w-[320px] lg:w-auto shrink-0 snap-start select-none"
                 >
-                  <div className="p-3 rounded-xl bg-blue-50 border border-blue-100 w-fit mb-4 flex items-center justify-center min-w-[44px] min-h-[44px]">
-                    {renderPillarIcon(val.icon, i)}
+                  <div className="about-pillar-header flex items-center gap-3.5 mb-3.5">
+                    <div className="about-pillar-icon p-3 rounded-xl bg-blue-50 border border-blue-100 shrink-0 flex items-center justify-center min-w-[44px] min-h-[44px]">
+                      {renderPillarIcon(val.icon, i)}
+                    </div>
+                    <h3 className="about-pillar-title text-base font-bold text-slate-900 leading-snug">
+                      {val.title}
+                    </h3>
                   </div>
-                  <h3 className="text-base font-bold text-slate-900">
-                    {val.title}
-                  </h3>
-                  <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  <p className="about-pillar-desc text-xs sm:text-sm text-slate-600 leading-relaxed">
                     {val.description}
                   </p>
                 </div>
               ))}
             </div>
-
-            {/* Mobile & Tablet Scroll Indicator Dots */}
-            <div className="flex items-center justify-center gap-1.5 pt-4 lg:hidden" aria-hidden="true">
-              {servicePillars.map((_, dotIdx) => (
-                <button
-                  key={dotIdx}
-                  type="button"
-                  onClick={() => {
-                    if (!pillarsScrollRef.current) return
-                    const cardEl = pillarsScrollRef.current.children[dotIdx] as HTMLElement
-                    cardEl?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
-                  }}
-                  className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                    activePillarIdx === dotIdx ? 'w-6 bg-blue-600' : 'w-1.5 bg-slate-300 hover:bg-slate-400'
-                  }`}
-                  aria-label={`Lihat pilar layanan ${dotIdx + 1}`}
-                />
-              ))}
-            </div>
           </div>
 
           {/* Impact Stats Card */}
-          <div className="lg:col-span-5 rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-sm">
-            <span className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+          <div className="about-stats-card lg:col-span-5 rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-sm">
+            <span className="about-stats-badge text-xs font-semibold uppercase tracking-wider text-blue-600">
               Tolok Ukur Kualitas Website
             </span>
-            <h3 className="mt-1 text-lg font-bold text-slate-900">
+            <h3 className="about-stats-title mt-1 text-lg font-bold text-slate-900">
               Standar Rekayasa Web {content.brandName}
             </h3>
 
-            <div className="mt-6 space-y-3">
+            <div className="about-stats-list mt-6 space-y-3">
               {stats.map((stat, i) => (
-                <div key={i} className="flex justify-between items-center py-3 border-b border-slate-100 last:border-none">
-                  <span className="text-xs sm:text-sm text-slate-600 font-medium">
+                <div key={i} className="about-stat-row flex justify-between items-center py-3 border-b border-slate-100 last:border-none">
+                  <span className="about-stat-label text-xs sm:text-sm text-slate-600 font-medium">
                     {stat.label}
                   </span>
-                  <span className="text-base sm:text-lg font-bold text-slate-900">
+                  <span className="about-stat-value text-base sm:text-lg font-bold text-slate-900">
                     {stat.value}
                   </span>
                 </div>
               ))}
             </div>
 
-            <p className="mt-6 pt-4 border-t border-slate-100 text-xs text-slate-500 italic">
+            <p className="about-stats-footnote mt-6 pt-4 border-t border-slate-100 text-xs text-slate-500 italic">
               *Diuji secara berkala dengan audit performa Google Lighthouse pada jaringan seluler maupun desktop.
             </p>
           </div>
@@ -184,7 +150,7 @@ export default function About({ content }: { content: LandingPageContent }) {
         </div>
 
         {/* Interactive Dropdown Boundary Line & Team Section */}
-        <div className="mt-20">
+        <div className="about-team-wrapper mt-20">
           
           {/* Garis Batas Interaktif yang Berfungsi Sebagai Dropdown Toggle (Tanpa Teks & Tanpa Badges) */}
           <button
@@ -192,7 +158,7 @@ export default function About({ content }: { content: LandingPageContent }) {
             onClick={() => setIsTeamOpen(!isTeamOpen)}
             aria-expanded={isTeamOpen}
             aria-controls="team-section-content"
-            className="group w-full flex items-center justify-center cursor-pointer py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-lg select-none"
+            className="about-team-toggle group w-full flex items-center justify-center cursor-pointer py-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-lg select-none"
             title={isTeamOpen ? 'Klik untuk menutup tim pengembang' : 'Klik untuk melihat tim pengembang'}
           >
             {/* Garis Kiri */}
@@ -217,13 +183,13 @@ export default function About({ content }: { content: LandingPageContent }) {
 
           {/* Area Tim Pengembang (Default Tertutup, Muncul Saat Garis Diklik) */}
           {isTeamOpen && (
-            <div id="team-section-content" className="pt-12 sm:pt-14 transition-all duration-300 animate-fade-in">
+            <div id="team-section-content" className="about-team-content pt-12 sm:pt-14 transition-all duration-300 animate-fade-in">
               
-              <div className="mx-auto max-w-3xl text-center mb-14 flex flex-col items-center">
-                <h3 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
+              <div className="about-team-header mx-auto max-w-3xl text-center mb-14 flex flex-col items-center">
+                <h3 className="about-team-title text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
                   Tim Pengembang di Balik <span className="text-blue-600">{content.brandName}</span>
                 </h3>
-                <p className="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed max-w-xl mx-auto">
+                <p className="about-team-desc mt-3 text-sm sm:text-base text-slate-600 leading-relaxed max-w-xl mx-auto">
                   Didukung talenta berdedikasi dalam desain antarmuka pengguna, rekayasa kode modern, dan optimasi performa website.
                 </p>
               </div>
@@ -233,38 +199,38 @@ export default function About({ content }: { content: LandingPageContent }) {
                 <div
                   ref={teamScrollRef}
                   onScroll={handleTeamScroll}
-                  className="flex overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory gap-5 sm:gap-6 py-2 px-1 lg:px-0 lg:py-0 lg:grid lg:grid-cols-4 lg:gap-6 w-full"
+                  className="about-team-track flex overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory gap-5 sm:gap-6 py-2 px-1 lg:px-0 lg:py-0 lg:grid lg:grid-cols-4 lg:gap-6 w-full"
                 >
                   {teamMembers.map((member, i) => (
                     <div
                       key={i}
-                      className="rounded-2xl border border-slate-200/90 bg-white p-6 text-center shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-200 w-[260px] sm:w-[280px] lg:w-auto shrink-0 snap-start select-none"
+                      className="about-team-card rounded-2xl border border-slate-200/90 bg-white p-6 text-center shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-200 w-[260px] sm:w-[280px] lg:w-auto shrink-0 snap-start select-none"
                     >
                       {/* Initials Avatar Box */}
-                      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-800 border border-slate-200/80 font-bold text-base mb-4">
+                      <div className="about-team-avatar mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-800 border border-slate-200/80 font-bold text-base mb-4">
                         {member.initials}
                       </div>
 
                       {/* Name & Role */}
-                      <h4 className="text-base font-bold text-slate-900">
+                      <h4 className="about-team-name text-base font-bold text-slate-900">
                         {member.name}
                       </h4>
-                      <p className="text-xs font-semibold text-blue-600 uppercase tracking-wider mt-0.5">
+                      <p className="about-team-role text-xs font-semibold text-blue-600 uppercase tracking-wider mt-0.5">
                         {member.role}
                       </p>
 
                       {/* Bio Description */}
-                      <p className="mt-3 text-xs text-slate-600 leading-relaxed">
+                      <p className="about-team-bio mt-3 text-xs text-slate-600 leading-relaxed">
                         {member.desc}
                       </p>
 
                       {/* LinkedIn Link */}
-                      <div className="mt-4 pt-3 border-t border-slate-100 flex justify-center">
+                      <div className="about-team-social-box mt-4 pt-3 border-t border-slate-100 flex justify-center">
                         <a
                           href={member.linkedin}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-slate-400 hover:text-blue-600 transition-colors p-2 rounded-lg focus-visible:outline-2 focus-visible:outline-blue-600"
+                          className="about-team-social-link text-slate-400 hover:text-blue-600 transition-colors p-2 rounded-lg focus-visible:outline-2 focus-visible:outline-blue-600"
                           aria-label={`LinkedIn ${member.name}`}
                         >
                           <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -277,7 +243,7 @@ export default function About({ content }: { content: LandingPageContent }) {
                 </div>
 
                 {/* Mobile & Tablet Scroll Indicator Dots for Team */}
-                <div className="flex items-center justify-center gap-1.5 pt-4 lg:hidden" aria-hidden="true">
+                <div className="about-team-dots flex items-center justify-center gap-1.5 pt-4 lg:hidden" aria-hidden="true">
                   {teamMembers.map((_, dotIdx) => (
                     <button
                       key={dotIdx}
@@ -287,7 +253,7 @@ export default function About({ content }: { content: LandingPageContent }) {
                         const cardEl = teamScrollRef.current.children[dotIdx] as HTMLElement
                         cardEl?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
                       }}
-                      className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                      className={`about-team-dot h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
                         activeTeamIdx === dotIdx ? 'w-6 bg-blue-600' : 'w-1.5 bg-slate-300 hover:bg-slate-400'
                       }`}
                       aria-label={`Lihat profil tim ${dotIdx + 1}`}

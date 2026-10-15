@@ -1,5 +1,9 @@
 import { useState } from 'react'
 import { DEFAULT_FAQ_ITEMS } from './FAQ'
+import { DEFAULT_PRIVACY_POLICY } from './PrivacyPolicy'
+import type { PrivacySection, PrivacyPolicyContent } from './PrivacyPolicy'
+
+export type { PrivacySection, PrivacyPolicyContent }
 
 // ─── Data Interfaces ─────────────────────────────────────────────────────────
 
@@ -52,6 +56,7 @@ export interface PortfolioItem {
   description: string
   features: string[]
   image?: string
+  images?: string[]
   duration?: string
   demoUrl?: string
   deliverables?: string
@@ -133,6 +138,7 @@ export interface LandingPageContent {
   contact: ContactInfo
   footer: FooterInfo
   footerServices: FooterService[]
+  privacyPolicy?: PrivacyPolicyContent
 }
 
 // ─── Panel Props ─────────────────────────────────────────────────────────────
@@ -153,6 +159,7 @@ export const CATEGORIES = [
   { id: 'faq',       label: 'Tanya Jawab (FAQ)',       icon: '❓' },
   { id: 'contact',   label: 'Kontak & Call to Action', icon: '📬' },
   { id: 'footer',    label: 'Footer & Legalitas',      icon: '🦶' },
+  { id: 'privacy',   label: 'Kebijakan Privasi',       icon: '🛡️' },
 ]
 
 export const WEBSITE_CATEGORIES = [
@@ -222,16 +229,16 @@ function getHighlightStyle(color?: string): React.CSSProperties {
 
 // ─── Reusable Input Components ────────────────────────────────────────────────
 
-function Field({ label, value, onChange, multiline = false, rows = 3 }: {
-  label: string; value: string; onChange: (v: string) => void; multiline?: boolean; rows?: number
+function Field({ label, value, onChange, multiline = false, rows = 3, placeholder = '' }: {
+  label: string; value: string; onChange: (v: string) => void; multiline?: boolean; rows?: number; placeholder?: string
 }) {
   const cls = "w-full rounded-xl bg-slate-950 px-4 py-3 text-white border border-slate-800 focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 transition-all font-medium text-sm"
   return (
     <div>
       <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{label}</label>
       {multiline
-        ? <textarea rows={rows} value={value} onChange={e => onChange(e.target.value)} className={`${cls} resize-y`} />
-        : <input type="text" value={value} onChange={e => onChange(e.target.value)} className={cls} />
+        ? <textarea rows={rows} value={value} placeholder={placeholder} onChange={e => onChange(e.target.value)} className={`${cls} resize-y`} />
+        : <input type="text" value={value} placeholder={placeholder} onChange={e => onChange(e.target.value)} className={cls} />
       }
     </div>
   )
@@ -273,9 +280,12 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
   const [activeCategory, setActiveCategory] = useState('general')
   const [saved, setSaved] = useState(false)
   const [expandedProjectIdx, setExpandedProjectIdx] = useState<number | null>(0)
+  const [openHeroSlideIndices, setOpenHeroSlideIndices] = useState<number[]>([0])
   const [portfolioSearch, setPortfolioSearch] = useState<string>('')
   const [portfolioCategoryFilter, setPortfolioCategoryFilter] = useState<string>('Semua')
   const [selectedFooterServiceIdx, setSelectedFooterServiceIdx] = useState<number | 'all'>(0)
+  const [projectImageUrlInput, setProjectImageUrlInput] = useState<string>('')
+  const [openPrivacySectionIndices, setOpenPrivacySectionIndices] = useState<number[]>([0])
 
   const handleChange = <K extends keyof LandingPageContent>(key: K, value: LandingPageContent[K]) => {
     onUpdateContent({ ...content, [key]: value })
@@ -367,6 +377,38 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
     flashSaved()
   }
 
+  const toggleHeroSlide = (idx: number) => {
+    setOpenHeroSlideIndices(prev =>
+      prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx]
+    )
+  }
+
+  const expandAllHeroSlides = () => {
+    setOpenHeroSlideIndices(content.heroSlides.map((_, i) => i))
+  }
+
+  const collapseAllHeroSlides = () => {
+    setOpenHeroSlideIndices([])
+  }
+
+  const moveSlide = (idx: number, direction: 'up' | 'down') => {
+    const targetIdx = direction === 'up' ? idx - 1 : idx + 1
+    if (targetIdx < 0 || targetIdx >= content.heroSlides.length) return
+    const slides = [...content.heroSlides]
+    const temp = slides[idx]
+    slides[idx] = slides[targetIdx]
+    slides[targetIdx] = temp
+    handleChange('heroSlides', slides)
+    setOpenHeroSlideIndices(prev => {
+      const hasIdx = prev.includes(idx)
+      const hasTarget = prev.includes(targetIdx)
+      const next = prev.filter(i => i !== idx && i !== targetIdx)
+      if (hasIdx) next.push(targetIdx)
+      if (hasTarget) next.push(idx)
+      return next
+    })
+  }
+
   const addSlide = () => {
     const newSlide: HeroSlide = {
       title: 'Solusi Website Bisnis',
@@ -377,7 +419,9 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
       learnText: 'Lihat Layanan',
       learnLink: '#services',
     }
+    const newIndex = content.heroSlides.length
     handleChange('heroSlides', [...content.heroSlides, newSlide])
+    setOpenHeroSlideIndices(prev => [...prev, newIndex])
   }
 
   const deleteSlide = (idx: number) => {
@@ -387,6 +431,11 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
     }
     const slides = content.heroSlides.filter((_, i) => i !== idx)
     handleChange('heroSlides', slides)
+    setOpenHeroSlideIndices(prev =>
+      prev
+        .filter(i => i !== idx)
+        .map(i => (i > idx ? i - 1 : i))
+    )
   }
 
   // ── Hero Badges ────────────────────────────────────────────────────────────
@@ -474,6 +523,113 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
     updateProject(idx, 'features', value.split('\n').map(s => s.trim()).filter(Boolean))
   }
 
+  const handleUploadProjectImages = (idx: number, files: FileList | null) => {
+    if (!files || files.length === 0) return
+    const fileArray = Array.from(files)
+    const promises = fileArray.map(file => {
+      return new Promise<string>((resolve) => {
+        const reader = new FileReader()
+        reader.onload = () => {
+          if (typeof reader.result === 'string') {
+            resolve(reader.result)
+          } else {
+            resolve('')
+          }
+        }
+        reader.readAsDataURL(file)
+      })
+    })
+
+    Promise.all(promises).then(results => {
+      const valid = results.filter(r => Boolean(r && r.trim()))
+      if (valid.length === 0) return
+      const projects = [...content.portfolioItems]
+      const currentItem = projects[idx]
+      const existing = (currentItem.images && currentItem.images.length > 0)
+        ? currentItem.images
+        : (currentItem.image ? [currentItem.image] : [])
+      const updatedImages = [...existing, ...valid]
+      projects[idx] = {
+        ...currentItem,
+        images: updatedImages,
+        image: updatedImages[0] || '',
+      }
+      handleChange('portfolioItems', projects)
+    })
+  }
+
+  const handleAddProjectImageUrl = (idx: number, url: string) => {
+    if (!url || !url.trim()) return
+    const projects = [...content.portfolioItems]
+    const currentItem = projects[idx]
+    const existing = (currentItem.images && currentItem.images.length > 0)
+      ? currentItem.images
+      : (currentItem.image ? [currentItem.image] : [])
+    const updatedImages = [...existing, url.trim()]
+    projects[idx] = {
+      ...currentItem,
+      images: updatedImages,
+      image: updatedImages[0] || '',
+    }
+    handleChange('portfolioItems', projects)
+  }
+
+  const handleRemoveProjectImage = (idx: number, imgIdx: number) => {
+    const projects = [...content.portfolioItems]
+    const currentItem = projects[idx]
+    const existing = (currentItem.images && currentItem.images.length > 0)
+      ? currentItem.images
+      : (currentItem.image ? [currentItem.image] : [])
+    const updatedImages = existing.filter((_, i) => i !== imgIdx)
+    projects[idx] = {
+      ...currentItem,
+      images: updatedImages,
+      image: updatedImages[0] || '',
+    }
+    handleChange('portfolioItems', projects)
+  }
+
+  const handleMoveProjectImage = (idx: number, imgIdx: number, direction: 'left' | 'right') => {
+    const projects = [...content.portfolioItems]
+    const currentItem = projects[idx]
+    const existing = [...((currentItem.images && currentItem.images.length > 0) ? currentItem.images : (currentItem.image ? [currentItem.image] : []))]
+    const targetIdx = direction === 'left' ? imgIdx - 1 : imgIdx + 1
+    if (targetIdx < 0 || targetIdx >= existing.length) return
+    const [moved] = existing.splice(imgIdx, 1)
+    existing.splice(targetIdx, 0, moved)
+    projects[idx] = {
+      ...currentItem,
+      images: existing,
+      image: existing[0] || '',
+    }
+    handleChange('portfolioItems', projects)
+  }
+
+  const handleSetPrimaryImage = (idx: number, imgIdx: number) => {
+    if (imgIdx === 0) return
+    const projects = [...content.portfolioItems]
+    const currentItem = projects[idx]
+    const existing = [...((currentItem.images && currentItem.images.length > 0) ? currentItem.images : (currentItem.image ? [currentItem.image] : []))]
+    const [primary] = existing.splice(imgIdx, 1)
+    existing.unshift(primary)
+    projects[idx] = {
+      ...currentItem,
+      images: existing,
+      image: existing[0] || '',
+    }
+    handleChange('portfolioItems', projects)
+  }
+
+  const handleClearProjectImages = (idx: number) => {
+    const projects = [...content.portfolioItems]
+    projects[idx] = {
+      ...projects[idx],
+      images: [],
+      image: '',
+    }
+    handleChange('portfolioItems', projects)
+  }
+
   const addProject = () => {
     const newProject: PortfolioItem = {
       title: 'Website Proyek Baru',
@@ -482,6 +638,7 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
       description: 'Penjelasan singkat mengenai solusi website yang dibangun, fitur utama, dan dampaknya bagi pertumbuhan bisnis klien.',
       features: ['Desain Modern & Responsif', 'Kecepatan Muat Optimal', 'Struktur SEO Terindeks Google'],
       image: '',
+      images: [],
       duration: '7 - 14 Hari Kerja',
       demoUrl: '',
       deliverables: 'Dibuat dengan kode bersih, optimasi Core Web Vitals, tampilan responsif di seluruh gadget, dan 100% kepemilikan source code klien.',
@@ -497,6 +654,7 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
       ...original,
       title: `${original.title} (Salinan)`,
       features: [...original.features],
+      images: original.images ? [...original.images] : (original.image ? [original.image] : []),
     }
     const updated = [...content.portfolioItems]
     updated.splice(idx + 1, 0, duplicated)
@@ -574,6 +732,92 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
 
   const updateFooterServiceFeatures = (idx: number, value: string) => {
     updateFooterService(idx, 'features', value.split('\n').map(s => s.trim()).filter(Boolean))
+  }
+
+  // ── Privacy Policy Helpers ─────────────────────────────────────────────────
+  const privacyData = content.privacyPolicy || DEFAULT_PRIVACY_POLICY
+
+  const updatePrivacyField = <K extends keyof PrivacyPolicyContent>(key: K, value: PrivacyPolicyContent[K]) => {
+    handleChange('privacyPolicy', {
+      ...privacyData,
+      [key]: value,
+    })
+  }
+
+  const togglePrivacySection = (idx: number) => {
+    setOpenPrivacySectionIndices(prev =>
+      prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx]
+    )
+  }
+
+  const expandAllPrivacySections = () => {
+    const total = (privacyData.sections || []).length
+    setOpenPrivacySectionIndices(Array.from({ length: total }, (_, i) => i))
+  }
+
+  const collapseAllPrivacySections = () => {
+    setOpenPrivacySectionIndices([])
+  }
+
+  const updatePrivacySection = (idx: number, key: keyof PrivacySection, value: string) => {
+    const sections = [...(privacyData.sections || [])]
+    sections[idx] = { ...sections[idx], [key]: value }
+    updatePrivacyField('sections', sections)
+  }
+
+  const addPrivacySection = () => {
+    const sections = [...(privacyData.sections || [])]
+    const newIdx = sections.length + 1
+    const newSection: PrivacySection = {
+      title: `${newIdx}. Ketentuan Kebijakan Baru`,
+      content: 'Tuliskan penjelasan mengenai ketentuan atau kebijakan perlindungan data baru di sini.',
+    }
+    const updated = [...sections, newSection]
+    updatePrivacyField('sections', updated)
+    setOpenPrivacySectionIndices(prev => [...prev, updated.length - 1])
+  }
+
+  const deletePrivacySection = (idx: number) => {
+    const sections = [...(privacyData.sections || [])]
+    if (sections.length <= 1) {
+      alert('Minimal harus memiliki 1 pasal / poin kebijakan privasi.')
+      return
+    }
+    const targetTitle = sections[idx]?.title || `Pasal #${idx + 1}`
+    if (window.confirm(`Hapus "${targetTitle}"? Tindakan ini tidak dapat dibatalkan.`)) {
+      const updated = sections.filter((_, i) => i !== idx)
+      updatePrivacyField('sections', updated)
+      setOpenPrivacySectionIndices(prev =>
+        prev
+          .filter(i => i !== idx)
+          .map(i => (i > idx ? i - 1 : i))
+      )
+    }
+  }
+
+  const movePrivacySection = (idx: number, direction: 'up' | 'down') => {
+    const targetIdx = direction === 'up' ? idx - 1 : idx + 1
+    const sections = [...(privacyData.sections || [])]
+    if (targetIdx < 0 || targetIdx >= sections.length) return
+    const temp = sections[idx]
+    sections[idx] = sections[targetIdx]
+    sections[targetIdx] = temp
+    updatePrivacyField('sections', sections)
+    setOpenPrivacySectionIndices(prev => {
+      const hasIdx = prev.includes(idx)
+      const hasTarget = prev.includes(targetIdx)
+      const next = prev.filter(i => i !== idx && i !== targetIdx)
+      if (hasIdx) next.push(targetIdx)
+      if (hasTarget) next.push(idx)
+      return next
+    })
+  }
+
+  const resetPrivacyToDefault = () => {
+    if (window.confirm('Reset seluruh isi Kebijakan Privasi ke standar awal TEKNOFLASE? Tindakan ini akan menimpa perubahan kustom saat ini.')) {
+      handleChange('privacyPolicy', DEFAULT_PRIVACY_POLICY)
+      setOpenPrivacySectionIndices([0])
+    }
   }
 
   const activeCat = CATEGORIES.find(c => c.id === activeCategory) || CATEGORIES[0]
@@ -869,245 +1113,382 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
                 {/* Slides Editor Header */}
                 <div className="bg-slate-900 rounded-2xl border border-slate-800 p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
-                    <SectionTitle icon="✨" label="Daftar Slide Hero" />
-                    <p className="text-sm text-slate-400 -mt-3 mb-0">Slide bergantian otomatis setiap 7 detik pada halaman beranda.</p>
+                    <div className="flex items-center gap-2.5">
+                      <SectionTitle icon="✨" label="Daftar Slide Hero" />
+                      <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-slate-950 text-slate-300 border border-slate-800 -mt-6">
+                        {content.heroSlides.length} Slide
+                      </span>
+                    </div>
+                    <p className="text-sm text-slate-400 -mt-3 mb-0">
+                      Slide bergantian otomatis setiap 7 detik pada halaman beranda. Klik pada baris slide untuk membuka atau menutup accordion.
+                    </p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={addSlide}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-md shadow-emerald-500/20 transition-all cursor-pointer self-start sm:self-auto"
-                  >
-                    <span>+</span> Tambah Slide Baru
-                  </button>
+                  <div className="flex items-center gap-2 flex-wrap self-start sm:self-auto">
+                    <button
+                      type="button"
+                      onClick={expandAllHeroSlides}
+                      className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold border border-slate-700 transition-colors cursor-pointer"
+                      title="Buka seluruh accordion slide"
+                    >
+                      Buka Semua
+                    </button>
+                    <button
+                      type="button"
+                      onClick={collapseAllHeroSlides}
+                      className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold border border-slate-700 transition-colors cursor-pointer"
+                      title="Tutup seluruh accordion slide"
+                    >
+                      Tutup Semua
+                    </button>
+                    <button
+                      type="button"
+                      onClick={addSlide}
+                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-md shadow-emerald-500/20 transition-all cursor-pointer"
+                    >
+                      <span>+</span> Tambah Slide Baru
+                    </button>
+                  </div>
                 </div>
 
-                {/* Slides List */}
-                {content.heroSlides.map((slide, idx) => {
-                  const effectiveColor = slide.highlightColor || content.heroHighlightColor || '#2563eb'
-                  const effectiveFontSize = slide.fontSize || content.heroFontSize || 'normal'
-                  const effectiveHighlightFontSize = slide.highlightFontSize || content.heroHighlightFontSize || 'same'
+                {/* Slides Accordion List */}
+                <div className="space-y-3.5">
+                  {content.heroSlides.map((slide, idx) => {
+                    const isExpanded = openHeroSlideIndices.includes(idx)
+                    const effectiveColor = slide.highlightColor || content.heroHighlightColor || '#2563eb'
+                    const effectiveFontSize = slide.fontSize || content.heroFontSize || 'normal'
+                    const effectiveHighlightFontSize = slide.highlightFontSize || content.heroHighlightFontSize || 'same'
 
-                  return (
-                    <div key={idx} className="bg-slate-900 rounded-2xl border border-slate-800 p-6 shadow-sm space-y-5">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-bold border border-emerald-500/20">
-                            {idx + 1}
-                          </span>
-                          <span className="text-sm font-bold text-white">Slide #{idx + 1}</span>
-                          <span className="text-xs text-slate-400 font-mono hidden sm:inline">
-                            ({effectiveFontSize} • {effectiveColor.startsWith('#') ? effectiveColor : 'gradien'})
-                          </span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => deleteSlide(idx)}
-                          className="text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10 border border-red-500/20 rounded-lg px-2.5 py-1 transition-colors cursor-pointer"
-                          title="Hapus Slide Ini"
+                    return (
+                      <div
+                        key={idx}
+                        className={`bg-slate-900 rounded-2xl border transition-all duration-200 overflow-hidden shadow-sm ${
+                          isExpanded ? 'border-emerald-500/40 ring-1 ring-emerald-500/20' : 'border-slate-800 hover:border-slate-700'
+                        }`}
+                      >
+                        {/* ─── Compact Summary Row Header (Accordion Toggle Bar) ─── */}
+                        <div
+                          onClick={() => toggleHeroSlide(idx)}
+                          className="p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-3.5 bg-slate-900/95 cursor-pointer hover:bg-slate-800/60 transition-colors select-none"
+                          role="button"
+                          aria-expanded={isExpanded}
+                          tabIndex={0}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault()
+                              toggleHeroSlide(idx)
+                            }
+                          }}
                         >
-                          Hapus
-                        </button>
-                      </div>
-
-                      {/* Live Preview Card */}
-                      <div className="p-4 rounded-xl bg-slate-950 border border-slate-800/90 shadow-inner">
-                        <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                          <div className="flex items-center gap-2">
-                            <span className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                              <span>👁️</span> Live Headline Preview
+                          {/* Left: Index badge, title & highlight preview */}
+                          <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                            <span className={`flex h-8 w-8 items-center justify-center rounded-xl text-xs font-mono font-bold shrink-0 transition-colors ${
+                              isExpanded
+                                ? 'bg-emerald-500 text-slate-950 shadow-sm shadow-emerald-500/30'
+                                : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                            }`}>
+                              #{idx + 1}
                             </span>
-                            {content.showHeroHighlight === false && (
-                              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                                ⚠️ Highlight Disembunyikan (OFF)
-                              </span>
-                            )}
+
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <h4 className="text-sm font-bold text-white truncate max-w-sm sm:max-w-md lg:max-w-xl">
+                                  {slide.title || 'Slide Hero Tanpa Judul'}
+                                </h4>
+                                {slide.highlight && content.showHeroHighlight !== false && (
+                                  <span
+                                    className="text-xs font-bold truncate max-w-xs"
+                                    style={getHighlightStyle(effectiveColor)}
+                                  >
+                                    {slide.highlight}
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Compact Meta Badges */}
+                              <div className="flex items-center gap-2 mt-1 flex-wrap text-[11px] font-mono text-slate-400">
+                                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-slate-950 border border-slate-800">
+                                  <span className="w-2 h-2 rounded-full inline-block shrink-0" style={{ background: effectiveColor }} />
+                                  <span>{effectiveColor.startsWith('#') ? effectiveColor : 'Gradien'}</span>
+                                </span>
+                                <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800">
+                                  Ukuran: {effectiveFontSize}
+                                </span>
+                                {slide.ctaText && (
+                                  <span className="hidden sm:inline-block px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-400">
+                                    Tombol: {slide.ctaText}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-2 text-[10px] font-mono text-slate-400">
-                            <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">
-                              Ukuran: {effectiveFontSize}
-                            </span>
-                            <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 flex items-center gap-1">
-                              <span className="w-2 h-2 rounded-full inline-block" style={{ background: effectiveColor }} />
-                              {effectiveColor.startsWith('#') ? effectiveColor : 'Gradien'}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="py-4 px-3 bg-slate-900/60 rounded-lg border border-slate-800/60 text-center">
-                          <p className={`font-extrabold tracking-tight text-white leading-tight ${
-                            effectiveFontSize === 'compact' ? 'text-lg sm:text-2xl' :
-                            effectiveFontSize === 'large' ? 'text-2xl sm:text-4xl' :
-                            effectiveFontSize === 'jumbo' ? 'text-3xl sm:text-5xl' :
-                            'text-xl sm:text-3xl'
-                          }`}>
-                            {slide.title || 'Judul Slide Hero'}
-                            {content.showHeroHighlight !== false && (
-                              <span
-                                className={`block mt-1 font-extrabold ${
-                                  effectiveHighlightFontSize === 'compact' ? 'text-base sm:text-xl' :
-                                  effectiveHighlightFontSize === 'large' ? 'text-2xl sm:text-4xl' :
-                                  effectiveHighlightFontSize === 'jumbo' ? 'text-3xl sm:text-5xl' :
-                                  ''
-                                }`}
-                                style={getHighlightStyle(effectiveColor)}
-                              >
-                                {slide.highlight || 'Highlight Teks Berwarna'}
-                              </span>
-                            )}
-                          </p>
-                        </div>
-                      </div>
 
-                      {/* Input Judul & Highlight */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Field label="Judul Slide" value={slide.title} onChange={v => updateSlide(idx, 'title', v)} />
-                        <Field label="Highlight (Teks Berwarna)" value={slide.highlight} onChange={v => updateSlide(idx, 'highlight', v)} />
-                      </div>
-
-                      {/* Kontrol Penataan Warna Highlight & Ukuran Font Dinamis */}
-                      <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800/80 space-y-4">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider font-mono flex items-center gap-1.5">
-                            <span>🎨</span> Kustomisasi Warna & Ukuran Font Slide #{idx + 1}
-                          </span>
-                          {(slide.highlightColor || slide.fontSize || slide.highlightFontSize) && (
+                          {/* Right: Actions & Accordion Toggle */}
+                          <div
+                            onClick={(e) => e.stopPropagation()}
+                            className="flex items-center gap-1.5 self-end md:self-auto shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-800/80 w-full md:w-auto justify-end"
+                          >
+                            {/* Reorder Buttons */}
                             <button
                               type="button"
-                              onClick={() => {
-                                const slides = [...content.heroSlides]
-                                const updatedSlide = { ...slides[idx] }
-                                delete updatedSlide.highlightColor
-                                delete updatedSlide.fontSize
-                                delete updatedSlide.highlightFontSize
-                                slides[idx] = updatedSlide
-                                handleChange('heroSlides', slides)
-                              }}
-                              className="text-[11px] text-slate-400 hover:text-slate-200 underline cursor-pointer"
-                              title="Kembalikan ke gaya bawaan hero"
+                              disabled={idx === 0}
+                              onClick={() => moveSlide(idx, 'up')}
+                              className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800 disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
+                              title="Geser urutan slide ke atas"
+                              aria-label="Geser ke atas"
                             >
-                              Reset ke Bawaan
+                              ⬆️
                             </button>
-                          )}
-                        </div>
-
-                        {/* 1. Pengaturan Warna Highlight */}
-                        <div>
-                          <label className="block text-xs font-semibold text-slate-300 mb-2">
-                            Pilih Warna Highlight
-                          </label>
-                          <div className="flex flex-wrap items-center gap-3">
-                            {/* Color Picker & Text */}
-                            <div className="flex items-center gap-2 bg-slate-900 px-3 py-2 rounded-xl border border-slate-800">
-                              <input
-                                type="color"
-                                value={effectiveColor.startsWith('#') ? effectiveColor : '#2563eb'}
-                                onChange={e => updateSlide(idx, 'highlightColor', e.target.value)}
-                                className="w-7 h-7 rounded cursor-pointer bg-transparent border-0 shrink-0"
-                                title="Pilih warna highlight visual"
-                              />
-                              <input
-                                type="text"
-                                value={slide.highlightColor || ''}
-                                onChange={e => updateSlide(idx, 'highlightColor', e.target.value)}
-                                placeholder={content.heroHighlightColor || '#2563eb'}
-                                className="w-28 text-xs font-mono bg-transparent text-white border-0 focus:outline-none"
-                              />
-                            </div>
-
-                            {/* Solid Swatches */}
-                            <div className="flex flex-wrap items-center gap-1.5">
-                              {HERO_COLOR_PRESETS.map((preset) => {
-                                const isSelected = effectiveColor.toLowerCase() === preset.hex.toLowerCase()
-                                return (
-                                  <button
-                                    key={preset.hex}
-                                    type="button"
-                                    onClick={() => updateSlide(idx, 'highlightColor', preset.hex)}
-                                    className={`w-7 h-7 rounded-lg transition-transform flex items-center justify-center cursor-pointer ${
-                                      isSelected ? 'scale-110 ring-2 ring-white ring-offset-2 ring-offset-slate-900 shadow-md' : 'hover:scale-105'
-                                    }`}
-                                    style={{ backgroundColor: preset.hex }}
-                                    title={preset.name}
-                                  >
-                                    {isSelected && <span className="text-[10px] text-white font-bold">✓</span>}
-                                  </button>
-                                )
-                              })}
-                            </div>
-
-                            {/* Gradient Presets */}
-                            <div className="flex items-center gap-1.5 pl-2 border-l border-slate-800">
-                              <span className="text-[10px] font-mono text-slate-400">Gradien:</span>
-                              {HERO_GRADIENT_PRESETS.map((grad, gIdx) => {
-                                const isSelected = slide.highlightColor === grad.value
-                                return (
-                                  <button
-                                    key={gIdx}
-                                    type="button"
-                                    onClick={() => updateSlide(idx, 'highlightColor', grad.value)}
-                                    className={`px-2.5 py-1 rounded-md text-[10px] font-semibold text-white transition-all cursor-pointer ${
-                                      isSelected ? 'ring-2 ring-white ring-offset-1 ring-offset-slate-900 scale-105' : 'opacity-85 hover:opacity-100'
-                                    }`}
-                                    style={{ background: grad.value }}
-                                    title={grad.name}
-                                  >
-                                    {grad.name.split(' ')[0]}
-                                  </button>
-                                )
-                              })}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* 2. Pengaturan Ukuran Font Judul & Highlight */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-slate-900">
-                          <div>
-                            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                              Ukuran Font Judul Headline
-                            </label>
-                            <select
-                              value={slide.fontSize || content.heroFontSize || 'normal'}
-                              onChange={e => updateSlide(idx, 'fontSize', e.target.value)}
-                              className="w-full rounded-xl bg-slate-900 px-3 py-2 text-xs text-white border border-slate-800 focus:outline-none focus:border-emerald-400 cursor-pointer"
+                            <button
+                              type="button"
+                              disabled={idx === content.heroSlides.length - 1}
+                              onClick={() => moveSlide(idx, 'down')}
+                              className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800 disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
+                              title="Geser urutan slide ke bawah"
+                              aria-label="Geser ke bawah"
                             >
-                              {HERO_FONT_SIZES.map(s => (
-                                <option key={s.id} value={s.id}>
-                                  {s.label} — {s.desc}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
+                              ⬇️
+                            </button>
 
-                          <div>
-                            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                              Ukuran Font Highlight (Teks Berwarna)
-                            </label>
-                            <select
-                              value={slide.highlightFontSize || content.heroHighlightFontSize || 'same'}
-                              onChange={e => updateSlide(idx, 'highlightFontSize', e.target.value)}
-                              className="w-full rounded-xl bg-slate-900 px-3 py-2 text-xs text-white border border-slate-800 focus:outline-none focus:border-emerald-400 cursor-pointer"
+                            {/* Delete Button */}
+                            <button
+                              type="button"
+                              onClick={() => deleteSlide(idx)}
+                              className="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/10 border border-red-500/20 transition-colors cursor-pointer flex items-center gap-1"
+                              title="Hapus Slide Ini"
                             >
-                              {HERO_HIGHLIGHT_FONT_SIZES.map(hs => (
-                                <option key={hs.id} value={hs.id}>
-                                  {hs.label}
-                                </option>
-                              ))}
-                            </select>
+                              <span>🗑️</span>
+                              <span className="hidden sm:inline">Hapus</span>
+                            </button>
+
+                            {/* Expand / Collapse Button */}
+                            <button
+                              type="button"
+                              onClick={() => toggleHeroSlide(idx)}
+                              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                                isExpanded
+                                  ? 'bg-slate-800 text-white border border-slate-700'
+                                  : 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-sm shadow-emerald-500/20'
+                              }`}
+                            >
+                              <span>{isExpanded ? 'Tutup' : 'Edit'}</span>
+                              <svg
+                                className={`w-3.5 h-3.5 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                strokeWidth={2.5}
+                              >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                              </svg>
+                            </button>
                           </div>
                         </div>
-                      </div>
 
-                      <Field label="Deskripsi Slide" value={slide.desc} onChange={v => updateSlide(idx, 'desc', v)} multiline rows={2} />
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Field label="Teks Tombol Utama" value={slide.ctaText} onChange={v => updateSlide(idx, 'ctaText', v)} />
-                        <Field label="Link Tombol Utama" value={slide.ctaLink} onChange={v => updateSlide(idx, 'ctaLink', v)} />
+                        {/* ─── Detailed Edit Form (Expanded Accordion Body) ─── */}
+                        {isExpanded && (
+                          <div className="p-6 border-t border-slate-800 bg-slate-950/40 space-y-5 animate-fadeIn">
+                            {/* Live Preview Card */}
+                            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800/90 shadow-inner">
+                              <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                                    <span>👁️</span> Live Headline Preview
+                                  </span>
+                                  {content.showHeroHighlight === false && (
+                                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                      ⚠️ Highlight Disembunyikan (OFF)
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-2 text-[10px] font-mono text-slate-400">
+                                  <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">
+                                    Ukuran: {effectiveFontSize}
+                                  </span>
+                                  <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 flex items-center gap-1">
+                                    <span className="w-2 h-2 rounded-full inline-block" style={{ background: effectiveColor }} />
+                                    {effectiveColor.startsWith('#') ? effectiveColor : 'Gradien'}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="py-4 px-3 bg-slate-900/60 rounded-lg border border-slate-800/60 text-center">
+                                <p className={`font-extrabold tracking-tight text-white leading-tight ${
+                                  effectiveFontSize === 'compact' ? 'text-lg sm:text-2xl' :
+                                  effectiveFontSize === 'large' ? 'text-2xl sm:text-4xl' :
+                                  effectiveFontSize === 'jumbo' ? 'text-3xl sm:text-5xl' :
+                                  'text-xl sm:text-3xl'
+                                }`}>
+                                  {slide.title || 'Judul Slide Hero'}
+                                  {content.showHeroHighlight !== false && (
+                                    <span
+                                      className={`block mt-1 font-extrabold ${
+                                        effectiveHighlightFontSize === 'compact' ? 'text-base sm:text-xl' :
+                                        effectiveHighlightFontSize === 'large' ? 'text-2xl sm:text-4xl' :
+                                        effectiveHighlightFontSize === 'jumbo' ? 'text-3xl sm:text-5xl' :
+                                        ''
+                                      }`}
+                                      style={getHighlightStyle(effectiveColor)}
+                                    >
+                                      {slide.highlight || 'Highlight Teks Berwarna'}
+                                    </span>
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Input Judul & Highlight */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <Field label="Judul Slide" value={slide.title} onChange={v => updateSlide(idx, 'title', v)} />
+                              <Field label="Highlight (Teks Berwarna)" value={slide.highlight} onChange={v => updateSlide(idx, 'highlight', v)} />
+                            </div>
+
+                            {/* Kontrol Penataan Warna Highlight & Ukuran Font Dinamis */}
+                            <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800/80 space-y-4">
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider font-mono flex items-center gap-1.5">
+                                  <span>🎨</span> Kustomisasi Warna & Ukuran Font Slide #{idx + 1}
+                                </span>
+                                {(slide.highlightColor || slide.fontSize || slide.highlightFontSize) && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const slides = [...content.heroSlides]
+                                      const updatedSlide = { ...slides[idx] }
+                                      delete updatedSlide.highlightColor
+                                      delete updatedSlide.fontSize
+                                      delete updatedSlide.highlightFontSize
+                                      slides[idx] = updatedSlide
+                                      handleChange('heroSlides', slides)
+                                    }}
+                                    className="text-[11px] text-slate-400 hover:text-slate-200 underline cursor-pointer"
+                                    title="Kembalikan ke gaya bawaan hero"
+                                  >
+                                    Reset ke Bawaan
+                                  </button>
+                                )}
+                              </div>
+
+                              {/* 1. Pengaturan Warna Highlight */}
+                              <div>
+                                <label className="block text-xs font-semibold text-slate-300 mb-2">
+                                  Pilih Warna Highlight
+                                </label>
+                                <div className="flex flex-wrap items-center gap-3">
+                                  {/* Color Picker & Text */}
+                                  <div className="flex items-center gap-2 bg-slate-900 px-3 py-2 rounded-xl border border-slate-800">
+                                    <input
+                                      type="color"
+                                      value={effectiveColor.startsWith('#') ? effectiveColor : '#2563eb'}
+                                      onChange={e => updateSlide(idx, 'highlightColor', e.target.value)}
+                                      className="w-7 h-7 rounded cursor-pointer bg-transparent border-0 shrink-0"
+                                      title="Pilih warna highlight visual"
+                                    />
+                                    <input
+                                      type="text"
+                                      value={slide.highlightColor || ''}
+                                      onChange={e => updateSlide(idx, 'highlightColor', e.target.value)}
+                                      placeholder={content.heroHighlightColor || '#2563eb'}
+                                      className="w-28 text-xs font-mono bg-transparent text-white border-0 focus:outline-none"
+                                    />
+                                  </div>
+
+                                  {/* Solid Swatches */}
+                                  <div className="flex flex-wrap items-center gap-1.5">
+                                    {HERO_COLOR_PRESETS.map((preset) => {
+                                      const isSelected = effectiveColor.toLowerCase() === preset.hex.toLowerCase()
+                                      return (
+                                        <button
+                                          key={preset.hex}
+                                          type="button"
+                                          onClick={() => updateSlide(idx, 'highlightColor', preset.hex)}
+                                          className={`w-7 h-7 rounded-lg transition-transform flex items-center justify-center cursor-pointer ${
+                                            isSelected ? 'scale-110 ring-2 ring-white ring-offset-2 ring-offset-slate-900 shadow-md' : 'hover:scale-105'
+                                          }`}
+                                          style={{ backgroundColor: preset.hex }}
+                                          title={preset.name}
+                                        >
+                                          {isSelected && <span className="text-[10px] text-white font-bold">✓</span>}
+                                        </button>
+                                      )
+                                    })}
+                                  </div>
+
+                                  {/* Gradient Presets */}
+                                  <div className="flex items-center gap-1.5 pl-2 border-l border-slate-800">
+                                    <span className="text-[10px] font-mono text-slate-400">Gradien:</span>
+                                    {HERO_GRADIENT_PRESETS.map((grad, gIdx) => {
+                                      const isSelected = slide.highlightColor === grad.value
+                                      return (
+                                        <button
+                                          key={gIdx}
+                                          type="button"
+                                          onClick={() => updateSlide(idx, 'highlightColor', grad.value)}
+                                          className={`px-2.5 py-1 rounded-md text-[10px] font-semibold text-white transition-all cursor-pointer ${
+                                            isSelected ? 'ring-2 ring-white ring-offset-1 ring-offset-slate-900 scale-105' : 'opacity-85 hover:opacity-100'
+                                          }`}
+                                          style={{ background: grad.value }}
+                                          title={grad.name}
+                                        >
+                                          {grad.name.split(' ')[0]}
+                                        </button>
+                                      )
+                                    })}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* 2. Pengaturan Ukuran Font Judul & Highlight */}
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-slate-900">
+                                <div>
+                                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                                    Ukuran Font Judul Headline
+                                  </label>
+                                  <select
+                                    value={slide.fontSize || content.heroFontSize || 'normal'}
+                                    onChange={e => updateSlide(idx, 'fontSize', e.target.value)}
+                                    className="w-full rounded-xl bg-slate-900 px-3 py-2 text-xs text-white border border-slate-800 focus:outline-none focus:border-emerald-400 cursor-pointer"
+                                  >
+                                    {HERO_FONT_SIZES.map(s => (
+                                      <option key={s.id} value={s.id}>
+                                        {s.label} — {s.desc}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
+
+                                <div>
+                                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                                    Ukuran Font Highlight (Teks Berwarna)
+                                  </label>
+                                  <select
+                                    value={slide.highlightFontSize || content.heroHighlightFontSize || 'same'}
+                                    onChange={e => updateSlide(idx, 'highlightFontSize', e.target.value)}
+                                    className="w-full rounded-xl bg-slate-900 px-3 py-2 text-xs text-white border border-slate-800 focus:outline-none focus:border-emerald-400 cursor-pointer"
+                                  >
+                                    {HERO_HIGHLIGHT_FONT_SIZES.map(hs => (
+                                      <option key={hs.id} value={hs.id}>
+                                        {hs.label}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
+                              </div>
+                            </div>
+
+                            <Field label="Deskripsi Slide" value={slide.desc} onChange={v => updateSlide(idx, 'desc', v)} multiline rows={2} />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <Field label="Teks Tombol Utama" value={slide.ctaText} onChange={v => updateSlide(idx, 'ctaText', v)} />
+                              <Field label="Link Tombol Utama" value={slide.ctaLink} onChange={v => updateSlide(idx, 'ctaLink', v)} />
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <Field label="Teks Tombol Sekunder" value={slide.learnText} onChange={v => updateSlide(idx, 'learnText', v)} />
+                              <Field label="Link Tombol Sekunder" value={slide.learnLink} onChange={v => updateSlide(idx, 'learnLink', v)} />
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Field label="Teks Tombol Sekunder" value={slide.learnText} onChange={v => updateSlide(idx, 'learnText', v)} />
-                        <Field label="Link Tombol Sekunder" value={slide.learnLink} onChange={v => updateSlide(idx, 'learnLink', v)} />
-                      </div>
-                    </div>
-                  )
-                })}
+                    )
+                  })}
+                </div>
               </div>
             )}
 
@@ -1587,89 +1968,210 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
                                 )}
                               </div>
 
-                              {/* 4. Media Gambar / Mockup Proyek */}
-                              <div className="space-y-4 bg-slate-900 p-5 rounded-xl border border-slate-800">
-                                <span className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider block">
-                                  Bagian 4: Gambar Mockup / Screenshot Proyek
-                                </span>
+                              {/* 4. Media Gambar / Mockup Proyek (Multi-Image Slider Support) */}
+                              {(() => {
+                                const currentProjectImages: string[] = (project.images && project.images.length > 0)
+                                  ? project.images
+                                  : (project.image && project.image.trim() !== '' ? [project.image] : [])
 
-                                {/* Catatan Panduan Ukuran & Format Gambar */}
-                                <div className="rounded-xl bg-slate-950/80 border border-slate-800/90 p-3 text-xs space-y-1.5 text-slate-400">
-                                  <div className="flex items-center gap-1.5 font-semibold text-emerald-400 text-xs">
-                                    <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    <span>Panduan Rekomendasi Ukuran Gambar:</span>
-                                  </div>
-                                  <ul className="list-disc list-inside space-y-0.5 text-[11px] leading-relaxed text-slate-300">
-                                    <li><strong>Rasio Tampilan:</strong> Landscape <strong>16:9</strong> atau <strong>4:3</strong> (proporsional di HP, tablet, &amp; monitor laptop).</li>
-                                    <li><strong>Resolusi Ideal:</strong> <strong>1200 × 800 px</strong> (atau minimal <strong>800 × 600 px</strong>).</li>
-                                    <li><strong>Format yang Didukung:</strong> JPG, JPEG, PNG, atau WebP.</li>
-                                    <li><strong>Ukuran File:</strong> Disarankan di bawah <strong>1 MB – 2 MB</strong> agar performa loading website tetap cepat.</li>
-                                  </ul>
-                                </div>
-
-                                <div className="space-y-2">
-                                  <div className="flex items-center justify-between">
-                                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                                      Sumber Gambar
-                                    </label>
-                                    {project.image && (
-                                      <button
-                                        type="button"
-                                        onClick={() => updateProject(idx, 'image', '')}
-                                        className="text-xs text-red-400 hover:text-red-300 hover:underline cursor-pointer"
-                                      >
-                                        Hapus Gambar (Gunakan Gambar Default)
-                                      </button>
-                                    )}
-                                  </div>
-
-                                  <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
-                                    <input
-                                      type="text"
-                                      value={project.image || ''}
-                                      onChange={e => updateProject(idx, 'image', e.target.value)}
-                                      placeholder="Masukkan URL gambar (https://...) atau pilih file dari komputer..."
-                                      className="flex-1 rounded-xl bg-slate-950 px-4 py-2.5 text-white border border-slate-800 focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 text-sm font-medium"
-                                    />
-                                    <label className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-semibold border border-slate-700 cursor-pointer transition-colors shrink-0">
-                                      <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                      </svg>
-                                      <span>Pilih File</span>
-                                      <input
-                                        type="file"
-                                        accept="image/*"
-                                        className="hidden"
-                                        onChange={e => {
-                                          const file = e.target.files?.[0]
-                                          if (file) {
-                                            const reader = new FileReader()
-                                            reader.onload = () => {
-                                              if (typeof reader.result === 'string') {
-                                                updateProject(idx, 'image', reader.result)
-                                              }
-                                            }
-                                            reader.readAsDataURL(file)
-                                          }
-                                        }}
-                                      />
-                                    </label>
-                                  </div>
-
-                                  {project.image && (
-                                    <div className="relative mt-3 h-36 w-full sm:w-64 rounded-xl overflow-hidden border border-slate-700/80 bg-slate-950 group">
-                                      <img src={project.image} alt={project.title} className="h-full w-full object-cover" />
-                                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                                        <span className="text-[11px] font-medium text-white px-2 py-1 rounded bg-black/60">
-                                          Pratinjau Gambar Aktif
+                                return (
+                                  <div className="space-y-4 bg-slate-900 p-5 rounded-xl border border-slate-800">
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                      <div>
+                                        <span className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider block">
+                                          Bagian 4: Gambar Mockup &amp; Galeri Slider Proyek
+                                        </span>
+                                        <span className="text-[11px] text-slate-400">
+                                          Unggah 1 gambar untuk tampilan statis, atau lebih dari 1 gambar untuk mengaktifkan <strong>Slider Foto Interaktif</strong> di landing page.
                                         </span>
                                       </div>
+                                      <div>
+                                        {currentProjectImages.length > 1 ? (
+                                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                                            <span>🎠</span>
+                                            <span>Slider Aktif ({currentProjectImages.length} Foto)</span>
+                                          </span>
+                                        ) : currentProjectImages.length === 1 ? (
+                                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                            <span>🖼️</span>
+                                            <span>1 Gambar (Cover)</span>
+                                          </span>
+                                        ) : (
+                                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono font-medium bg-slate-800 text-slate-400 border border-slate-700">
+                                            <span>🌐</span>
+                                            <span>Gambar Default Kategori</span>
+                                          </span>
+                                        )}
+                                      </div>
                                     </div>
-                                  )}
-                                </div>
-                              </div>
+
+                                    {/* Catatan Panduan Ukuran & Format Gambar */}
+                                    <div className="rounded-xl bg-slate-950/80 border border-slate-800/90 p-3 text-xs space-y-1.5 text-slate-400">
+                                      <div className="flex items-center gap-1.5 font-semibold text-emerald-400 text-xs">
+                                        <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        <span>Panduan &amp; Tips Slider Gambar:</span>
+                                      </div>
+                                      <ul className="list-disc list-inside space-y-0.5 text-[11px] leading-relaxed text-slate-300">
+                                        <li><strong>Multi-upload:</strong> Klik <em>"Pilih File Gambar (Bisa Banyak)"</em> lalu pilih beberapa file sekaligus menggunakan tombol <kbd className="px-1 py-0.5 rounded bg-slate-800 text-[10px]">Ctrl</kbd> / <kbd className="px-1 py-0.5 rounded bg-slate-800 text-[10px]">Shift</kbd>.</li>
+                                        <li><strong>Rasio Ideal:</strong> Landscape <strong>16:9</strong> atau <strong>4:3</strong> (misalnya 1200 × 800 px) agar rapi dan seragam di semua gadget.</li>
+                                        <li><strong>Format:</strong> JPG, JPEG, PNG, atau WebP.</li>
+                                        <li><strong>Urutan Slide:</strong> Gambar pertama (#1) bertindak sebagai gambar sampul utama. Gunakan tombol panah ◀ ▶ untuk mengatur urutan slide.</li>
+                                      </ul>
+                                    </div>
+
+                                    {/* Upload & URL Input Tools */}
+                                    <div className="space-y-3 pt-1">
+                                      <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                                        {/* Multi-file input button */}
+                                        <label className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold border border-emerald-500 cursor-pointer transition-colors shadow-sm shadow-emerald-600/20 shrink-0">
+                                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                          </svg>
+                                          <span>📁 Pilih File Gambar (Bisa Banyak)</span>
+                                          <input
+                                            type="file"
+                                            multiple
+                                            accept="image/*"
+                                            className="hidden"
+                                            onChange={e => {
+                                              handleUploadProjectImages(idx, e.target.files)
+                                              e.target.value = ''
+                                            }}
+                                          />
+                                        </label>
+
+                                        {/* URL Input */}
+                                        <div className="flex-1 flex gap-2">
+                                          <input
+                                            type="text"
+                                            value={projectImageUrlInput}
+                                            onChange={e => setProjectImageUrlInput(e.target.value)}
+                                            onKeyDown={e => {
+                                              if (e.key === 'Enter') {
+                                                e.preventDefault()
+                                                handleAddProjectImageUrl(idx, projectImageUrlInput)
+                                                setProjectImageUrlInput('')
+                                              }
+                                            }}
+                                            placeholder="Atau tempel URL gambar (https://...) lalu tekan Tambah..."
+                                            className="flex-1 rounded-xl bg-slate-950 px-4 py-2.5 text-white border border-slate-800 focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 text-xs font-medium"
+                                          />
+                                          <button
+                                            type="button"
+                                            onClick={() => {
+                                              handleAddProjectImageUrl(idx, projectImageUrlInput)
+                                              setProjectImageUrlInput('')
+                                            }}
+                                            className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold border border-slate-700 cursor-pointer transition-colors shrink-0"
+                                          >
+                                            + Tambah URL
+                                          </button>
+                                        </div>
+
+                                        {currentProjectImages.length > 0 && (
+                                          <button
+                                            type="button"
+                                            onClick={() => handleClearProjectImages(idx)}
+                                            className="px-3 py-2.5 rounded-xl text-xs font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/10 border border-red-500/20 transition-colors cursor-pointer shrink-0"
+                                            title="Hapus semua gambar"
+                                          >
+                                            Hapus Semua
+                                          </button>
+                                        )}
+                                      </div>
+                                    </div>
+
+                                    {/* Gallery Thumbnails Grid */}
+                                    {currentProjectImages.length > 0 ? (
+                                      <div className="space-y-2 pt-2">
+                                        <div className="flex items-center justify-between text-xs text-slate-400 font-mono">
+                                          <span>Daftar Slide Gambar ({currentProjectImages.length} foto):</span>
+                                          <span className="text-[11px] text-slate-500">Gunakan panah untuk mengatur urutan slide</span>
+                                        </div>
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                                          {currentProjectImages.map((img, imgIdx) => (
+                                            <div
+                                              key={imgIdx}
+                                              className="relative rounded-xl overflow-hidden border border-slate-800 bg-slate-950 flex flex-col group hover:border-slate-700 transition-colors"
+                                            >
+                                              {/* Image Preview */}
+                                              <div className="aspect-[4/3] w-full overflow-hidden bg-slate-900 relative">
+                                                <img
+                                                  src={img}
+                                                  alt={`Slide #${imgIdx + 1}`}
+                                                  className="w-full h-full object-cover"
+                                                />
+                                                <div className="absolute top-1.5 left-1.5 flex items-center gap-1">
+                                                  <span
+                                                    className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold shadow-sm ${
+                                                      imgIdx === 0
+                                                        ? 'bg-emerald-500 text-slate-950 font-bold'
+                                                        : 'bg-black/75 text-white backdrop-blur-sm'
+                                                    }`}
+                                                  >
+                                                    {imgIdx === 0 ? '★ Cover' : `#${imgIdx + 1}`}
+                                                  </span>
+                                                </div>
+                                              </div>
+
+                                              {/* Image Control Toolbar */}
+                                              <div className="p-1.5 bg-slate-900 flex items-center justify-between border-t border-slate-800 gap-1">
+                                                <div className="flex items-center gap-1">
+                                                  <button
+                                                    type="button"
+                                                    disabled={imgIdx === 0}
+                                                    onClick={() => handleMoveProjectImage(idx, imgIdx, 'left')}
+                                                    className="h-6 w-6 rounded flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-20 disabled:pointer-events-none text-[11px] cursor-pointer"
+                                                    title="Geser ke kiri"
+                                                    aria-label="Geser ke kiri"
+                                                  >
+                                                    ◀
+                                                  </button>
+                                                  <button
+                                                    type="button"
+                                                    disabled={imgIdx === currentProjectImages.length - 1}
+                                                    onClick={() => handleMoveProjectImage(idx, imgIdx, 'right')}
+                                                    className="h-6 w-6 rounded flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-20 disabled:pointer-events-none text-[11px] cursor-pointer"
+                                                    title="Geser ke kanan"
+                                                    aria-label="Geser ke kanan"
+                                                  >
+                                                    ▶
+                                                  </button>
+                                                  {imgIdx !== 0 && (
+                                                    <button
+                                                      type="button"
+                                                      onClick={() => handleSetPrimaryImage(idx, imgIdx)}
+                                                      className="px-1.5 py-0.5 rounded text-[10px] font-semibold text-emerald-400 hover:bg-emerald-500/10 border border-emerald-500/20 cursor-pointer"
+                                                      title="Jadikan gambar sampul utama (#1)"
+                                                    >
+                                                      ★ Cover
+                                                    </button>
+                                                  )}
+                                                </div>
+                                                <button
+                                                  type="button"
+                                                  onClick={() => handleRemoveProjectImage(idx, imgIdx)}
+                                                  className="h-6 w-6 rounded flex items-center justify-center text-red-400 hover:text-red-300 hover:bg-red-500/10 text-xs cursor-pointer"
+                                                  title="Hapus gambar ini"
+                                                  aria-label="Hapus gambar ini"
+                                                >
+                                                  🗑️
+                                                </button>
+                                              </div>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <div className="p-4 rounded-xl bg-slate-950/60 border border-dashed border-slate-800 text-center text-xs text-slate-500">
+                                        Belum ada gambar yang diunggah. Klik <strong>"Pilih File Gambar"</strong> di atas atau tempel URL untuk menambahkan foto mockup.
+                                      </div>
+                                    )}
+                                  </div>
+                                )
+                              })()}
 
                               {/* Close Editor Button */}
                               <div className="flex justify-end pt-2">
@@ -1803,7 +2305,7 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
                   />
                   <Field
                     label="Teks Tombol WhatsApp"
-                    value={content.ctaButtonText || 'Mulai Percakapan WhatsApp Sekarang'}
+                    value={content.ctaButtonText || 'WhatsApp Sekarang'}
                     onChange={v => handleChange('ctaButtonText', v)}
                   />
                 </div>
@@ -1827,7 +2329,7 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
                   <div className="border-t border-slate-800 pt-5 space-y-4">
                     <Field label="Alamat Email Resmi" value={content.contact.email} onChange={v => updateContact('email', v)} />
                     <Field label="Nomor WhatsApp (format internasional tanpa +, contoh: 6281234567890)" value={content.contact.whatsapp} onChange={v => updateContact('whatsapp', v)} />
-                    <Field label="Lokasi Kantor / Studio" value={content.contact.location} onChange={v => updateContact('location', v)} />
+                    <Field label="Lokasi" value={content.contact.location} onChange={v => updateContact('location', v)} />
                   </div>
                 </div>
               </div>
@@ -2167,6 +2669,234 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
                 </div>
                 <div className="border-t border-slate-800 pt-5">
                   <Field label="Teks Copyright Akhir" value={content.footer.copyrightSuffix} onChange={v => updateFooter('copyrightSuffix', v)} multiline rows={2} />
+                </div>
+              </div>
+            )}
+
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {/* 🛡️ TAB: KEBIJAKAN PRIVASI (CMS KONTEN LEGAL & PRIVASI DATA)    */}
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {activeCategory === 'privacy' && (
+              <div className="space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+                  <div>
+                    <SectionTitle icon="🛡️" label="Pengelolaan Halaman Kebijakan Privasi" />
+                    <p className="text-xs text-slate-400 -mt-4">
+                      Kelola konten halaman Kebijakan Privasi, tanggal pembaruan, dan pasal perlindungan data pribadi sesuai standar UU No. 27 Tahun 2022 (UU PDP).
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <a
+                      href="#privacy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 text-xs font-semibold transition-all cursor-pointer"
+                      title="Lihat halaman Kebijakan Privasi di tab baru"
+                    >
+                      <span>👁️</span> Buka Halaman
+                    </a>
+                    <button
+                      type="button"
+                      onClick={resetPrivacyToDefault}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-800 bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-semibold transition-all cursor-pointer"
+                      title="Kembalikan ke template standar bawaan"
+                    >
+                      <span>🔄</span> Reset Standar
+                    </button>
+                  </div>
+                </div>
+
+                {/* Info & Banner Header Settings */}
+                <div className="bg-slate-900/60 p-5 rounded-2xl border border-slate-800/80 space-y-4">
+                  <div className="flex items-center gap-2 text-white font-bold text-sm">
+                    <span>📝</span>
+                    <span>Informasi & Pengantar Utama Halaman</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Field
+                      label="Judul Halaman"
+                      value={privacyData.title || 'Kebijakan Privasi'}
+                      onChange={v => updatePrivacyField('title', v)}
+                    />
+                    <Field
+                      label="Tanggal Terakhir Diperbarui"
+                      value={privacyData.lastUpdated || ''}
+                      onChange={v => updatePrivacyField('lastUpdated', v)}
+                    />
+                  </div>
+
+                  <Field
+                    label="Sub-judul / Komitmen Ringkas"
+                    value={privacyData.subtitle || ''}
+                    onChange={v => updatePrivacyField('subtitle', v)}
+                    multiline
+                    rows={2}
+                  />
+
+                  <Field
+                    label="Teks Pengantar / Pernyataan Perlindungan Data (Intro Card)"
+                    value={privacyData.intro || ''}
+                    onChange={v => updatePrivacyField('intro', v)}
+                    multiline
+                    rows={3}
+                  />
+                </div>
+
+                {/* Accordion Poin-Poin & Pasal Kebijakan Privasi */}
+                <div className="bg-slate-900/60 p-5 rounded-2xl border border-slate-800/80 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                    <div>
+                      <div className="flex items-center gap-2 text-white font-bold text-sm">
+                        <span>📑</span>
+                        <span>Daftar Poin & Pasal Kebijakan Privasi</span>
+                        <span className="text-xs font-mono font-bold bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">
+                          {(privacyData.sections || []).length} Pasal
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-400 mt-1">
+                        Format pasal disusun dengan accordion ringkas. Anda dapat menambah, mengedit, mengubah urutan, atau menghapus pasal sesuai kebutuhan operasional.
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2 self-start sm:self-auto shrink-0 flex-wrap">
+                      <button
+                        type="button"
+                        onClick={expandAllPrivacySections}
+                        className="px-2.5 py-1 rounded-lg border border-slate-800 bg-slate-950 hover:bg-slate-800 text-slate-300 text-xs font-semibold cursor-pointer transition-colors"
+                      >
+                        Buka Semua
+                      </button>
+                      <button
+                        type="button"
+                        onClick={collapseAllPrivacySections}
+                        className="px-2.5 py-1 rounded-lg border border-slate-800 bg-slate-950 hover:bg-slate-800 text-slate-300 text-xs font-semibold cursor-pointer transition-colors"
+                      >
+                        Tutup Semua
+                      </button>
+                      <button
+                        type="button"
+                        onClick={addPrivacySection}
+                        className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md shadow-blue-600/20 transition-all cursor-pointer flex items-center gap-1.5"
+                      >
+                        <span>+</span> Tambah Pasal Baru
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* List Pasal Accordion */}
+                  <div className="space-y-3 pt-1">
+                    {(privacyData.sections || []).map((sec, idx) => {
+                      const isOpen = openPrivacySectionIndices.includes(idx)
+                      const totalSec = (privacyData.sections || []).length
+
+                      return (
+                        <div
+                          key={idx}
+                          className="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden transition-all duration-200"
+                        >
+                          {/* Accordion Header */}
+                          <div
+                            className="p-4 flex items-center justify-between gap-3 cursor-pointer select-none hover:bg-slate-900/60 transition-colors"
+                            onClick={() => togglePrivacySection(idx)}
+                          >
+                            <div className="flex items-center gap-3 min-w-0 flex-1">
+                              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-blue-600/20 text-blue-400 text-xs font-mono font-bold border border-blue-500/30">
+                                {idx + 1}
+                              </span>
+                              <div className="min-w-0 flex-1">
+                                <span className="text-sm font-bold text-white truncate block">
+                                  {sec.title || `Pasal #${idx + 1}`}
+                                </span>
+                                <span className="text-[11px] text-slate-500 truncate block mt-0.5">
+                                  {sec.content ? sec.content.slice(0, 80) + '...' : '(Konten pasal masih kosong)'}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Actions on Header */}
+                            <div className="flex items-center gap-1.5 shrink-0" onClick={e => e.stopPropagation()}>
+                              <button
+                                type="button"
+                                disabled={idx === 0}
+                                onClick={() => movePrivacySection(idx, 'up')}
+                                className="p-1 px-2 rounded bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed text-xs transition-colors"
+                                title="Pindah ke Atas"
+                              >
+                                ▲
+                              </button>
+                              <button
+                                type="button"
+                                disabled={idx === totalSec - 1}
+                                onClick={() => movePrivacySection(idx, 'down')}
+                                className="p-1 px-2 rounded bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed text-xs transition-colors"
+                                title="Pindah ke Bawah"
+                              >
+                                ▼
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => deletePrivacySection(idx)}
+                                className="p-1 px-2 rounded bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 text-xs transition-colors cursor-pointer"
+                                title="Hapus Pasal"
+                              >
+                                🗑️
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => togglePrivacySection(idx)}
+                                className="p-1 px-2 text-slate-400 hover:text-white text-xs font-bold"
+                              >
+                                {isOpen ? '▲' : '▼'}
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Accordion Body */}
+                          {isOpen && (
+                            <div className="p-4 pt-2 border-t border-slate-800/80 bg-slate-900/30 space-y-4">
+                              <Field
+                                label="Judul Pasal / Poin Kebijakan"
+                                value={sec.title}
+                                onChange={v => updatePrivacySection(idx, 'title', v)}
+                                placeholder="Contoh: 1. Informasi yang Kami Kumpulkan"
+                              />
+
+                              <div>
+                                <div className="flex items-center justify-between mb-2">
+                                  <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                                    Isi Ketentuan / Penjelasan Pasal
+                                  </label>
+                                  <span className="text-[11px] text-slate-500 font-mono">
+                                    Mendukung format paragraf multi-baris & bullet point (•)
+                                  </span>
+                                </div>
+                                <textarea
+                                  rows={5}
+                                  value={sec.content}
+                                  onChange={e => updatePrivacySection(idx, 'content', e.target.value)}
+                                  placeholder="Tuliskan uraian pasal kebijakan di sini..."
+                                  className="w-full rounded-xl bg-slate-950 px-4 py-3 text-white border border-slate-800 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all font-medium text-sm resize-y leading-relaxed"
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* Legal compliance alert banner */}
+                <div className="rounded-2xl p-4 bg-blue-950/40 border border-blue-800/60 flex items-start gap-3">
+                  <span className="text-xl">💡</span>
+                  <div className="text-xs text-blue-200 leading-relaxed space-y-1">
+                    <p className="font-bold text-white">Pedoman Kepatuhan UU Perlindungan Data Pribadi (UU PDP No. 27/2022):</p>
+                    <p>
+                      Pastikan klausul selalu transparan menyebutkan tujuan pengambilan data calon klien, hak klien atas data mereka, dan penegasan bahwa 100% aset dan source code adalah hak milik klien setelah serah terima proyek.
+                    </p>
+                  </div>
                 </div>
               </div>
             )}

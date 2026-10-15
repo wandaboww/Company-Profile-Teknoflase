@@ -90,3 +90,1011 @@ h1, h2, h3, h4, h5, h6 {
   scrollbar-width: none;
 }
 
+/* ==========================================================================
+   Custom Element Identifier Classes (Pengenal Elemen Semantik)
+   Dibuat untuk identifikasi elemen kustom dan keterbacaan hierarki DOM
+   ========================================================================== */
+
+/* ─── App & Global Layout ────────────────────────────────────────────────── */
+.app-layout {
+  min-height: 100vh;
+}
+
+/* ─── Navbar Elements ────────────────────────────────────────────────────── */
+.navbar {
+  width: 100%;
+}
+.navbar-container {
+  width: 100%;
+}
+.navbar-wrapper {
+  display: flex;
+}
+.navbar-brand {
+  display: inline-flex;
+}
+.navbar-logo {
+  flex-shrink: 0;
+}
+.navbar-brand-content {
+  display: flex;
+}
+.navbar-brand-name {
+  display: inline-block;
+}
+.navbar-brand-tagline {
+  display: block;
+}
+.navbar-menu-desktop {
+  align-items: center;
+}
+.navbar-link {
+  display: inline-flex;
+}
+.navbar-actions-desktop {
+  align-items: center;
+}
+.navbar-cta-btn {
+  display: inline-flex;
+}
+.navbar-mobile-toggle {
+  align-items: center;
+}
+.navbar-toggle-btn {
+  display: inline-flex;
+}
+.navbar-drawer {
+  width: 100%;
+}
+.navbar-drawer-nav {
+  display: flex;
+  flex-direction: column;
+}
+.navbar-drawer-link {
+  display: block;
+}
+.navbar-drawer-actions {
+  width: 100%;
+}
+.navbar-drawer-cta-btn {
+  display: block;
+}
+.navbar-drawer-backdrop {
+  position: fixed;
+}
+
+/* ─── Hero Section Elements ──────────────────────────────────────────────── */
+.hero-section {
+  position: relative;
+}
+.hero-gradient-overlay {
+  position: absolute;
+}
+.hero-container {
+  position: relative;
+}
+.hero-content {
+  display: flex;
+  flex-direction: column;
+}
+.hero-title {
+  display: block;
+}
+.hero-highlight {
+  display: block;
+}
+.hero-description {
+  display: block;
+}
+.hero-slider-nav {
+  display: flex;
+}
+.hero-slider-label {
+  display: inline-block;
+}
+.hero-slider-dot {
+  cursor: pointer;
+}
+.hero-actions {
+  display: flex;
+}
+.hero-cta-btn {
+  display: inline-flex;
+}
+.hero-learn-btn {
+  display: inline-flex;
+}
+.hero-badges-container {
+  width: 100%;
+}
+.hero-badges-list {
+  display: flex;
+}
+.hero-badge-item {
+  display: inline-flex;
+}
+.hero-badge-check {
+  font-weight: 700;
+}
+
+/* ─── About Section Elements ─────────────────────────────────────────────── */
+.about-section {
+  position: relative;
+}
+.about-container {
+  width: 100%;
+}
+.about-header {
+  display: flex;
+  flex-direction: column;
+}
+.about-title {
+  display: block;
+}
+.about-description {
+  display: block;
+}
+.about-grid {
+  display: grid;
+}
+.about-pillars-column {
+  width: 100%;
+}
+.about-pillars-track {
+  width: 100%;
+}
+.about-pillar-card {
+  display: flex;
+  flex-direction: column;
+}
+.about-pillar-header {
+  display: flex;
+  align-items: center;
+}
+.about-pillar-icon {
+  display: flex;
+}
+.about-pillar-title {
+  display: block;
+}
+.about-pillar-desc {
+  display: block;
+}
+
+.about-stats-card {
+  position: relative;
+}
+.about-stats-badge {
+  display: inline-block;
+}
+.about-stats-title {
+  display: block;
+}
+.about-stats-list {
+  width: 100%;
+}
+.about-stat-row {
+  display: flex;
+}
+.about-stat-label {
+  display: inline-block;
+}
+.about-stat-value {
+  display: inline-block;
+}
+.about-stats-footnote {
+  display: block;
+}
+.about-team-wrapper {
+  width: 100%;
+}
+.about-team-toggle {
+  display: flex;
+}
+.about-team-content {
+  width: 100%;
+}
+.about-team-header {
+  display: flex;
+  flex-direction: column;
+}
+.about-team-title {
+  display: block;
+}
+.about-team-desc {
+  display: block;
+}
+.about-team-track {
+  width: 100%;
+}
+.about-team-card {
+  display: block;
+}
+.about-team-avatar {
+  display: flex;
+}
+.about-team-name {
+  display: block;
+}
+.about-team-role {
+  display: block;
+}
+.about-team-bio {
+  display: block;
+}
+.about-team-social-box {
+  display: flex;
+}
+.about-team-social-link {
+  display: inline-flex;
+}
+.about-team-dots {
+  display: flex;
+}
+.about-team-dot {
+  cursor: pointer;
+}
+
+/* ─── Services Section Elements ──────────────────────────────────────────── */
+.services-section {
+  position: relative;
+}
+.services-container {
+  width: 100%;
+}
+.services-header {
+  display: flex;
+  flex-direction: column;
+}
+.services-title {
+  display: block;
+}
+.services-description {
+  display: block;
+}
+.services-filter-wrapper {
+  width: 100%;
+}
+.services-filter-bar {
+  display: flex;
+}
+.services-filter-btn {
+  display: inline-flex;
+}
+.services-slider-container {
+  position: relative;
+}
+.services-slider-viewport {
+  overflow: hidden;
+}
+.services-slider-track {
+  display: flex;
+  align-items: stretch;
+}
+.services-slide-item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.services-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #000000;
+  outline: 1px solid #000000;
+  outline-offset: -1px;
+  box-shadow: none !important;
+}
+.services-card-grid {
+  display: grid;
+  flex: 1 1 auto;
+  height: 100%;
+}
+.services-card-media {
+  position: relative;
+}
+.services-card-media-slider {
+  position: relative;
+}
+.services-card-image {
+  width: 100%;
+  height: 100%;
+}
+.services-media-nav-prev,
+.services-media-nav-next {
+  user-select: none;
+}
+.services-media-counter {
+  display: flex;
+  align-items: center;
+}
+.services-media-dot {
+  cursor: pointer;
+}
+.services-modal-media-slider {
+  position: relative;
+}
+.services-modal-media-prev,
+.services-modal-media-next {
+  user-select: none;
+}
+.services-card-content {
+  display: flex;
+  flex-direction: column;
+}
+.services-card-header {
+  display: flex;
+}
+.services-card-icon-box {
+  display: flex;
+}
+.services-card-badge-group {
+  display: flex;
+}
+.services-badge-duration {
+  display: inline-flex;
+}
+.services-badge-category {
+  display: inline-flex;
+}
+.services-card-title {
+  display: block;
+}
+.services-card-description {
+  display: block;
+}
+.services-card-features-box {
+  width: 100%;
+}
+.services-card-features-heading {
+  display: block;
+}
+.services-card-features-list {
+  display: grid;
+}
+.services-card-feature-item {
+  display: flex;
+}
+.services-card-scope-box {
+  display: block;
+}
+.services-card-actions {
+  display: flex;
+}
+.services-card-cta-btn {
+  display: inline-flex;
+}
+.services-card-secondary-actions {
+  display: flex;
+}
+.services-card-demo-btn {
+  display: inline-flex;
+}
+.services-card-detail-btn {
+  display: inline-flex;
+}
+.services-slider-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.5rem; /* 24px - Jarak konsisten, proporsional, dan bersih */
+}
+.services-slider-dots {
+  display: flex;
+}
+.services-slider-dot {
+  cursor: pointer;
+}
+.services-assurance-banner {
+  display: flex;
+  margin-top: 24.8px;
+}
+.services-assurance-title {
+  display: block;
+}
+.services-assurance-desc {
+  display: block;
+}
+.services-assurance-btn {
+  display: inline-flex;
+}
+.services-modal-backdrop {
+  position: fixed;
+}
+.services-modal-container {
+  position: relative;
+}
+.services-modal-header {
+  position: relative;
+  background-color: #e2e8f0;
+}
+.services-modal-title {
+  display: block;
+}
+.services-modal-close-btn {
+  position: absolute;
+}
+.services-modal-body {
+  overflow-y: auto;
+}
+.services-modal-footer {
+  display: flex;
+}
+
+/* ─── FAQ Section Elements ───────────────────────────────────────────────── */
+.faq-section {
+  position: relative;
+}
+.faq-container {
+  width: 100%;
+}
+.faq-header {
+  display: flex;
+  flex-direction: column;
+}
+.faq-title {
+  display: block;
+}
+.faq-description {
+  display: block;
+}
+.faq-controls {
+  width: 100%;
+}
+.faq-search-wrapper {
+  position: relative;
+}
+.faq-search-input {
+  width: 100%;
+}
+.faq-search-clear-btn {
+  position: absolute;
+}
+.faq-categories-wrapper {
+  width: 100%;
+}
+.faq-categories-track {
+  display: flex;
+}
+.faq-category-btn {
+  display: inline-flex;
+}
+.faq-accordion-container {
+  width: 100%;
+}
+.faq-accordion-track {
+  display: flex;
+}
+.faq-accordion-item {
+  overflow: hidden;
+}
+.faq-accordion-trigger {
+  display: flex;
+}
+.faq-item-category {
+  display: inline-block;
+}
+.faq-item-question {
+  display: inline-block;
+}
+.faq-item-icon-box {
+  display: flex;
+}
+.faq-accordion-body {
+  display: block;
+}
+.faq-item-answer {
+  display: block;
+}
+
+/* ─── Contact Section Elements ───────────────────────────────────────────── */
+.contact-section {
+  position: relative;
+}
+.contact-container {
+  width: 100%;
+}
+.contact-header {
+  display: flex;
+  flex-direction: column;
+}
+.contact-title {
+  display: block;
+}
+.contact-description {
+  display: block;
+}
+.contact-callout-wrapper {
+  width: 100%;
+}
+.contact-callout-card {
+  position: relative;
+}
+.contact-callout-title {
+  display: block;
+}
+.contact-callout-desc {
+  display: block;
+}
+.contact-callout-btn {
+  display: inline-flex;
+}
+.contact-info-wrapper {
+  width: 100%;
+}
+.contact-info-track {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+@media (max-width: 639px) {
+  .contact-info-track {
+    display: flex !important;
+    flex-wrap: wrap !important;
+  }
+}
+.contact-info-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.contact-info-icon-box {
+  display: flex;
+}
+.contact-info-body {
+  display: block;
+}
+.contact-info-label {
+  display: block;
+}
+.contact-info-value {
+  display: block;
+}
+
+/* ─── Footer Section Elements ────────────────────────────────────────────── */
+.footer-section {
+  position: relative;
+}
+.footer-container {
+  width: 100%;
+}
+.footer-layout {
+  display: flex;
+}
+.footer-brand-box {
+  display: flex;
+  flex-direction: column;
+}
+.footer-brand-header {
+  display: flex;
+}
+.footer-brand-badge {
+  display: flex;
+}
+.footer-brand-name {
+  display: inline-block;
+}
+.footer-brand-desc {
+  display: block;
+}
+.footer-social-list {
+  display: flex;
+}
+.footer-social-item {
+  display: inline-block;
+}
+.footer-social-link {
+  display: inline-flex;
+}
+.footer-links-wrapper {
+  display: flex;
+}
+.footer-links-col {
+  display: flex;
+  flex-direction: column;
+}
+.footer-col-title {
+  display: block;
+}
+.footer-links-list {
+  display: flex;
+  flex-direction: column;
+}
+.footer-links-item {
+  display: block;
+}
+.footer-service-btn {
+  display: block;
+}
+.footer-nav-link {
+  display: inline-block;
+}
+.footer-bottom {
+  text-align: center;
+}
+.footer-copyright {
+  display: block;
+}
+.footer-modal-backdrop {
+  position: fixed;
+}
+.footer-modal-container {
+  position: relative;
+  animation: footerModalIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes footerModalIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.96) translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+.footer-modal-header {
+  position: relative;
+  overflow: hidden;
+}
+.footer-modal-title {
+  display: block;
+}
+.footer-modal-close-btn {
+  position: absolute;
+}
+.footer-modal-body {
+  overflow-y: auto;
+}
+.footer-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+.footer-modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.footer-modal-body::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 9999px;
+}
+.footer-modal-body::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8;
+}
+.footer-modal-footer {
+  display: flex;
+}
+
+/* ─── Workflow Section Elements ──────────────────────────────────────────── */
+.workflow-section {
+  position: relative;
+}
+.workflow-container {
+  width: 100%;
+}
+.workflow-header {
+  display: flex;
+  flex-direction: column;
+}
+.workflow-title {
+  display: block;
+}
+.workflow-description {
+  display: block;
+}
+.workflow-grid {
+  display: grid;
+}
+.workflow-card {
+  display: flex;
+  flex-direction: column;
+}
+.workflow-card-badge-row {
+  display: flex;
+}
+.workflow-step-badge {
+  display: flex;
+}
+.workflow-step-icon-box {
+  display: flex;
+}
+.workflow-step-title {
+  display: block;
+}
+.workflow-step-desc {
+  display: block;
+}
+
+/* ─── Privacy Policy Page Elements ───────────────────────────────────────── */
+.privacy-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.privacy-header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+}
+.privacy-header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.privacy-header-brand {
+  display: flex;
+  align-items: center;
+}
+.privacy-header-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.privacy-header-brand-info {
+  display: flex;
+  flex-direction: column;
+}
+.privacy-header-brand-name {
+  display: inline-block;
+}
+.privacy-header-brand-tagline {
+  display: block;
+}
+.privacy-header-menu-desktop {
+  align-items: center;
+}
+.privacy-header-nav-link {
+  display: inline-flex;
+  align-items: center;
+}
+.privacy-header-actions {
+  display: flex;
+  align-items: center;
+}
+.privacy-header-back-btn {
+  align-items: center;
+}
+.privacy-header-back-icon {
+  flex-shrink: 0;
+}
+.privacy-header-back-text {
+  display: inline-block;
+}
+.privacy-header-cta-btn {
+  align-items: center;
+}
+.privacy-header-cta-text {
+  display: inline-block;
+}
+.privacy-header-cta-icon {
+  flex-shrink: 0;
+}
+@media (max-width: 1023px) {
+  .privacy-header-back-btn,
+  .privacy-header-cta-btn {
+    display: none !important;
+  }
+}
+.privacy-mobile-toggle {
+  align-items: center;
+}
+.privacy-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.privacy-toggle-icon {
+  flex-shrink: 0;
+}
+.privacy-toggle-text {
+  display: inline-block;
+}
+.privacy-drawer {
+  width: 100%;
+}
+.privacy-drawer-backdrop {
+  position: fixed;
+}
+.privacy-drawer-nav {
+  display: flex;
+  flex-direction: column;
+}
+.privacy-drawer-link {
+  display: block;
+}
+.privacy-drawer-actions {
+  display: flex;
+  flex-direction: column;
+}
+.privacy-drawer-cta-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.privacy-drawer-back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.privacy-drawer-back-icon {
+  flex-shrink: 0;
+}
+.privacy-hero-section {
+  position: relative;
+  overflow: hidden;
+}
+.privacy-hero-bg-glow-right {
+  position: absolute;
+  pointer-events: none;
+}
+.privacy-hero-bg-glow-left {
+  position: absolute;
+  pointer-events: none;
+}
+.privacy-hero-container {
+  text-align: center;
+}
+.privacy-hero-title {
+  display: block;
+}
+.privacy-hero-subtitle {
+  display: block;
+}
+.privacy-notice-card {
+  display: flex;
+  text-align: left;
+}
+.privacy-notice-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.privacy-notice-icon {
+  flex-shrink: 0;
+}
+.privacy-notice-content {
+  display: flex;
+  flex-direction: column;
+}
+.privacy-notice-title {
+  display: block;
+}
+.privacy-notice-desc {
+  display: block;
+}
+.privacy-content-section {
+  flex: 1 1 0%;
+}
+.privacy-content-container {
+  width: 100%;
+}
+.privacy-sections-list {
+  display: flex;
+  flex-direction: column;
+}
+.privacy-sections-toolbar {
+  display: flex;
+}
+.privacy-sections-toolbar-info {
+  display: flex;
+  align-items: center;
+}
+.privacy-sections-count {
+  display: inline-block;
+}
+.privacy-sections-status {
+  display: inline-flex;
+}
+.privacy-sections-toggle-all {
+  display: flex;
+  align-items: center;
+}
+.privacy-sections-btn-expand {
+  display: inline-flex;
+}
+.privacy-sections-btn-collapse {
+  display: inline-flex;
+}
+.privacy-section-card {
+  display: block;
+}
+.privacy-section-card-open {
+  position: relative;
+}
+.privacy-section-card-closed {
+  position: relative;
+}
+.privacy-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.privacy-section-header-left {
+  display: flex;
+  align-items: center;
+}
+.privacy-section-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.privacy-section-title {
+  display: block;
+}
+.privacy-section-toggle {
+  display: flex;
+  align-items: center;
+}
+.privacy-section-toggle-label {
+  display: inline-block;
+}
+.privacy-section-chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.privacy-section-preview {
+  display: block;
+}
+.privacy-section-body {
+  display: block;
+}
+.privacy-contact-card {
+  position: relative;
+}
+.privacy-contact-layout {
+  display: flex;
+}
+@media (max-width: 1023px) {
+  .privacy-contact-layout {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  .privacy-contact-actions {
+    width: 100% !important;
+  }
+}
+.privacy-contact-info {
+  display: flex;
+  flex-direction: column;
+}
+.privacy-contact-badge {
+  display: inline-flex;
+  align-items: center;
+}
+.privacy-contact-badge-icon {
+  flex-shrink: 0;
+}
+.privacy-contact-title {
+  display: block;
+}
+.privacy-contact-desc {
+  display: block;
+}
+.privacy-contact-actions {
+  display: flex;
+}
+.privacy-contact-wa-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.privacy-contact-wa-text {
+  display: inline-block;
+}
+.privacy-contact-wa-icon {
+  flex-shrink: 0;
+}
+.privacy-contact-back-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.privacy-contact-back-text {
+  display: inline-block;
+}
+
+
