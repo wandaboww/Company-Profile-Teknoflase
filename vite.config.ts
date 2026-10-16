@@ -2,6 +2,8 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
+const port = Number(process.env.PORT) || 5173
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -9,8 +11,8 @@ export default defineConfig({
     react(),
   ],
   server: {
-    host: true,
-    port: 5173,
+    host: '0.0.0.0',
+    port: port,
     cors: true,
     allowedHosts: true,
     headers: {
@@ -19,8 +21,8 @@ export default defineConfig({
     },
   },
   preview: {
-    host: true,
-    port: 5173,
+    host: '0.0.0.0',
+    port: port,
     cors: true,
     allowedHosts: true,
     headers: {
@@ -29,3 +31,4 @@ export default defineConfig({
     },
   },
 })
+

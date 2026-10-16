@@ -617,30 +617,18 @@ Jika proses review selesai dan ingin mematikan server dev di terminal:
   * **Penambahan File Fallback SPA ([`public/.htaccess`](file:///D:/Website/Company%20Profile%20Teknoflase/public/.htaccess))**:
     * Menambahkan aturan rewrite URL SPA untuk server berbasis Apache / LiteSpeed / cPanel agar seluruh request rute otomatis diarahkan ke `index.html`.
 
+### 41. Penguatan Kompatibilitas Server Produksi & Resolusi Total HTTP 502 Bad Gateway
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+* **Identifikasi Akar Masalah Dependensi Produksi**:
+  * Pada server Linux/VPS dengan environment `NODE_ENV=production`, eksekusi `npm install` secara otomatis mengabaikan `devDependencies`.
+  * Sebelumnya, pustaka penting seperti `vite`, `@tailwindcss/vite`, `@vitejs/plugin-react`, dan `tailwindcss` berada di dalam `devDependencies`. Akibatnya, perintah `npm run build` atau `npm start` di server gagal dengan pesan galat `vite: command not found` (exit code 127).
+  * Kegagalan proses Vite mengakibatkan upstream port `5173` mati, sehingga Nginx menghasilkan respons `502 Bad Gateway` saat menerima request dari Cloudflare.
+* **Solusi & Penguatan Arsitektur**:
+  * **Relokasi ke Production Dependencies ([`package.json`](file:///D:/Website/Company%20Profile%20Teknoflase/package.json))**:
+    * Memindahkan `vite`, `@vitejs/plugin-react`, `@tailwindcss/vite`, dan `tailwindcss` ke blok `dependencies` utama agar selalu terinstal di server produksi tanpa terpengaruh filter `NODE_ENV`.
+    * Memperbarui script `"start"` dan `"preview"` menjadi `vite preview --host 0.0.0.0 --port 5173`.
+  * **Explicit Binding `0.0.0.0` & Dynamic Port ([`vite.config.ts`](file:///D:/Website/Company%20Profile%20Teknoflase/vite.config.ts))**:
+    * Mengubah binding host dari boolean `true` menjadi eksplisit `'0.0.0.0'` untuk menjamin Nginx dapat menghubungkan `127.0.0.1` ke socket IPv4 tanpa kendala IPv6 loopback mismatch.
+    * Mengadopsi `process.env.PORT || 5173` agar port otomatis menyesuaikan bila server/PaaS menyuntikkan variabel `PORT`.
+  * **Penyediaan File Konfigurasi PM2 ([`ecosystem.config.cjs`](file:///D:/Website/Company%20Profile%20Teknoflase/ecosystem.config.cjs))**:
+    * Menyediakan konfigurasi standar PM2 untuk menjalankan service `teknoflase` di latar belakang dengan proteksi auto-restart dan limit memori.
