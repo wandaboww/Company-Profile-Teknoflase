@@ -562,6 +562,25 @@ Jika proses review selesai dan ingin mematikan server dev di terminal:
 * **Penyelarasan Stylesheet Semantik ([`src/index.css`](file:///D:/Website/Company%20Profile%20Teknoflase/src/index.css))**:
   * Memperbarui aturan CSS `.contact-info-track` dengan menambahkan `flex-wrap: wrap;` serta proteksi media query `@media (max-width: 639px)` dengan `display: flex !important; flex-wrap: wrap !important;`.
 
+### 38. Penanganan Anti-Crash Gambar URL & Penyediaan Direktori Media Repository (`public/images/services/`)
+
+* **Analisis Penyebab Gambar URL Crash / Gagal Ditampilkan**:
+  * **Hotlink Protection**: Banyak CDN/hosting eksternal (termasuk Unsplash pada kondisi tertentu) memblokir rendering gambar jika browser mengirimkan header `Referer` dari domain berbeda.
+  * **HTML Preview vs Direct Link**: Tautan sharing (seperti Google Drive `/file/d/...` atau Dropbox) bukanlah file gambar langsung, melainkan halaman antarmuka web HTML yang tidak bisa dirender oleh tag `<img>`.
+  * **Ketiadaan Fallback**: Ketiadaan penanganan *error boundary* atau event `onError` pada tag `<img>` membuat gambar yang gagal dimuat tampak broken atau merusak layout antarmuka.
+* **Perbaikan Anti-Crash & Fallback Komponen Layanan ([`src/components/Services.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/components/Services.tsx))**:
+  * Menambahkan fungsi pembantu `getFallbackImage(category, realIndex)` yang mengembalikan URL gambar default beresolusi tinggi berdasarkan kategori layanan saat gambar yang diinput bermasalah.
+  * Memasang atribut `referrerPolicy="no-referrer"` pada seluruh elemen `<img>` (kartu layanan tunggal, slider media galeri, dan galeri modal detail) untuk mem-bypass pemblokiran hotlinking dari server eksternal.
+  * Memasang event handler `onError` pada setiap elemen `<img>` yang otomatis mengalihkan sumber gambar (`target.src = fallback`) ke gambar default jika link URL eksternal rusak, berstatus 404, atau terblokir.
+* **Penyempurnaan Input URL & Normalisasi Link Otomatis di Admin Panel ([`src/components/AdminPanel.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/components/AdminPanel.tsx))**:
+  * Menambahkan fungsi `normalizeImageUrl(url)` pada `handleAddProjectImageUrl` yang otomatis mendeteksi dan mengonversi link Google Drive sharing viewer (`drive.google.com/file/d/...`) menjadi direct raw image CDN (`lh3.googleusercontent.com/d/...`), serta link Dropbox menjadi direct file (`dl.dropboxusercontent.com`).
+  * Memperbarui placeholder input teks menjadi: `"Tempel path lokal (/images/services/...) atau URL gambar (https://...)"`.
+  * Memasang `referrerPolicy="no-referrer"` dan graceful opacity handler pada thumbnail preview kartu proyek dan thumbnail slide galeri di Admin Panel.
+* **Penyediaan Direktori Media Repository Lokal ([`public/images/services/`](file:///D:/Website/Company%20Profile%20Teknoflase/public/images/services))**:
+  * Membuat folder permanen `public/images/services/` di dalam struktur repository Git beserta file petunjuk [`README.md`](file:///D:/Website/Company%20Profile%20Teknoflase/public/images/services/README.md).
+  * Solusi ini memungkinkan pengguna mengelola berkas gambar langsung di dalam repository proyek tanpa memerlukan database atau third-party storage seperti Supabase. Setiap berkas yang dimasukkan ke folder ini otomatis ikut ter-upload ke web server saat menjalankan `git push`, berkecepatan tinggi, bebas dari masalah kuota browser `localStorage`, dan dapat dipanggil menggunakan format path lokal sederhana: `/images/services/nama-file.jpg`.
+
+
 
 
 

@@ -132,6 +132,12 @@ function getServiceImage(image?: string, category?: string, index: number = 0): 
   return list[index % list.length] || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80'
 }
 
+function getFallbackImage(category?: string, index: number = 0): string {
+  if (category && DEFAULT_SERVICE_IMAGES[category]) return DEFAULT_SERVICE_IMAGES[category]
+  const list = Object.values(DEFAULT_SERVICE_IMAGES)
+  return list[index % list.length] || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80'
+}
+
 function getServiceImages(project: PortfolioItem, index: number = 0): string[] {
   if (project.images && Array.isArray(project.images) && project.images.length > 0) {
     const valid = project.images.filter(img => typeof img === 'string' && img.trim() !== '')
@@ -191,6 +197,14 @@ function ServiceCardMediaGallery({
           alt={project.title}
           className="services-card-image w-full h-full object-cover object-center aspect-[4/3] lg:aspect-auto transition-transform duration-700 ease-out group-hover:scale-105"
           loading="lazy"
+          referrerPolicy="no-referrer"
+          onError={(e) => {
+            const target = e.currentTarget
+            const fallback = getFallbackImage(project.category, realIndex)
+            if (target.src !== fallback) {
+              target.src = fallback
+            }
+          }}
         />
       </div>
     )
@@ -215,6 +229,14 @@ function ServiceCardMediaGallery({
                 : 'opacity-0 scale-95 z-0 pointer-events-none'
             }`}
             loading="lazy"
+            referrerPolicy="no-referrer"
+            onError={(e) => {
+              const target = e.currentTarget
+              const fallback = getFallbackImage(project.category, realIndex)
+              if (target.src !== fallback) {
+                target.src = fallback
+              }
+            }}
           />
         ))}
       </div>
@@ -285,6 +307,14 @@ function ModalMediaGallery({
         src={images[0]}
         alt={project.title}
         className="w-full h-full object-cover"
+        referrerPolicy="no-referrer"
+        onError={(e) => {
+          const target = e.currentTarget
+          const fallback = getFallbackImage(project.category, realIndex)
+          if (target.src !== fallback) {
+            target.src = fallback
+          }
+        }}
       />
     )
   }
@@ -301,6 +331,14 @@ function ModalMediaGallery({
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
             i === safeIdx ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
           }`}
+          referrerPolicy="no-referrer"
+          onError={(e) => {
+            const target = e.currentTarget
+            const fallback = getFallbackImage(project.category, realIndex)
+            if (target.src !== fallback) {
+              target.src = fallback
+            }
+          }}
         />
       ))}
       <button

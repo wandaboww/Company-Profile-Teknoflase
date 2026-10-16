@@ -558,14 +558,29 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
     })
   }
 
+  const normalizeImageUrl = (input: string): string => {
+    let url = input.trim()
+    // Konversi Google Drive sharing/view link ke direct CDN link
+    const gdriveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/)
+    if (gdriveMatch && gdriveMatch[1]) {
+      return `https://lh3.googleusercontent.com/d/${gdriveMatch[1]}`
+    }
+    // Konversi Dropbox sharing link ke direct file
+    if (url.includes('dropbox.com')) {
+      return url.replace('dl=0', 'raw=1').replace('www.dropbox.com', 'dl.dropboxusercontent.com')
+    }
+    return url
+  }
+
   const handleAddProjectImageUrl = (idx: number, url: string) => {
     if (!url || !url.trim()) return
+    const cleanedUrl = normalizeImageUrl(url)
     const projects = [...content.portfolioItems]
     const currentItem = projects[idx]
     const existing = (currentItem.images && currentItem.images.length > 0)
       ? currentItem.images
       : (currentItem.image ? [currentItem.image] : [])
-    const updatedImages = [...existing, url.trim()]
+    const updatedImages = [...existing, cleanedUrl]
     projects[idx] = {
       ...currentItem,
       images: updatedImages,
@@ -1762,7 +1777,16 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
                               {/* Thumbnail Preview */}
                               <div className="w-14 h-12 rounded-lg bg-slate-950 border border-slate-800 overflow-hidden shrink-0 flex items-center justify-center relative">
                                 {project.image ? (
-                                  <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
+                                  <img
+                                    src={project.image}
+                                    alt={project.title}
+                                    className="w-full h-full object-cover"
+                                    referrerPolicy="no-referrer"
+                                    onError={(e) => {
+                                      const target = e.currentTarget as HTMLImageElement
+                                      target.style.opacity = '0.3'
+                                    }}
+                                  />
                                 ) : (
                                   <span className="text-base text-slate-600">🌐</span>
                                 )}
@@ -2055,7 +2079,7 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
                                                 setProjectImageUrlInput('')
                                               }
                                             }}
-                                            placeholder="Atau tempel URL gambar (https://...) lalu tekan Tambah..."
+                                            placeholder="Tempel path lokal (/images/services/...) atau URL gambar (https://...)"
                                             className="flex-1 rounded-xl bg-slate-950 px-4 py-2.5 text-white border border-slate-800 focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 text-xs font-medium"
                                           />
                                           <button
@@ -2102,6 +2126,11 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
                                                   src={img}
                                                   alt={`Slide #${imgIdx + 1}`}
                                                   className="w-full h-full object-cover"
+                                                  referrerPolicy="no-referrer"
+                                                  onError={(e) => {
+                                                    const target = e.currentTarget as HTMLImageElement
+                                                    target.style.opacity = '0.3'
+                                                  }}
                                                 />
                                                 <div className="absolute top-1.5 left-1.5 flex items-center gap-1">
                                                   <span
