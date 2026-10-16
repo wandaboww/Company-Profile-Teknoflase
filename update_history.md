@@ -601,6 +601,23 @@ Jika proses review selesai dan ingin mematikan server dev di terminal:
 * **Penyelarasan Stylesheet Semantik ([`src/index.css`](file:///D:/Website/Company%20Profile%20Teknoflase/src/index.css))**:
   * Mendaftarkan kelas semantik `.services-badge-cover` pada stylesheet proyek.
 
+### 40. Penanganan Error HTTP 502 & Cloudflare 522 (Allowed Hosts, Production Script & Server Stability)
+
+* **Analisis Penyebab Error 502 / Cloudflare 522**:
+  * **Ketiadaan Konfigurasi Host & Preview di Vite ([`vite.config.ts`](file:///D:/Website/Company%20Profile%20Teknoflase/vite.config.ts))**: Pada Vite v6+, Vite menerapkan proteksi DNS rebinding yang menolak request dengan header Host domain eksternal (`teknoflase.com`) secara default jika `allowedHosts` tidak dideklarasikan. Selain itu, ketiadaan blok konfigurasi `preview` membuat server produksi yang menjalankan `vite preview` default ke port `4173` pada `localhost` (127.0.0.1), sehingga reverse proxy (Nginx/Cloudflare) yang mengarah ke port `5173` mengalami *connection timeout* (Cloudflare Error 522) atau penolakan koneksi (HTTP 502 Bad Gateway).
+  * **Ketiadaan Script `"start"` di [`package.json`](file:///D:/Website/Company%20Profile%20Teknoflase/package.json)**: Sebagian besar platform hosting (PM2, Docker, Node.js App Manager, PaaS) secara otomatis mengeksekusi `npm start` saat container / service dimulai. Ketiadaan script `"start"` menyebabkan Node process langsung crash dan memicu siklus *restart loop* tanpa henti.
+  * **Lonjakan Memori (OOM Spike) saat Build**: Eksekusi `tsc -b` pada server VPS dengan RAM terbatas menyita 100% CPU dan ratusan MB memori, sehingga Linux kernel OOM Killer menghentikan proses web server atau menyebabkan latensi tinggi (> 15 detik) yang melampaui batas waktu handshake Cloudflare.
+* **Solusi & Penyelarasan Konfigurasi**:
+  * **Penyempurnaan Konfigurasi Server & Preview ([`vite.config.ts`](file:///D:/Website/Company%20Profile%20Teknoflase/vite.config.ts))**:
+    * Menambahkan `allowedHosts: true` pada blok `server` dan `preview` untuk mengizinkan request domain `teknoflase.com` beserta seluruh subdomain tanpa hambatan.
+    * Menambahkan blok `preview` dengan `host: true`, `port: 5173`, `cors: true`, dan security headers lengkap.
+  * **Penyediaan Production Script ([`package.json`](file:///D:/Website/Company%20Profile%20Teknoflase/package.json))**:
+    * Menambahkan script `"start": "vite preview --host --port 5173"` untuk menjamin kompatibilitas runtime PM2 dan process manager server.
+    * Mengoptimalkan `"build": "vite build"` (kompilasi kilat < 500ms tanpa beban RAM tinggi di server) serta menyediakan `"build:tsc": "tsc -b && vite build"` untuk pengujian tipe data lokal.
+  * **Penambahan File Fallback SPA ([`public/.htaccess`](file:///D:/Website/Company%20Profile%20Teknoflase/public/.htaccess))**:
+    * Menambahkan aturan rewrite URL SPA untuk server berbasis Apache / LiteSpeed / cPanel agar seluruh request rute otomatis diarahkan ke `index.html`.
+
+
 
 
 
