@@ -57,6 +57,7 @@ export interface PortfolioItem {
   features: string[]
   image?: string
   images?: string[]
+  coverImage?: string
   duration?: string
   demoUrl?: string
   deliverables?: string
@@ -553,6 +554,7 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
         ...currentItem,
         images: updatedImages,
         image: updatedImages[0] || '',
+        coverImage: updatedImages[0] || '',
       }
       handleChange('portfolioItems', projects)
     })
@@ -585,6 +587,7 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
       ...currentItem,
       images: updatedImages,
       image: updatedImages[0] || '',
+      coverImage: updatedImages[0] || '',
     }
     handleChange('portfolioItems', projects)
   }
@@ -600,6 +603,7 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
       ...currentItem,
       images: updatedImages,
       image: updatedImages[0] || '',
+      coverImage: updatedImages[0] || '',
     }
     handleChange('portfolioItems', projects)
   }
@@ -616,6 +620,7 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
       ...currentItem,
       images: existing,
       image: existing[0] || '',
+      coverImage: existing[0] || '',
     }
     handleChange('portfolioItems', projects)
   }
@@ -631,6 +636,7 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
       ...currentItem,
       images: existing,
       image: existing[0] || '',
+      coverImage: existing[0] || '',
     }
     handleChange('portfolioItems', projects)
   }
@@ -641,6 +647,7 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
       ...projects[idx],
       images: [],
       image: '',
+      coverImage: '',
     }
     handleChange('portfolioItems', projects)
   }
@@ -654,6 +661,7 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
       features: ['Desain Modern & Responsif', 'Kecepatan Muat Optimal', 'Struktur SEO Terindeks Google'],
       image: '',
       images: [],
+      coverImage: '',
       duration: '7 - 14 Hari Kerja',
       demoUrl: '',
       deliverables: 'Dibuat dengan kode bersih, optimasi Core Web Vitals, tampilan responsif di seluruh gadget, dan 100% kepemilikan source code klien.',
@@ -670,6 +678,8 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
       title: `${original.title} (Salinan)`,
       features: [...original.features],
       images: original.images ? [...original.images] : (original.image ? [original.image] : []),
+      image: original.image || (original.images?.[0] || ''),
+      coverImage: original.coverImage || original.image || (original.images?.[0] || ''),
     }
     const updated = [...content.portfolioItems]
     updated.splice(idx + 1, 0, duplicated)

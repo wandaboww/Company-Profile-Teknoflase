@@ -306,7 +306,7 @@ function App() {
             parsed.footerServices = DEFAULT_CONTENT.footerServices
             localStorage.setItem('landing_page_content', JSON.stringify(parsed))
           }
-          // Migrate: ensure existing saved portfolio items have images array
+          // Migrate: ensure existing saved portfolio items have images array and coverImage
           if (parsed.portfolioItems && Array.isArray(parsed.portfolioItems)) {
             let hasImageUpdates = false
             parsed.portfolioItems = parsed.portfolioItems.map((item: Record<string, unknown>, idx: number) => {
@@ -324,6 +324,10 @@ function App() {
                 // Populate default multi-images for demo if first item only has 1 image
                 hasImageUpdates = true
                 updated.images = defaultItem.images
+              }
+              if (!updated.coverImage && updated.image) {
+                hasImageUpdates = true
+                updated.coverImage = updated.image
               }
               return updated
             })
@@ -449,8 +453,26 @@ function App() {
         window.scrollTo({ top: 0, behavior: 'instant' })
       }
     }
+
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'landing_page_content' && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue)
+          if (parsed && typeof parsed === 'object') {
+            setContent(parsed)
+          }
+        } catch {
+          // Abaikan jika data parsing tidak valid
+        }
+      }
+    }
+
     window.addEventListener('hashchange', handleHashChange)
-    return () => window.removeEventListener('hashchange', handleHashChange)
+    window.addEventListener('storage', handleStorageChange)
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange)
+      window.removeEventListener('storage', handleStorageChange)
+    }
   }, [])
 
   const handleUpdateContent = (newContent: LandingPageContent) => {

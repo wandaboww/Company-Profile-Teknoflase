@@ -139,13 +139,26 @@ function getFallbackImage(category?: string, index: number = 0): string {
 }
 
 function getServiceImages(project: PortfolioItem, index: number = 0): string[] {
+  let list: string[] = []
   if (project.images && Array.isArray(project.images) && project.images.length > 0) {
-    const valid = project.images.filter(img => typeof img === 'string' && img.trim() !== '')
-    if (valid.length > 0) return valid
+    list = project.images.filter(img => typeof img === 'string' && img.trim() !== '')
   }
-  if (project.image && project.image.trim() !== '') {
-    return [project.image]
+
+  // Cover image preference: project.coverImage || project.image
+  const explicitCover = (project.coverImage && project.coverImage.trim()) || (project.image && project.image.trim()) || ''
+  if (explicitCover) {
+    const coverIdx = list.indexOf(explicitCover)
+    if (coverIdx > 0) {
+      // Reorder agar gambar cover selalu berada di urutan pertama (#1 / sampul utama)
+      list = [explicitCover, ...list.filter((_, i) => i !== coverIdx)]
+    } else if (coverIdx === -1 && list.length > 0) {
+      list = [explicitCover, ...list]
+    } else if (list.length === 0) {
+      list = [explicitCover]
+    }
   }
+
+  if (list.length > 0) return list
   return [getServiceImage(project.image, project.category, index)]
 }
 
@@ -159,6 +172,11 @@ function ServiceCardMediaGallery({
   const images = getServiceImages(project, realIndex)
   const [currentIdx, setCurrentIdx] = useState(0)
   const [touchStartX, setTouchStartX] = useState<number | null>(null)
+
+  // Otomatis sinkronkan dan reset slide ke posisi awal (cover) saat gambar sampul utama diubah
+  useEffect(() => {
+    setCurrentIdx(0)
+  }, [project.image, project.coverImage, project.images?.[0]])
 
   const safeIdx = currentIdx >= images.length ? 0 : currentIdx
 
@@ -193,6 +211,7 @@ function ServiceCardMediaGallery({
     return (
       <div className="services-card-media lg:col-span-5 relative w-full aspect-[4/3] lg:aspect-auto lg:h-full lg:min-h-full bg-slate-100 overflow-hidden flex items-center justify-center group">
         <img
+          key={images[0]}
           src={images[0]}
           alt={project.title}
           className="services-card-image w-full h-full object-cover object-center aspect-[4/3] lg:aspect-auto transition-transform duration-700 ease-out group-hover:scale-105"
@@ -220,7 +239,7 @@ function ServiceCardMediaGallery({
       <div className="relative w-full h-full overflow-hidden">
         {images.map((img, i) => (
           <img
-            key={i}
+            key={`${img}-${i}`}
             src={img}
             alt={`${project.title} - Gambar ${i + 1}`}
             className={`services-card-image absolute inset-0 w-full h-full object-cover object-center aspect-[4/3] lg:aspect-auto transition-all duration-500 ease-in-out ${
@@ -266,7 +285,7 @@ function ServiceCardMediaGallery({
       </button>
 
       {/* Stepper Dots Indicator */}
-      <div className="services-media-counter absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/70 backdrop-blur-md border border-white/10">
+      <div className="services-media-dots absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/70 backdrop-blur-md border border-white/10">
         {images.map((_, dotIdx) => (
           <button
             key={dotIdx}
@@ -283,9 +302,16 @@ function ServiceCardMediaGallery({
         ))}
       </div>
 
-      {/* Counter Pill */}
-      <div className="absolute top-3 right-3 z-20 px-2.5 py-0.5 rounded-md bg-slate-950/70 backdrop-blur-md text-[11px] font-mono font-medium text-white border border-white/10 shadow-sm">
-        {safeIdx + 1}/{images.length}
+      {/* Counter Pill & Cover Badge */}
+      <div className="services-media-counter absolute top-3 right-3 z-20 flex items-center gap-1.5 pointer-events-none">
+        {safeIdx === 0 && (
+          <span className="services-badge-cover px-2 py-0.5 rounded-md bg-emerald-500/95 backdrop-blur-md text-[10px] font-mono font-bold text-slate-950 shadow-sm border border-emerald-400/40">
+            ★ Cover
+          </span>
+        )}
+        <div className="px-2.5 py-0.5 rounded-md bg-slate-950/70 backdrop-blur-md text-[11px] font-mono font-medium text-white border border-white/10 shadow-sm">
+          {safeIdx + 1}/{images.length}
+        </div>
       </div>
     </div>
   )
@@ -301,9 +327,15 @@ function ModalMediaGallery({
   const images = getServiceImages(project, realIndex)
   const [currentIdx, setCurrentIdx] = useState(0)
 
+  // Otomatis reset slide modal ke gambar cover saat gambar berubah
+  useEffect(() => {
+    setCurrentIdx(0)
+  }, [project.image, project.coverImage, project.images?.[0]])
+
   if (images.length <= 1) {
     return (
       <img
+        key={images[0]}
         src={images[0]}
         alt={project.title}
         className="w-full h-full object-cover"
@@ -325,7 +357,7 @@ function ModalMediaGallery({
     <div className="relative w-full h-full overflow-hidden select-none bg-slate-950">
       {images.map((img, i) => (
         <img
-          key={i}
+          key={`${img}-${i}`}
           src={img}
           alt={`${project.title} - Gambar ${i + 1}`}
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
@@ -363,6 +395,8 @@ function ModalMediaGallery({
       >
         ›
       </button>
+
+      {/* Stepper Dots & Cover Indicator */}
       <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-sm">
         {images.map((_, dotIdx) => (
           <button
@@ -372,19 +406,28 @@ function ModalMediaGallery({
               e.stopPropagation()
               setCurrentIdx(dotIdx)
             }}
-            className={`h-1.5 rounded-full transition-all cursor-pointer ${
-              safeIdx === dotIdx ? 'w-4 bg-white' : 'w-1.5 bg-white/40 hover:bg-white/80'
+            className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+              safeIdx === dotIdx ? 'w-5 bg-white' : 'w-1.5 bg-white/40 hover:bg-white/80'
             }`}
-            aria-label={`Pindah ke foto ${dotIdx + 1}`}
+            aria-label={`Slide foto ${dotIdx + 1}`}
           />
         ))}
       </div>
-      <div className="absolute top-2.5 right-2.5 z-20 px-2 py-0.5 rounded bg-black/60 backdrop-blur-sm text-[11px] font-mono text-white">
-        {safeIdx + 1}/{images.length}
+
+      <div className="absolute top-2.5 right-2.5 z-20 flex items-center gap-1.5 pointer-events-none">
+        {safeIdx === 0 && (
+          <span className="px-2 py-0.5 rounded-md bg-emerald-500/90 text-slate-950 text-[10px] font-mono font-bold shadow-sm">
+            ★ Cover
+          </span>
+        )}
+        <div className="px-2 py-0.5 rounded-md bg-black/60 text-white text-[10px] font-mono">
+          {safeIdx + 1}/{images.length}
+        </div>
       </div>
     </div>
   )
 }
+
 
 export default function Services({ content }: { content: LandingPageContent }) {
   const [activeTab, setActiveTab] = useState('Semua')

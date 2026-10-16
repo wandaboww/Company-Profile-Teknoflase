@@ -580,6 +580,28 @@ Jika proses review selesai dan ingin mematikan server dev di terminal:
   * Membuat folder permanen `public/images/services/` di dalam struktur repository Git beserta file petunjuk [`README.md`](file:///D:/Website/Company%20Profile%20Teknoflase/public/images/services/README.md).
   * Solusi ini memungkinkan pengguna mengelola berkas gambar langsung di dalam repository proyek tanpa memerlukan database atau third-party storage seperti Supabase. Setiap berkas yang dimasukkan ke folder ini otomatis ikut ter-upload ke web server saat menjalankan `git push`, berkecepatan tinggi, bebas dari masalah kuota browser `localStorage`, dan dapat dipanggil menggunakan format path lokal sederhana: `/images/services/nama-file.jpg`.
 
+### 39. Sinkronisasi Real-Time & Pengaktifan Cover Image Portofolio di Landing Page
+
+* **Analisis Masalah Set Cover Image**:
+  * **Sinkronisasi Lintas-Tab Browser**: Saat pengguna mengelola gambar di Admin CMS (`#admin`) dan membuka landing page di tab browser lain secara bersamaan (seperti terlihat pada tab Chrome ganda), browser tidak memicu pembaruan state karena ketiadaan listener event `storage` global di `App.tsx`.
+  * **Prioritas Penataan Gambar pada Slider**: Fungsi `getServiceImages` sebelumnya hanya mengembalikan array `images` apa adanya tanpa memastikan apakah gambar sampul (`coverImage` atau `image`) berada di urutan pertama (`#1`), sehingga jika gambar yang dijadikan cover berada di indeks lain, landing page tetap menampilkan foto pertama lama.
+  * **State Lifecycle Galeri**: State slide aktif (`currentIdx`) pada `ServiceCardMediaGallery` dan `ModalMediaGallery` bersifat lokal dan tidak me-reset kembali ke gambar cover (`#1`) ketika cover image diubah.
+  * **Reconciliasi Elemen DOM Gambar**: Penggunaan key berbasis indeks numerik (`key={i}`) membuat browser menganggap elemen `<img>` sama dan mempertahankan cache render lama saat urutan foto berpindah posisi.
+* **Perbaikan Logika Cover Image pada Komponen Layanan ([`src/components/Services.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/components/Services.tsx))**:
+  * Memperbarui fungsi `getServiceImages` agar memprioritaskan `coverImage` atau `image`. Jika gambar sampul berada di urutan non-nol, sistem secara otomatis menata ulang array sehingga cover image selalu menempati urutan pertama (`#1`).
+  * Menambahkan lifecycle `useEffect` pada `ServiceCardMediaGallery` dan `ModalMediaGallery` untuk otomatis mereset tampilan slide kembali ke gambar sampul utama (`setCurrentIdx(0)`) setiap kali properti cover image diperbarui.
+  * Mengubah key render elemen `<img>` menjadi string unik `key={`${img}-${i}`}` untuk memicu re-render DOM yang bersih dan mulus saat urutan slide ditukar.
+  * Menambahkan indikator visual status cover (`.services-badge-cover`) dengan badge `★ Cover` pada sudut kanan atas slider saat slide cover aktif, selaras dengan tampilan di Admin CMS.
+* **Integrasi Lintas-Tab & Auto-Migrasi State ([`src/App.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/App.tsx))**:
+  * Menambahkan event listener `storage` pada `useEffect` utama di `App.tsx`. Setiap kali pengguna mengklik `★ Cover` atau mengubah konten di tab Admin CMS, seluruh tab landing page yang sedang terbuka otomatis tersinkronisasi seketika secara *real-time*.
+  * Menambahkan auto-migrasi `coverImage` pada inisialisasi state `portfolioItems` di `localStorage`.
+* **Standardisasi Tipe Data & Handler Admin Panel ([`src/components/AdminPanel.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/components/AdminPanel.tsx))**:
+  * Memperluas interface `PortfolioItem` dengan properti `coverImage?: string`.
+  * Memperbarui seluruh handler manipulasi gambar (`handleSetPrimaryImage`, `handleAddProjectImageUrl`, `handleUploadProjectImages`, `handleRemoveProjectImage`, `handleMoveProjectImage`, `addProject`, `duplicateProject`) agar selalu menjaga konsistensi `coverImage`, `image`, dan `images[0]`.
+* **Penyelarasan Stylesheet Semantik ([`src/index.css`](file:///D:/Website/Company%20Profile%20Teknoflase/src/index.css))**:
+  * Mendaftarkan kelas semantik `.services-badge-cover` pada stylesheet proyek.
+
+
 
 
 
