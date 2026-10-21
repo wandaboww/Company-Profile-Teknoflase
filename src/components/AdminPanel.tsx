@@ -287,6 +287,14 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
   const [selectedFooterServiceIdx, setSelectedFooterServiceIdx] = useState<number | 'all'>(0)
   const [projectImageUrlInput, setProjectImageUrlInput] = useState<string>('')
   const [openPrivacySectionIndices, setOpenPrivacySectionIndices] = useState<number[]>([0])
+  const [uploadProgress, setUploadProgress] = useState<{
+    projectIdx: number
+    percent: number
+    current: number
+    total: number
+    fileName: string
+    isComplete?: boolean
+  } | null>(null)
 
   const handleChange = <K extends keyof LandingPageContent>(key: K, value: LandingPageContent[K]) => {
     onUpdateContent({ ...content, [key]: value })
@@ -527,36 +535,101 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
   const handleUploadProjectImages = (idx: number, files: FileList | null) => {
     if (!files || files.length === 0) return
     const fileArray = Array.from(files)
-    const promises = fileArray.map(file => {
-      return new Promise<string>((resolve) => {
-        const reader = new FileReader()
-        reader.onload = () => {
-          if (typeof reader.result === 'string') {
-            resolve(reader.result)
-          } else {
-            resolve('')
-          }
-        }
-        reader.readAsDataURL(file)
-      })
+    const total = fileArray.length
+
+    // Inisialisasi progress bar awal
+    setUploadProgress({
+      projectIdx: idx,
+      percent: 15,
+      current: 1,
+      total,
+      fileName: fileArray[0].name,
+      isComplete: false,
     })
 
-    Promise.all(promises).then(results => {
-      const valid = results.filter(r => Boolean(r && r.trim()))
-      if (valid.length === 0) return
-      const projects = [...content.portfolioItems]
-      const currentItem = projects[idx]
-      const existing = (currentItem.images && currentItem.images.length > 0)
-        ? currentItem.images
-        : (currentItem.image ? [currentItem.image] : [])
-      const updatedImages = [...existing, ...valid]
-      projects[idx] = {
-        ...currentItem,
-        images: updatedImages,
-        image: updatedImages[0] || '',
-        coverImage: updatedImages[0] || '',
+    let completed = 0
+    const results: string[] = []
+
+    fileArray.forEach((file, fileIdx) => {
+      const reader = new FileReader()
+
+      reader.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const filePercent = event.loaded / event.total
+          const overall = Math.min(95, Math.round(((completed + filePercent) / total) * 100))
+          setUploadProgress(prev => (prev && prev.projectIdx === idx ? {
+            ...prev,
+            percent: overall,
+            current: completed + 1,
+            fileName: file.name,
+          } : null))
+        }
       }
-      handleChange('portfolioItems', projects)
+
+      reader.onload = () => {
+        if (typeof reader.result === 'string' && reader.result.trim()) {
+          results[fileIdx] = reader.result
+        } else {
+          results[fileIdx] = ''
+        }
+        completed += 1
+        const percent = Math.min(95, Math.round((completed / total) * 90))
+        setUploadProgress({
+          projectIdx: idx,
+          percent,
+          current: Math.min(completed + 1, total),
+          total,
+          fileName: file.name,
+          isComplete: false,
+        })
+
+        if (completed === total) {
+          const valid = results.filter(r => Boolean(r && r.trim()))
+          if (valid.length > 0) {
+            const projects = [...content.portfolioItems]
+            const currentItem = projects[idx]
+            const existing = (currentItem.images && currentItem.images.length > 0)
+              ? currentItem.images
+              : (currentItem.image ? [currentItem.image] : [])
+            const updatedImages = [...existing, ...valid]
+            const preservedCover = (currentItem.coverImage && currentItem.coverImage.trim() !== '')
+              ? currentItem.coverImage
+              : (updatedImages[0] || '')
+
+            projects[idx] = {
+              ...currentItem,
+              images: updatedImages,
+              image: updatedImages[0] || '',
+              coverImage: preservedCover,
+            }
+            handleChange('portfolioItems', projects)
+          }
+
+          // Set 100% dan status selesai
+          setUploadProgress({
+            projectIdx: idx,
+            percent: 100,
+            current: total,
+            total,
+            fileName: total > 1 ? `${total} foto selesai diunggah` : file.name,
+            isComplete: true,
+          })
+
+          // Sembunyikan progress bar otomatis setelah 2 detik
+          setTimeout(() => {
+            setUploadProgress(prev => (prev && prev.projectIdx === idx ? null : prev))
+          }, 2000)
+        }
+      }
+
+      reader.onerror = () => {
+        completed += 1
+        if (completed === total) {
+          setTimeout(() => setUploadProgress(null), 1500)
+        }
+      }
+
+      reader.readAsDataURL(file)
     })
   }
 
@@ -2115,6 +2188,42 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
                                           </button>
                                         )}
                                       </div>
+
+                                      {/* Simple & Clean Upload Progress Bar */}
+                                      {uploadProgress && uploadProgress.projectIdx === idx && (
+                                        <div className="p-3 rounded-xl bg-slate-950/90 border border-emerald-500/30 space-y-2 transition-all shadow-sm">
+                                          <div className="flex items-center justify-between text-xs gap-2">
+                                            <div className="flex items-center gap-2 min-w-0">
+                                              {uploadProgress.isComplete ? (
+                                                <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold">
+                                                  ✓
+                                                </span>
+                                              ) : (
+                                                <div className="h-3.5 w-3.5 shrink-0 rounded-full border-2 border-emerald-400 border-t-transparent animate-spin" />
+                                              )}
+                                              <span className="font-semibold text-slate-200 truncate">
+                                                {uploadProgress.isComplete
+                                                  ? 'Upload Selesai!'
+                                                  : `Mengunggah (${uploadProgress.current}/${uploadProgress.total})...`}
+                                              </span>
+                                              <span className="text-[11px] text-slate-400 truncate max-w-[200px] hidden sm:inline">
+                                                {uploadProgress.fileName}
+                                              </span>
+                                            </div>
+                                            <span className="font-mono text-xs font-bold text-emerald-400 shrink-0">
+                                              {uploadProgress.percent}%
+                                            </span>
+                                          </div>
+
+                                          {/* Progress Bar Track */}
+                                          <div className="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                                            <div
+                                              className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-300 ease-out"
+                                              style={{ width: `${uploadProgress.percent}%` }}
+                                            />
+                                          </div>
+                                        </div>
+                                      )}
                                     </div>
 
                                     {/* Gallery Thumbnails Grid */}
