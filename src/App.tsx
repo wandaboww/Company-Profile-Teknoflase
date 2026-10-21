@@ -320,10 +320,6 @@ function App() {
               if (!Array.isArray(updated.images) || updated.images.length === 0) {
                 hasImageUpdates = true
                 updated.images = defaultItem?.images || (updated.image ? [updated.image as string] : [])
-              } else if (idx === 0 && updated.images.length === 1 && defaultItem?.images && defaultItem.images.length > 1) {
-                // Populate default multi-images for demo if first item only has 1 image
-                hasImageUpdates = true
-                updated.images = defaultItem.images
               }
               if (!updated.coverImage && updated.image) {
                 hasImageUpdates = true

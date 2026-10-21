@@ -139,26 +139,33 @@ function getFallbackImage(category?: string, index: number = 0): string {
 }
 
 function getServiceImages(project: PortfolioItem, index: number = 0): string[] {
-  let list: string[] = []
-  if (project.images && Array.isArray(project.images) && project.images.length > 0) {
-    list = project.images.filter(img => typeof img === 'string' && img.trim() !== '')
-  }
+  // Kumpulkan semua gambar yang valid dari array images
+  const rawList: string[] = (project.images && Array.isArray(project.images))
+    ? project.images.filter(img => typeof img === 'string' && img.trim() !== '')
+    : []
 
-  // Cover image preference: project.coverImage || project.image
-  const explicitCover = (project.coverImage && project.coverImage.trim()) || (project.image && project.image.trim()) || ''
-  if (explicitCover) {
-    const coverIdx = list.indexOf(explicitCover)
-    if (coverIdx > 0) {
-      // Reorder agar gambar cover selalu berada di urutan pertama (#1 / sampul utama)
-      list = [explicitCover, ...list.filter((_, i) => i !== coverIdx)]
-    } else if (coverIdx === -1 && list.length > 0) {
-      list = [explicitCover, ...list]
-    } else if (list.length === 0) {
-      list = [explicitCover]
+  // Tentukan gambar cover: coverImage diprioritaskan, fallback ke image
+  const coverUrl = (project.coverImage && project.coverImage.trim() !== '')
+    ? project.coverImage.trim()
+    : (project.image && project.image.trim() !== '' ? project.image.trim() : '')
+
+  if (coverUrl) {
+    // Cari posisi coverUrl di dalam list
+    const coverIdx = rawList.findIndex(img => img === coverUrl)
+    if (coverIdx === 0) {
+      // Sudah di posisi pertama, kembalikan langsung
+      return rawList.length > 0 ? rawList : [coverUrl]
+    } else if (coverIdx > 0) {
+      // Pindahkan cover ke posisi pertama
+      return [coverUrl, ...rawList.filter((_, i) => i !== coverIdx)]
+    } else {
+      // coverUrl tidak ada di list — tambahkan di depan
+      return rawList.length > 0 ? [coverUrl, ...rawList] : [coverUrl]
     }
   }
 
-  if (list.length > 0) return list
+  // Tidak ada cover, kembalikan list apa adanya atau fallback default
+  if (rawList.length > 0) return rawList
   return [getServiceImage(project.image, project.category, index)]
 }
 
