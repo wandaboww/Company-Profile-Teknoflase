@@ -792,13 +792,6 @@ export default function Services({ content }: { content: LandingPageContent }) {
                   </ul>
                 </div>
               )}
-
-              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-900 mb-1 font-mono">Standar & Deliverables</h4>
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  {activeDetail.deliverables || 'Dibangun dengan arsitektur web modern, performa tinggi, struktur SEO terindeks Google, dan 100% kepemilikan source code klien.'}
-                </p>
-              </div>
             </div>
 
             <div className="services-modal-footer p-5 border-t border-slate-100 bg-slate-50/70 flex flex-col sm:flex-row gap-3 items-center justify-between shrink-0">
