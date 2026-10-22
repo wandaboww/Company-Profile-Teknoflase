@@ -649,3 +649,9 @@ Jika proses review selesai dan ingin mematikan server dev di terminal:
   * **Proteksi dan Pemulihan Otomatis di Runtime ([`src/App.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/App.tsx))**:
     * Membungkus `localStorage.setItem` dengan blok `try ... catch` agar tidak pernah memicu crash / unhandled exception.
     * Menambahkan deteksi otomatis saat inisialisasi aplikasi untuk memangkas sisa gambar berukuran besar peninggalan versi lama.
+
+### 43. Penyederhanaan Modal Detail Layanan (Penghapusan Card Standar & Deliverables)
+
+* **Penghapusan Card Standar & Deliverables ([`src/components/Services.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/components/Services.tsx))**:
+  * Menghapus blok kartu `Standar & Deliverables` di dalam kontainer modal detail layanan (`.services-modal-container`).
+  * Modal detail layanan kini tampil lebih bersih, proporsional, dan terfokus pada: Galeri Media Mockup, Deskripsi Solusi Layanan, dan Daftar Fitur yang Diterapkan.
