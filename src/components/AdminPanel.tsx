@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { DEFAULT_FAQ_ITEMS } from './FAQ'
 import { DEFAULT_PRIVACY_POLICY } from './PrivacyPolicy'
 import type { PrivacySection, PrivacyPolicyContent } from './PrivacyPolicy'
-import { compressImageFile } from '../utils/imageOptimizer'
+import { compressImageFile, compressBase64Image } from '../utils/imageOptimizer'
 
 export type { PrivacySection, PrivacyPolicyContent }
 
@@ -675,18 +675,36 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
     handleChange('portfolioItems', projects)
   }
 
-  const handleSetPrimaryImage = (idx: number, imgIdx: number) => {
+  const handleSetPrimaryImage = async (idx: number, imgIdx: number) => {
     if (imgIdx === 0) return
     const projects = [...content.portfolioItems]
     const currentItem = projects[idx]
     const existing = [...((currentItem.images && currentItem.images.length > 0) ? currentItem.images : (currentItem.image ? [currentItem.image] : []))]
     const [primary] = existing.splice(imgIdx, 1)
-    existing.unshift(primary)
+
+    // Kompresi gambar primer jika bertipe Data URL Base64 besar
+    let optimizedPrimary = primary
+    if (typeof primary === 'string' && primary.startsWith('data:image/') && primary.length > 70_000) {
+      optimizedPrimary = await compressBase64Image(primary, 1000, 650, 0.70)
+    }
+
+    existing.unshift(optimizedPrimary)
+
+    // Kompresi seluruh array gambar agar hemat memori localStorage
+    const optimizedImages = await Promise.all(
+      existing.map(async (img) => {
+        if (typeof img === 'string' && img.startsWith('data:image/') && img.length > 70_000) {
+          return await compressBase64Image(img, 1000, 650, 0.70)
+        }
+        return img
+      })
+    )
+
     projects[idx] = {
       ...currentItem,
-      images: existing,
-      image: existing[0] || '',
-      coverImage: existing[0] || '',
+      images: optimizedImages,
+      image: optimizedImages[0] || '',
+      coverImage: optimizedImages[0] || '',
     }
     handleChange('portfolioItems', projects)
   }

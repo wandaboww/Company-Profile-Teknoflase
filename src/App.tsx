@@ -470,7 +470,7 @@ function App() {
     // Auto-optimize existing oversized base64 images in localStorage from legacy uploads
     try {
       const rawSaved = localStorage.getItem('landing_page_content')
-      if (rawSaved && rawSaved.length > 1_500_000) {
+      if (rawSaved && rawSaved.length > 400_000) {
         sanitizePortfolioStorage(content.portfolioItems).then(({ items, compressedCount }) => {
           if (compressedCount > 0) {
             const optimized = { ...content, portfolioItems: items }

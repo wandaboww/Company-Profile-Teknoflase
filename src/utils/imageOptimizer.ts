@@ -7,9 +7,9 @@ import type { PortfolioItem } from '../components/AdminPanel'
  */
 export function compressImageFile(
   file: File,
-  maxWidth = 1200,
-  maxHeight = 800,
-  quality = 0.75
+  maxWidth = 1000,
+  maxHeight = 650,
+  quality = 0.70
 ): Promise<string> {
   return new Promise((resolve) => {
     // File SVG berukuran kecil secara bawaan, tidak perlu rasterisasi canvas
@@ -77,20 +77,20 @@ export function compressImageFile(
 
 /**
  * Kompres string Base64 yang sudah ada (misal data warisan lama di localStorage)
- * jika ukurannya terlalu besar (> 200 KB).
+ * jika ukurannya melebihi batas aman (> 70 KB).
  */
 export function compressBase64Image(
   dataUrl: string,
-  maxWidth = 1200,
-  maxHeight = 800,
-  quality = 0.75
+  maxWidth = 1000,
+  maxHeight = 650,
+  quality = 0.70
 ): Promise<string> {
   return new Promise((resolve) => {
     if (
       !dataUrl ||
       !dataUrl.startsWith('data:image/') ||
       dataUrl.startsWith('data:image/svg+xml') ||
-      dataUrl.length < 200_000 // Kurang dari ~150 KB sudah aman
+      dataUrl.length < 70_000 // Kurang dari ~50 KB sudah sangat aman
     ) {
       resolve(dataUrl)
       return
@@ -156,8 +156,8 @@ export async function sanitizePortfolioStorage(
       // Periksa dan kompres array images
       const images = await Promise.all(
         (project.images || []).map(async (img) => {
-          if (typeof img === 'string' && img.startsWith('data:image/') && img.length > 200_000) {
-            const compressed = await compressBase64Image(img)
+          if (typeof img === 'string' && img.startsWith('data:image/') && img.length > 70_000) {
+            const compressed = await compressBase64Image(img, 1000, 650, 0.70)
             if (compressed.length < img.length) {
               compressedCount++
               projectChanged = true
@@ -170,8 +170,8 @@ export async function sanitizePortfolioStorage(
 
       // Periksa coverImage
       let coverImage = project.coverImage
-      if (typeof coverImage === 'string' && coverImage.startsWith('data:image/') && coverImage.length > 200_000) {
-        const compressed = await compressBase64Image(coverImage)
+      if (typeof coverImage === 'string' && coverImage.startsWith('data:image/') && coverImage.length > 70_000) {
+        const compressed = await compressBase64Image(coverImage, 1000, 650, 0.70)
         if (compressed.length < coverImage.length) {
           compressedCount++
           projectChanged = true
@@ -181,8 +181,8 @@ export async function sanitizePortfolioStorage(
 
       // Periksa image
       let image = project.image
-      if (typeof image === 'string' && image.startsWith('data:image/') && image.length > 200_000) {
-        const compressed = await compressBase64Image(image)
+      if (typeof image === 'string' && image.startsWith('data:image/') && image.length > 70_000) {
+        const compressed = await compressBase64Image(image, 1000, 650, 0.70)
         if (compressed.length < image.length) {
           compressedCount++
           projectChanged = true
