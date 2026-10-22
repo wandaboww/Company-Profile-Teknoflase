@@ -11,6 +11,7 @@ import FAQ, { DEFAULT_FAQ_ITEMS } from './components/FAQ'
 import SEO from './components/SEO'
 import PrivacyPolicy, { DEFAULT_PRIVACY_POLICY } from './components/PrivacyPolicy'
 import type { LandingPageContent } from './components/AdminPanel'
+import { sanitizePortfolioStorage } from './utils/imageOptimizer'
 
 const DEFAULT_CONTENT: LandingPageContent = {
   brandName: 'TEKNOFLASE',
@@ -465,15 +466,55 @@ function App() {
 
     window.addEventListener('hashchange', handleHashChange)
     window.addEventListener('storage', handleStorageChange)
+
+    // Auto-optimize existing oversized base64 images in localStorage from legacy uploads
+    try {
+      const rawSaved = localStorage.getItem('landing_page_content')
+      if (rawSaved && rawSaved.length > 1_500_000) {
+        sanitizePortfolioStorage(content.portfolioItems).then(({ items, compressedCount }) => {
+          if (compressedCount > 0) {
+            const optimized = { ...content, portfolioItems: items }
+            setContent(optimized)
+            try {
+              localStorage.setItem('landing_page_content', JSON.stringify(optimized))
+              console.info(`[Teknoflase] Otomatis mengoptimalkan ${compressedCount} aset gambar lokal (${(rawSaved.length / 1024 / 1024).toFixed(2)} MB ➔ ${(JSON.stringify(optimized).length / 1024 / 1024).toFixed(2)} MB)`)
+            } catch (e) {
+              console.warn('Could not auto-save optimized images:', e)
+            }
+          }
+        })
+      }
+    } catch (e) {
+      console.warn('Storage check error:', e)
+    }
+
     return () => {
       window.removeEventListener('hashchange', handleHashChange)
       window.removeEventListener('storage', handleStorageChange)
     }
   }, [])
 
-  const handleUpdateContent = (newContent: LandingPageContent) => {
+  const handleUpdateContent = async (newContent: LandingPageContent) => {
     setContent(newContent)
-    localStorage.setItem('landing_page_content', JSON.stringify(newContent))
+    try {
+      localStorage.setItem('landing_page_content', JSON.stringify(newContent))
+    } catch (err: unknown) {
+      console.warn('LocalStorage quota exceeded, attempting automatic image optimization...', err)
+      try {
+        const { items, compressedCount } = await sanitizePortfolioStorage(newContent.portfolioItems)
+        if (compressedCount > 0) {
+          const sanitizedContent = { ...newContent, portfolioItems: items }
+          setContent(sanitizedContent)
+          localStorage.setItem('landing_page_content', JSON.stringify(sanitizedContent))
+          console.info(`[Teknoflase] Berhasil mengompresi ${compressedCount} gambar untuk menghemat kuota localStorage.`)
+          return
+        }
+      } catch (sanitizeErr) {
+        console.error('Failed to auto-sanitize portfolio storage:', sanitizeErr)
+      }
+
+      alert('Kapasitas penyimpanan lokal browser (localStorage) penuh (~5MB). Silakan gunakan tautan URL gambar (Google Drive/Dropbox/Unsplash) atau kurangi jumlah foto agar perubahan tersimpan permanen.')
+    }
   }
 
   const handleLogin = () => {

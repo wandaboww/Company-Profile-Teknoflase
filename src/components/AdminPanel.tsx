@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { DEFAULT_FAQ_ITEMS } from './FAQ'
 import { DEFAULT_PRIVACY_POLICY } from './PrivacyPolicy'
 import type { PrivacySection, PrivacyPolicyContent } from './PrivacyPolicy'
+import { compressImageFile } from '../utils/imageOptimizer'
 
 export type { PrivacySection, PrivacyPolicyContent }
 
@@ -550,86 +551,62 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
     let completed = 0
     const results: string[] = []
 
-    fileArray.forEach((file, fileIdx) => {
-      const reader = new FileReader()
-
-      reader.onprogress = (event) => {
-        if (event.lengthComputable) {
-          const filePercent = event.loaded / event.total
-          const overall = Math.min(95, Math.round(((completed + filePercent) / total) * 100))
-          setUploadProgress(prev => (prev && prev.projectIdx === idx ? {
-            ...prev,
-            percent: overall,
-            current: completed + 1,
-            fileName: file.name,
-          } : null))
-        }
+    fileArray.forEach(async (file, fileIdx) => {
+      try {
+        const compressed = await compressImageFile(file)
+        results[fileIdx] = compressed
+      } catch {
+        results[fileIdx] = ''
       }
 
-      reader.onload = () => {
-        if (typeof reader.result === 'string' && reader.result.trim()) {
-          results[fileIdx] = reader.result
-        } else {
-          results[fileIdx] = ''
+      completed += 1
+      const percent = Math.min(95, Math.round((completed / total) * 90))
+      setUploadProgress({
+        projectIdx: idx,
+        percent,
+        current: Math.min(completed + 1, total),
+        total,
+        fileName: file.name,
+        isComplete: false,
+      })
+
+      if (completed === total) {
+        const valid = results.filter(r => Boolean(r && r.trim()))
+        if (valid.length > 0) {
+          const projects = [...content.portfolioItems]
+          const currentItem = projects[idx]
+          const existing = (currentItem.images && currentItem.images.length > 0)
+            ? currentItem.images
+            : (currentItem.image ? [currentItem.image] : [])
+          const updatedImages = [...existing, ...valid]
+          const preservedCover = (currentItem.coverImage && currentItem.coverImage.trim() !== '')
+            ? currentItem.coverImage
+            : (updatedImages[0] || '')
+
+          projects[idx] = {
+            ...currentItem,
+            images: updatedImages,
+            image: updatedImages[0] || '',
+            coverImage: preservedCover,
+          }
+          handleChange('portfolioItems', projects)
         }
-        completed += 1
-        const percent = Math.min(95, Math.round((completed / total) * 90))
+
+        // Set 100% dan status selesai
         setUploadProgress({
           projectIdx: idx,
-          percent,
-          current: Math.min(completed + 1, total),
+          percent: 100,
+          current: total,
           total,
-          fileName: file.name,
-          isComplete: false,
+          fileName: total > 1 ? `${total} foto berhasil dioptimalkan & diunggah` : file.name,
+          isComplete: true,
         })
 
-        if (completed === total) {
-          const valid = results.filter(r => Boolean(r && r.trim()))
-          if (valid.length > 0) {
-            const projects = [...content.portfolioItems]
-            const currentItem = projects[idx]
-            const existing = (currentItem.images && currentItem.images.length > 0)
-              ? currentItem.images
-              : (currentItem.image ? [currentItem.image] : [])
-            const updatedImages = [...existing, ...valid]
-            const preservedCover = (currentItem.coverImage && currentItem.coverImage.trim() !== '')
-              ? currentItem.coverImage
-              : (updatedImages[0] || '')
-
-            projects[idx] = {
-              ...currentItem,
-              images: updatedImages,
-              image: updatedImages[0] || '',
-              coverImage: preservedCover,
-            }
-            handleChange('portfolioItems', projects)
-          }
-
-          // Set 100% dan status selesai
-          setUploadProgress({
-            projectIdx: idx,
-            percent: 100,
-            current: total,
-            total,
-            fileName: total > 1 ? `${total} foto selesai diunggah` : file.name,
-            isComplete: true,
-          })
-
-          // Sembunyikan progress bar otomatis setelah 2 detik
-          setTimeout(() => {
-            setUploadProgress(prev => (prev && prev.projectIdx === idx ? null : prev))
-          }, 2000)
-        }
+        // Sembunyikan progress bar otomatis setelah 2 detik
+        setTimeout(() => {
+          setUploadProgress(prev => (prev && prev.projectIdx === idx ? null : prev))
+        }, 2000)
       }
-
-      reader.onerror = () => {
-        completed += 1
-        if (completed === total) {
-          setTimeout(() => setUploadProgress(null), 1500)
-        }
-      }
-
-      reader.readAsDataURL(file)
     })
   }
 
