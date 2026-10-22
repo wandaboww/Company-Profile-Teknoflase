@@ -632,3 +632,20 @@ Jika proses review selesai dan ingin mematikan server dev di terminal:
     * Mengadopsi `process.env.PORT || 5173` agar port otomatis menyesuaikan bila server/PaaS menyuntikkan variabel `PORT`.
   * **Penyediaan File Konfigurasi PM2 ([`ecosystem.config.cjs`](file:///D:/Website/Company%20Profile%20Teknoflase/ecosystem.config.cjs))**:
     * Menyediakan konfigurasi standar PM2 untuk menjalankan service `teknoflase` di latar belakang dengan proteksi auto-restart dan limit memori.
+
+### 42. Resolusi QuotaExceededError pada Fitur Set As Cover & Unggah Gambar
+
+* **Analisis Penyebab Error saat Set As Cover**:
+  * Ketika admin mengklik tombol "Set as cover" (`handleSetPrimaryImage`), fungsi memindahkan gambar terpilih ke urutan pertama (`existing[0]`), dan menyalin string gambar tersebut ke tiga properti sekaligus: `project.images[0]`, `project.image`, dan `project.coverImage`.
+  * Jika gambar yang diunggah berupa Data URL Base64 mentah (berukuran 2–4 MB), penyalinan rangkap tiga ini melipatgandakan data menjadi **6–12 MB** dalam string JSON `landing_page_content`.
+  * Kapasitas penyimpanan `localStorage` pada browser dibatasi maksimal **~5 MB**. Akibatnya, eksekusi `localStorage.setItem` seketika melempar galat `QuotaExceededError`.
+* **Solusi & Penguatan Arsitektur**:
+  * **Kompresi Otomatis di Handler Set Cover ([`src/components/AdminPanel.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/components/AdminPanel.tsx))**:
+    * Mengubah `handleSetPrimaryImage` menjadi asinkron (`async`) dan otomatis mengompresi gambar primer serta seluruh gambar proyek menggunakan HTML5 Canvas sebelum disimpan ke state.
+    * Ukuran gambar terpilih dipangkas dari ~3 MB menjadi hanya **~40–60 KB** (efisiensi ruang >95%).
+  * **Modul Pengoptimal Gambar ([`src/utils/imageOptimizer.ts`](file:///D:/Website/Company%20Profile%20Teknoflase/src/utils/imageOptimizer.ts))**:
+    * Menyediakan fungsi kompresi gambar berbasis canvas (`compressImageFile` & `compressBase64Image`) dengan resolusi maksimal 1000 × 650 px dan kualitas 0.70 WebP/JPEG.
+    * Menyediakan fungsi sanitasi menyeluruh (`sanitizePortfolioStorage`) untuk memulihkan `localStorage` yang terlanjur penuh.
+  * **Proteksi dan Pemulihan Otomatis di Runtime ([`src/App.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/App.tsx))**:
+    * Membungkus `localStorage.setItem` dengan blok `try ... catch` agar tidak pernah memicu crash / unhandled exception.
+    * Menambahkan deteksi otomatis saat inisialisasi aplikasi untuk memangkas sisa gambar berukuran besar peninggalan versi lama.
