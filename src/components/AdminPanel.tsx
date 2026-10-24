@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { DEFAULT_FAQ_ITEMS } from './FAQ'
 import { DEFAULT_PRIVACY_POLICY } from './PrivacyPolicy'
 import type { PrivacySection, PrivacyPolicyContent } from './PrivacyPolicy'
@@ -207,13 +207,172 @@ const HERO_FONT_SIZES = [
   { id: 'jumbo',   label: 'Jumbo / Ekstra',     desc: '6xl (HP) / 8xl (Tablet) / 9xl (Desktop)' },
 ]
 
-const HERO_HIGHLIGHT_FONT_SIZES = [
-  { id: 'same',    label: 'Proporsional (Sama dengan Judul)', desc: 'Ukuran highlight mengikuti judul' },
-  { id: 'compact', label: 'Lebih Ringkas',                   desc: 'Ukuran highlight sedikit lebih kecil' },
-  { id: 'normal',  label: 'Sedang / Normal',                 desc: 'Ukuran highlight seimbang' },
-  { id: 'large',   label: 'Lebih Besar',                     desc: 'Highlight lebih menonjol dari judul' },
-  { id: 'jumbo',   label: 'Ekstra Besar',                    desc: 'Highlight kontras ekstra besar' },
+export function parseFontSizePt(val?: string): number | null {
+  if (!val || val === 'same') return null
+  if (val === 'compact') return 24
+  if (val === 'normal') return 36
+  if (val === 'large') return 48
+  if (val === 'jumbo') return 64
+  const cleaned = val.replace(/[^0-9.]/g, '')
+  const num = parseFloat(cleaned)
+  return isNaN(num) || num <= 0 ? null : num
+}
+
+export function getHighlightCustomStyle(highlightSize?: string): React.CSSProperties {
+  const pt = parseFontSizePt(highlightSize)
+  if (!pt) return {}
+  return {
+    fontSize: pt <= 18 ? `${pt}pt` : `clamp(${Math.max(16, Math.round(pt * 0.62))}pt, 5vw, ${pt}pt)`,
+    lineHeight: 1.15,
+  }
+}
+
+export const HERO_HIGHLIGHT_FONT_SIZES = [
+  { id: 'same',  label: 'Proporsional (Sama dengan Judul)', desc: 'Ukuran highlight mengikuti judul' },
+  { id: '7pt',   label: '7 pt (9 px)',   desc: '7pt (~9px) — Ekstra Kecil' },
+  { id: '8pt',   label: '8 pt (11 px)',  desc: '8pt (~11px) — Catatan / Keterangan' },
+  { id: '9pt',   label: '9 pt (12 px)',  desc: '9pt (~12px) — Teks Ringkas' },
+  { id: '10pt',  label: '10 pt (13 px)', desc: '10pt (~13px) — Standar Dokumen' },
+  { id: '11pt',  label: '11 pt (15 px)', desc: '11pt (~15px) — Standar Word Modern' },
+  { id: '12pt',  label: '12 pt (16 px)', desc: '12pt (~16px) — Standar Body Text' },
+  { id: '14pt',  label: '14 pt (19 px)', desc: '14pt (~19px) — Subjudul Ringan' },
+  { id: '16pt',  label: '16 pt (21 px)', desc: '16pt (~21px) — Subjudul Sedang' },
+  { id: '18pt',  label: '18 pt (24 px)', desc: '18pt (~24px) — Heading Menengah' },
+  { id: '20pt',  label: '20 pt (27 px)', desc: '20pt (~27px) — Heading Tegas' },
+  { id: '22pt',  label: '22 pt (29 px)', desc: '22pt (~29px) — Heading Menonjol' },
+  { id: '24pt',  label: '24 pt (32 px)', desc: '24pt (~32px) — Banner Sedang' },
+  { id: '26pt',  label: '26 pt (35 px)', desc: '26pt (~35px) — Banner Tegas' },
+  { id: '28pt',  label: '28 pt (37 px)', desc: '28pt (~37px) — Banner Menonjol' },
+  { id: '32pt',  label: '32 pt (43 px)', desc: '32pt (~43px) — Judul Besar' },
+  { id: '36pt',  label: '36 pt (48 px)', desc: '36pt (~48px) — Hero Headline Standar' },
+  { id: '42pt',  label: '42 pt (56 px)', desc: '42pt (~56px) — Hero Headline Kuat' },
+  { id: '48pt',  label: '48 pt (64 px)', desc: '48pt (~64px) — Hero Headline Besar' },
+  { id: '56pt',  label: '56 pt (75 px)', desc: '56pt (~75px) — Display Headline' },
+  { id: '64pt',  label: '64 pt (85 px)', desc: '64pt (~85px) — Display Ekstra' },
+  { id: '72pt',  label: '72 pt (96 px)', desc: '72pt (~96px) — Jumbo Display' },
+  { id: '84pt',  label: '84 pt (112 px)', desc: '84pt (~112px) — Super Jumbo' },
+  { id: '96pt',  label: '96 pt (128 px)', desc: '96pt (~128px) — Ultra Display Maksimal' },
 ]
+
+function HighlightFontSizeSelector({
+  value,
+  onChange,
+  label = 'Ukuran Font Highlight Bawaan',
+  description,
+}: {
+  value?: string
+  onChange: (val: string) => void
+  label?: string
+  description?: string
+}) {
+  const currentVal = value || 'same'
+  const isPreset = HERO_HIGHLIGHT_FONT_SIZES.some(s => s.id === currentVal)
+  const [isCustomMode, setIsCustomMode] = useState(!isPreset && currentVal !== 'same')
+  const customNumeric = parseFontSizePt(currentVal) || 36
+  const [inputVal, setInputVal] = useState<number>(customNumeric)
+
+  useEffect(() => {
+    const pt = parseFontSizePt(currentVal)
+    if (pt) {
+      setInputVal(pt)
+    }
+    const presetMatch = HERO_HIGHLIGHT_FONT_SIZES.some(s => s.id === currentVal)
+    if (!presetMatch && currentVal !== 'same') {
+      setIsCustomMode(true)
+    }
+  }, [currentVal])
+
+  const handleSelectChange = (newVal: string) => {
+    if (newVal === 'custom') {
+      setIsCustomMode(true)
+      onChange(`${inputVal}pt`)
+    } else {
+      setIsCustomMode(false)
+      onChange(newVal)
+    }
+  }
+
+  const handleCustomInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const num = parseInt(e.target.value, 10)
+    if (!isNaN(num) && num > 0) {
+      setInputVal(num)
+      onChange(`${num}pt`)
+    } else if (e.target.value === '') {
+      setInputVal(0)
+    }
+  }
+
+  const selectedPreset = HERO_HIGHLIGHT_FONT_SIZES.find(s => s.id === currentVal)
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <label className="block text-xs font-semibold text-slate-300">
+          {label}
+        </label>
+        {isCustomMode && (
+          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            Kustom: {inputVal}pt
+          </span>
+        )}
+      </div>
+
+      <select
+        value={isCustomMode ? 'custom' : currentVal}
+        onChange={e => handleSelectChange(e.target.value)}
+        className="w-full rounded-xl bg-slate-950 px-3 py-2.5 text-xs text-white border border-slate-800 focus:outline-none focus:border-emerald-400 cursor-pointer"
+      >
+        <option value="same">Proporsional (Sama dengan Judul)</option>
+        <optgroup label="Ukuran Angka Standar (Seperti di Word)">
+          {HERO_HIGHLIGHT_FONT_SIZES.filter(s => s.id !== 'same').map(hs => (
+            <option key={hs.id} value={hs.id}>
+              {hs.label}
+            </option>
+          ))}
+        </optgroup>
+        <option value="custom">✏️ Kustom (Tentukan Angka Sendiri)...</option>
+      </select>
+
+      {/* Input Angka Kustom jika mode custom dipilih */}
+      {isCustomMode && (
+        <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-950/80 border border-emerald-500/30">
+          <span className="text-xs text-slate-400 font-medium shrink-0">Ketik Angka:</span>
+          <div className="flex items-center gap-1.5">
+            <input
+              type="number"
+              min={5}
+              max={250}
+              value={inputVal === 0 ? '' : inputVal}
+              onChange={handleCustomInputChange}
+              placeholder="38"
+              className="w-20 rounded-lg bg-slate-900 px-3 py-1.5 text-xs text-white border border-slate-700 focus:border-emerald-400 focus:outline-none font-mono font-bold text-center"
+            />
+            <span className="text-xs font-mono font-bold text-emerald-400">pt</span>
+          </div>
+          <span className="text-[11px] text-slate-400 font-mono">
+            (≈ {Math.round((inputVal || 0) * 1.333)} px)
+          </span>
+          <button
+            type="button"
+            onClick={() => handleSelectChange('same')}
+            className="ml-auto text-[10px] text-slate-400 hover:text-white underline cursor-pointer"
+            title="Kembalikan ke ukuran proporsional"
+          >
+            Reset
+          </button>
+        </div>
+      )}
+
+      <p className="text-[11px] text-slate-500">
+        {description || (
+          isCustomMode
+            ? `Ukuran font highlight kustom aktif: ${inputVal}pt (setara ~${Math.round((inputVal || 0) * 1.333)}px).`
+            : selectedPreset?.desc || 'Proporsional mewarisi ukuran font judul hero.'
+        )}
+      </p>
+    </div>
+  )
+}
 
 function getHighlightStyle(color?: string): React.CSSProperties {
   const chosenColor = color || '#2563eb'
@@ -1181,25 +1340,11 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
                     </div>
 
                     {/* Global Highlight Font Size */}
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-2">
-                        Ukuran Font Highlight Bawaan
-                      </label>
-                      <select
-                        value={content.heroHighlightFontSize || 'same'}
-                        onChange={e => handleChange('heroHighlightFontSize', e.target.value)}
-                        className="w-full rounded-xl bg-slate-950 px-3 py-2.5 text-xs text-white border border-slate-800 focus:outline-none focus:border-emerald-400 cursor-pointer"
-                      >
-                        {HERO_HIGHLIGHT_FONT_SIZES.map(hs => (
-                          <option key={hs.id} value={hs.id}>
-                            {hs.label}
-                          </option>
-                        ))}
-                      </select>
-                      <p className="text-[11px] text-slate-500 mt-1.5">
-                        {HERO_HIGHLIGHT_FONT_SIZES.find(hs => hs.id === (content.heroHighlightFontSize || 'same'))?.desc}
-                      </p>
-                    </div>
+                    <HighlightFontSizeSelector
+                      label="Ukuran Font Highlight Bawaan"
+                      value={content.heroHighlightFontSize || 'same'}
+                      onChange={val => handleChange('heroHighlightFontSize', val)}
+                    />
                   </div>
                 </div>
 
@@ -1419,7 +1564,10 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
                                         effectiveHighlightFontSize === 'jumbo' ? 'text-3xl sm:text-5xl' :
                                         ''
                                       }`}
-                                      style={getHighlightStyle(effectiveColor)}
+                                      style={{
+                                        ...getHighlightStyle(effectiveColor),
+                                        ...getHighlightCustomStyle(effectiveHighlightFontSize),
+                                      }}
                                     >
                                       {slide.highlight || 'Highlight Teks Berwarna'}
                                     </span>
@@ -1549,20 +1697,11 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
                                 </div>
 
                                 <div>
-                                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                                    Ukuran Font Highlight (Teks Berwarna)
-                                  </label>
-                                  <select
+                                  <HighlightFontSizeSelector
+                                    label="Ukuran Font Highlight (Teks Berwarna)"
                                     value={slide.highlightFontSize || content.heroHighlightFontSize || 'same'}
-                                    onChange={e => updateSlide(idx, 'highlightFontSize', e.target.value)}
-                                    className="w-full rounded-xl bg-slate-900 px-3 py-2 text-xs text-white border border-slate-800 focus:outline-none focus:border-emerald-400 cursor-pointer"
-                                  >
-                                    {HERO_HIGHLIGHT_FONT_SIZES.map(hs => (
-                                      <option key={hs.id} value={hs.id}>
-                                        {hs.label}
-                                      </option>
-                                    ))}
-                                  </select>
+                                    onChange={val => updateSlide(idx, 'highlightFontSize', val)}
+                                  />
                                 </div>
                               </div>
                             </div>

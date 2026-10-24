@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import type { LandingPageContent } from './AdminPanel'
+import { parseFontSizePt, getHighlightCustomStyle } from './AdminPanel'
 
 // Helper for title font size class
 function getTitleSizeClass(size?: string): string {
@@ -18,6 +19,7 @@ function getTitleSizeClass(size?: string): string {
 
 // Helper for highlight font size class
 function getHighlightSizeClass(highlightSize?: string): string {
+  if (parseFontSizePt(highlightSize)) return ''
   switch (highlightSize) {
     case 'compact':
       return 'text-2xl sm:text-4xl lg:text-5xl leading-tight'
@@ -78,7 +80,10 @@ export default function Hero({ content }: { content: LandingPageContent }) {
             {content.showHeroHighlight !== false && (
               <span
                 className={`hero-highlight block mt-2 ${getHighlightSizeClass(activeSlide.highlightFontSize || content.heroHighlightFontSize)}`}
-                style={getHighlightStyle(activeSlide.highlightColor || content.heroHighlightColor)}
+                style={{
+                  ...getHighlightStyle(activeSlide.highlightColor || content.heroHighlightColor),
+                  ...getHighlightCustomStyle(activeSlide.highlightFontSize || content.heroHighlightFontSize),
+                }}
               >
                 {activeSlide.highlight}
               </span>

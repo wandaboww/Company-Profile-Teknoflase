@@ -655,3 +655,18 @@ Jika proses review selesai dan ingin mematikan server dev di terminal:
 * **Penghapusan Card Standar & Deliverables ([`src/components/Services.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/components/Services.tsx))**:
   * Menghapus blok kartu `Standar & Deliverables` di dalam kontainer modal detail layanan (`.services-modal-container`).
   * Modal detail layanan kini tampil lebih bersih, proporsional, dan terfokus pada: Galeri Media Mockup, Deskripsi Solusi Layanan, dan Daftar Fitur yang Diterapkan.
+
+### 44. Pembaruan Dropdown Ukuran Font Highlight dengan Skala Pt (Ala Microsoft Word) & Input Kustom
+
+* **Pembaruan Skala Ukuran Font Highlight ([`src/components/AdminPanel.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/components/AdminPanel.tsx))**:
+  * Mengubah dropdown **"Ukuran Font Highlight Bawaan"** (Global) dan **"Ukuran Font Highlight (Teks Berwarna)"** (Per-Slide) menjadi daftar angka ukuran teks bergaya Microsoft Word:
+    * Mulai dari **7 pt (9 px)** hingga **96 pt (128 px)** lengkap dengan konversi estimasi piksel layar.
+    * Tetap menyediakan opsi bawaan `Proporsional (Sama dengan Judul)` untuk mewarisi ukuran judul hero.
+  * **Fitur Input Kustom (`✏️ Kustom (Tentukan Angka Sendiri)...`)**:
+    * Menambahkan opsi Kustom yang secara dinamis memunculkan input field angka (`input type="number" min="5" max="250"`) berakhiran satuan `pt` beserta konversi piksel otomatis.
+    * Admin dapat bebas mengetik angka ukuran font berapa pun sesuai kebutuhan desain visual.
+* **Penyelarasan Rendering Landing Page & Preview Live ([`src/components/Hero.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/components/Hero.tsx) & [`src/components/AdminPanel.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/components/AdminPanel.tsx))**:
+  * Mengimplementasikan fungsi `parseFontSizePt` dan `getHighlightCustomStyle` dengan CSS `clamp()` responsif:
+    * Ukuran font di desktop tampil tepat sesuai nilai pt yang dipilih.
+    * Pada layar smartphone sempit, ukuran teks otomatis berskala proporsional agar tidak mengalami teks overflow / wrap berlebih.
+  * Kotak pratinjau slide di Admin Panel langsung memperbarui ukuran font secara *real-time* saat dropdown atau input angka kustom diubah.
