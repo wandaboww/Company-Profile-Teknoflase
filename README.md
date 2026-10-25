@@ -70,8 +70,8 @@ Setelah server berjalan, buka browser dan akses tautan: `http://localhost:5173`
 Gunakan kredensial berikut untuk mengakses portal dashboard manajemen konten:
 
 * **URL Akses Admin**: [http://localhost:5173/#admin](http://localhost:5173/#admin)
-* **Username**: `admin`
-* **Password**: `trinova2025`
+* **Username**: ``
+* **Password**: ``
 
 ### Fitur yang Dapat Dikelola di Admin Panel:
 1. **General Info**: Nama Brand, Judul Utama (Hero), Tagline, Call-to-Action.
