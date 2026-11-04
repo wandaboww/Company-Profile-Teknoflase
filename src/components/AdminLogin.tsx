@@ -43,23 +43,25 @@ export default function AdminLogin({ onLogin, brandName = 'TEKNOFLASE' }: AdminL
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
-      <div className={`relative w-full max-w-md transition-all duration-300 ${shake ? 'animate-[shake_0.4s_ease-in-out]' : ''}`}>
+    <div className="admin-login-page min-h-screen bg-slate-950 flex items-center justify-center px-4">
+      <div className={`admin-login-wrapper relative w-full max-w-md transition-all duration-300 ${shake ? 'animate-[shake_0.4s_ease-in-out]' : ''}`}>
         {/* Card */}
-        <div className="rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-8 sm:p-10">
+        <div className="admin-login-card rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-8 sm:p-10">
+        {/* Card */}
+        
 
           {/* Brand Header */}
-          <div className="text-center mb-8">
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500 text-slate-950 font-black text-xl shadow-lg shadow-emerald-500/20">
+          <div className="admin-login-header text-center mb-8">
+            <div className="admin-login-logo mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500 text-slate-950 font-black text-xl shadow-lg shadow-emerald-500/20">
               {brandName ? brandName.charAt(0).toUpperCase() : 'T'}
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Admin Panel</h1>
-            <p className="mt-1.5 text-xs font-semibold text-slate-400">{brandName} — Content Management System</p>
+            <h1 className="admin-login-title text-2xl font-bold text-white tracking-tight">Admin Panel</h1>
+            <p className="admin-login-subtitle mt-1.5 text-xs font-semibold text-slate-400">{brandName} — Content Management System</p>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="mb-5 flex items-center gap-2.5 rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-3">
+            <div className="admin-login-error mb-5 flex items-center gap-2.5 rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-3">
               <svg className="w-4 h-4 text-red-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
               </svg>
@@ -68,7 +70,7 @@ export default function AdminLogin({ onLogin, brandName = 'TEKNOFLASE' }: AdminL
           )}
 
           {/* Login Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="admin-login-form space-y-5">
             {/* Username */}
             <div>
               <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">

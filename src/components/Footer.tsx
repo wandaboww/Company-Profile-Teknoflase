@@ -237,38 +237,38 @@ export default function Footer({ content }: { content: LandingPageContent }) {
             {/* Modal Body (Scrollable) */}
             <div className="footer-modal-body p-6 sm:p-8 space-y-6 overflow-y-auto flex-1">
               {/* Description Card */}
-              <div className="rounded-2xl p-5 sm:p-6 bg-slate-50/70 border border-slate-200/70 space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-md bg-blue-600 text-white text-[10px] font-bold">💡</span>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 font-mono">
+              <div className="footer-modal-desc-card rounded-2xl p-5 sm:p-6 bg-slate-50/70 border border-slate-200/70 space-y-2">
+                <div className="footer-modal-desc-header flex items-center gap-2">
+                  <span className="footer-modal-desc-icon flex h-5 w-5 items-center justify-center rounded-md bg-blue-600 text-white text-[10px] font-bold">💡</span>
+                  <h4 className="footer-modal-desc-heading text-xs font-bold uppercase tracking-wider text-slate-700 font-mono">
                     Fokus Solusi & Nilai Bisnis
                   </h4>
                 </div>
-                <p className="text-sm text-slate-600 leading-relaxed font-sans">
+                <p className="footer-modal-desc-text text-sm text-slate-600 leading-relaxed font-sans">
                   {selectedService.description}
                 </p>
               </div>
 
               {/* Features List with 2-Column Responsive Cards */}
-              <div>
-                <div className="flex items-center justify-between mb-3.5">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 font-mono flex items-center gap-2">
+              <div className="footer-modal-features-section">
+                <div className="footer-modal-features-header flex items-center justify-between mb-3.5">
+                  <h4 className="footer-modal-features-heading text-xs font-bold uppercase tracking-wider text-slate-500 font-mono flex items-center gap-2">
                     <span>🚀</span> Fitur & Keunggulan Terpasang
                   </h4>
-                  <span className="text-[11px] font-mono font-medium text-slate-400">
+                  <span className="footer-modal-features-counter text-[11px] font-mono font-medium text-slate-400">
                     {selectedService.features.length} Fitur Unggulan
                   </span>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div className="footer-modal-features-grid grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {selectedService.features.map((feat, i) => (
                     <div
                       key={i}
-                      className="group flex gap-3 items-start p-3.5 rounded-xl bg-white border border-slate-200/80 hover:border-blue-200 hover:bg-blue-50/20 transition-all shadow-2xs"
+                      className="footer-modal-feature-card group flex gap-3 items-start p-3.5 rounded-xl bg-white border border-slate-200/80 hover:border-blue-200 hover:bg-blue-50/20 transition-all shadow-2xs"
                     >
-                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold mt-0.5 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                      <span className="footer-modal-feature-check flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold mt-0.5 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
                         ✓
                       </span>
-                      <span className="text-xs sm:text-sm text-slate-700 font-medium leading-snug">
+                      <span className="footer-modal-feature-text text-xs sm:text-sm text-slate-700 font-medium leading-snug">
                         {feat}
                       </span>
                     </div>
@@ -277,17 +277,17 @@ export default function Footer({ content }: { content: LandingPageContent }) {
               </div>
 
               {/* MVP Scope Box with Badges */}
-              <div className="rounded-2xl p-5 bg-gradient-to-br from-blue-50/50 via-slate-50 to-indigo-50/30 border border-blue-100/80 space-y-2.5">
+              <div className="footer-modal-scope-card rounded-2xl p-5 bg-gradient-to-br from-blue-50/50 via-slate-50 to-indigo-50/30 border border-blue-100/80 space-y-2.5">
                 <div className="flex items-center gap-2">
                   <span className="flex h-5 w-5 items-center justify-center rounded-md bg-emerald-600 text-white text-[10px] font-bold">🛡️</span>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 font-mono">
+                  <h4 className="footer-modal-scope-heading text-xs font-bold uppercase tracking-wider text-slate-900 font-mono">
                     Estimasi Deliverable & Standar Pengerjaan
                   </h4>
                 </div>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-sans">
+                <p className="footer-modal-scope-text text-xs sm:text-sm text-slate-600 leading-relaxed font-sans">
                   {selectedService.mvp}
                 </p>
-                <div className="pt-2 flex flex-wrap gap-2 text-[11px] font-mono text-slate-500">
+                <div className="footer-modal-scope-tags pt-2 flex flex-wrap gap-2 text-[11px] font-mono text-slate-500">
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700 shadow-2xs">
                     ⚡ Siap Pakai
                   </span>
@@ -303,12 +303,12 @@ export default function Footer({ content }: { content: LandingPageContent }) {
 
             {/* Modal Footer Actions (Full Colour - Deep Slate/Blue Gradient) */}
             <div className="footer-modal-footer p-5 sm:p-6 border-t border-slate-800 bg-gradient-to-r from-slate-950 via-slate-900 to-blue-950 flex flex-col sm:flex-row gap-3 items-center justify-between shrink-0 shadow-inner">
-              <div className="flex flex-col sm:flex-row gap-2.5 w-full sm:w-auto">
+              <div className="footer-modal-actions flex flex-col sm:flex-row gap-2.5 w-full sm:w-auto">
                 <a
                   href={`https://wa.me/${content.contact.whatsapp}?text=Halo%20${encodeURIComponent(brandName)}%2C%20kami%20ingin%20konsultasi%20mengenai%20${encodeURIComponent(selectedService.name)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex justify-center items-center gap-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 py-3 px-6 font-bold text-sm shadow-md shadow-emerald-500/25 transition-all duration-200 cursor-pointer text-center whitespace-nowrap focus-visible:outline-2 focus-visible:outline-emerald-400 hover:scale-[1.02] active:scale-[0.98]"
+                  className="footer-modal-cta-btn inline-flex justify-center items-center gap-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 py-3 px-6 font-bold text-sm shadow-md shadow-emerald-500/25 transition-all duration-200 cursor-pointer text-center whitespace-nowrap focus-visible:outline-2 focus-visible:outline-emerald-400 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <span>Konsultasi Layanan Ini</span>
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -325,7 +325,7 @@ export default function Footer({ content }: { content: LandingPageContent }) {
                         setSelectedServiceIdx(null)
                       }
                     }}
-                    className="inline-flex justify-center items-center gap-2 rounded-xl bg-white/10 hover:bg-white/20 text-white py-3 px-5 font-semibold text-sm border border-white/20 hover:border-white/30 transition-all duration-200 cursor-pointer text-center whitespace-nowrap focus-visible:outline-2 focus-visible:outline-white"
+                    className="footer-modal-demo-btn inline-flex justify-center items-center gap-2 rounded-xl bg-white/10 hover:bg-white/20 text-white py-3 px-5 font-semibold text-sm border border-white/20 hover:border-white/30 transition-all duration-200 cursor-pointer text-center whitespace-nowrap focus-visible:outline-2 focus-visible:outline-white"
                   >
                     <span>Buka Preview Demo</span>
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -337,7 +337,7 @@ export default function Footer({ content }: { content: LandingPageContent }) {
               <button
                 type="button"
                 onClick={() => setSelectedServiceIdx(null)}
-                className="w-full sm:w-auto rounded-xl border border-slate-700 hover:border-slate-600 bg-slate-800/80 hover:bg-slate-800 py-3 px-5 font-semibold text-sm text-slate-300 hover:text-white transition-all cursor-pointer text-center whitespace-nowrap focus-visible:outline-2 focus-visible:outline-slate-400"
+                className="footer-modal-close-action-btn w-full sm:w-auto rounded-xl border border-slate-700 hover:border-slate-600 bg-slate-800/80 hover:bg-slate-800 py-3 px-5 font-semibold text-sm text-slate-300 hover:text-white transition-all cursor-pointer text-center whitespace-nowrap focus-visible:outline-2 focus-visible:outline-slate-400"
               >
                 Tutup
               </button>

@@ -697,3 +697,30 @@ Jika proses review selesai dan ingin mematikan server dev di terminal:
     * Menambahkan tombol **"📥 Cadangkan"** untuk mengunduh seluruh konten & gambar menjadi berkas `backup-teknoflase-YYYY-MM-DD.json`.
     * Menambahkan tombol **"📤 Pulihkan"** untuk mengunggah dan menerapkan berkas cadangan JSON sewaktu-waktu.
     * Dengan arsitektur ini, seluruh perubahan konten yang disimpan admin kini bersifat permanen di disk server VPS, sinkron secara *real-time* ke seluruh pengunjung, dan kebal terhadap pembersihan cache browser.
+
+
+### 46. Penerapan Nama Class Custom Semantik Sesuai Komponen & Konten serta Proteksi Sinkronisasi Data
+
+* **Penerapan Nama Class Custom Semantik Sesuai Komponen & Konten**:
+  * Memberikan penamaan class CSS semantik yang terstruktur, rapi, dan mudah diidentifikasi pada seluruh hierarki komponen dan konten:
+    * **Struktur Aplikasi Utama ([`src/App.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/App.tsx))**:
+      * `.app-root`, `.landing-app-root`, `.privacy-app-root`, `.admin-app-root`, `.landing-main-content`, `.admin-auth-screen`, `.admin-panel-screen`.
+    * **Layanan & Portofolio Proyek ([`src/components/Services.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/components/Services.tsx))**:
+      * Modal: `.services-modal-backdrop`, `.services-modal-container`, `.services-modal-header`, `.services-modal-badge-group`, `.services-modal-category-badge`, `.services-modal-duration-badge`, `.services-modal-title`, `.services-modal-close-btn`.
+      * Galeri Modal: `.services-modal-gallery-wrapper`, `.services-modal-gallery-single`, `.services-modal-gallery-img`, `.services-modal-gallery-prev-btn`, `.services-modal-gallery-next-btn`, `.services-modal-gallery-dots`, `.services-modal-gallery-dot`, `.services-modal-gallery-counter`, `.services-modal-gallery-cover-badge`.
+      * Konten Modal: `.services-modal-desc-box`, `.services-modal-desc-heading`, `.services-modal-desc-text`, `.services-modal-features-box`, `.services-modal-features-heading`, `.services-modal-features-list`, `.services-modal-feature-item`, `.services-modal-feature-check`, `.services-modal-feature-text`.
+      * Aksi Modal: `.services-modal-footer`, `.services-modal-actions`, `.services-modal-cta-btn`, `.services-modal-demo-btn`, `.services-modal-close-action-btn`.
+      * Kartu Layanan: `.services-card-scope-box`, `.services-card-scope-heading`, `.services-card-scope-desc`.
+    * **Footer & Modal Layanan Footer ([`src/components/Footer.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/components/Footer.tsx))**:
+      * `.footer-modal-desc-card`, `.footer-modal-desc-header`, `.footer-modal-desc-icon`, `.footer-modal-desc-heading`, `.footer-modal-desc-text`.
+      * `.footer-modal-features-section`, `.footer-modal-features-header`, `.footer-modal-features-heading`, `.footer-modal-features-counter`, `.footer-modal-features-grid`, `.footer-modal-feature-card`, `.footer-modal-feature-check`, `.footer-modal-feature-text`.
+      * `.footer-modal-scope-card`, `.footer-modal-scope-header`, `.footer-modal-scope-icon`, `.footer-modal-scope-heading`, `.footer-modal-scope-text`, `.footer-modal-scope-tags`, `.footer-modal-scope-tag`.
+      * `.footer-modal-actions`, `.footer-modal-cta-btn`, `.footer-modal-demo-btn`, `.footer-modal-close-action-btn`.
+    * **Autentikasi Admin ([`src/components/AdminLogin.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/components/AdminLogin.tsx))**:
+      * `.admin-login-page`, `.admin-login-wrapper`, `.admin-login-card`, `.admin-login-header`, `.admin-login-logo`, `.admin-login-title`, `.admin-login-subtitle`, `.admin-login-error`, `.admin-login-form`, `.admin-login-submit-btn`.
+    * **Panel Admin CMS ([`src/components/AdminPanel.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/components/AdminPanel.tsx))**:
+      * `.admin-panel-container`, `.admin-sidebar`, `.admin-sidebar-header`, `.admin-sidebar-logo`, `.admin-sidebar-brand-name`, `.admin-sidebar-nav`, `.admin-sidebar-view-site-link`, `.admin-sidebar-logout-btn`, `.admin-header`, `.admin-main-content`, `.admin-section-title`.
+* **Proteksi Mutlak Sinkronisasi Konten & Stempel Waktu (`_updatedAt`) ([`src/App.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/App.tsx))**:
+  * Menambahkan mekanisme stempel waktu `_updatedAt: Date.now()` pada setiap perubahan konten di `handleUpdateContent`.
+  * Memperbaiki `syncServerContent`: mencegah fallback file statis `/content.json` menimpa data kustom yang tersimpan di `localStorage` peramban.
+  * Jika server memiliki data lebih baru, konten diperbarui; jika data lokal admin lebih baru, data otomatis diunggah ke server untuk menjaga integritas data tanpa pernah kembali ke setelan bawaan.

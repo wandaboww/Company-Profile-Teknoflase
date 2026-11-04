@@ -402,56 +402,75 @@ function App() {
     window.addEventListener('hashchange', handleHashChange)
     window.addEventListener('storage', handleStorageChange)
 
-    // ── Sinkronisasi Otomatis Konten Master dari Server (VPS) ──
+    // ── Sinkronisasi Cerdas Konten Master dari Server (VPS) & Proteksi Data Lokal ──
     let isMounted = true
     const syncServerContent = async () => {
       try {
-        // Ambil data konten terbaru dari server VPS (/api/content atau fallback /content.json)
-        let res = await fetch('/api/content?t=' + Date.now()).catch(() => null)
-        if (!res || !res.ok) {
-          res = await fetch('/content.json?t=' + Date.now()).catch(() => null)
+        const localSaved = localStorage.getItem('landing_page_content')
+        let localTimestamp = 0
+        if (localSaved) {
+          try {
+            const lp = JSON.parse(localSaved)
+            localTimestamp = lp._updatedAt || 0
+          } catch {}
         }
+
+        // Ambil data konten terbaru dari endpoint API server VPS
+        const res = await fetch('/api/content?t=' + Date.now()).catch(() => null)
 
         if (res && res.ok) {
           const serverData = await res.json()
           if (serverData && typeof serverData === 'object' && serverData.brandName) {
-            if (isMounted) {
-              const merged: LandingPageContent = {
-                ...DEFAULT_CONTENT,
-                ...serverData,
-                footer: { ...DEFAULT_CONTENT.footer, ...(serverData.footer || {}) },
-                contact: { ...DEFAULT_CONTENT.contact, ...(serverData.contact || {}) },
-              }
-              setContent(merged)
-              try {
-                localStorage.setItem('landing_page_content', JSON.stringify(merged))
-              } catch {
-                // Abaikan jika kuota localStorage penuh
-              }
-            }
-            return
-          }
-        }
+            const serverTimestamp = serverData._updatedAt || 0
 
-        // Jika server belum memiliki data (misal saat instalasi awal),
-        // otomatis kirimkan data lokal yang sudah disesuaikan ke server sebagai data master!
-        const localSaved = localStorage.getItem('landing_page_content')
-        if (localSaved) {
-          try {
-            const localParsed = JSON.parse(localSaved)
-            if (localParsed && localParsed.brandName) {
+            // Hanya perbarui dari server jika data server LEBIH BARU atau data lokal belum ada
+            if (!localSaved || serverTimestamp > localTimestamp) {
+              if (isMounted) {
+                const merged: LandingPageContent = {
+                  ...DEFAULT_CONTENT,
+                  ...serverData,
+                  footer: { ...DEFAULT_CONTENT.footer, ...(serverData.footer || {}) },
+                  contact: { ...DEFAULT_CONTENT.contact, ...(serverData.contact || {}) },
+                }
+                setContent(merged)
+                try {
+                  localStorage.setItem('landing_page_content', JSON.stringify(merged))
+                } catch {}
+              }
+            } else if (localSaved && localTimestamp > serverTimestamp) {
+              // Jika data lokal admin LEBIH BARU daripada server (misal admin baru edit sebelum server restart),
+              // otomatis sinkronkan data lokal admin ke server!
               await fetch('/api/content', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: localSaved,
               }).catch(() => {})
             }
-          } catch {
-            // Abaikan jika parsing gagal
+            return
+          }
+        }
+
+        // HANYA gunakan fallback statis /content.json jika browser belum pernah menyimpan data apa pun (kunjungan pertama)
+        if (!localSaved) {
+          const fallbackRes = await fetch('/content.json?t=' + Date.now()).catch(() => null)
+          if (fallbackRes && fallbackRes.ok) {
+            const fallbackData = await fallbackRes.json()
+            if (fallbackData && typeof fallbackData === 'object' && fallbackData.brandName && isMounted) {
+              const merged: LandingPageContent = {
+                ...DEFAULT_CONTENT,
+                ...fallbackData,
+                footer: { ...DEFAULT_CONTENT.footer, ...(fallbackData.footer || {}) },
+                contact: { ...DEFAULT_CONTENT.contact, ...(fallbackData.contact || {}) },
+              }
+              setContent(merged)
+              try {
+                localStorage.setItem('landing_page_content', JSON.stringify(merged))
+              } catch {}
+            }
           }
         }
       } catch (err) {
-        console.warn('Gagal sinkronisasi konten server:', err)
+        console.warn('Sinkronisasi konten server:', err)
       }
     }
 
@@ -488,17 +507,21 @@ function App() {
   }, [])
 
   const handleUpdateContent = async (newContent: LandingPageContent) => {
-    setContent(newContent)
+    const stampedContent: LandingPageContent = {
+      ...newContent,
+      _updatedAt: Date.now(),
+    }
+    setContent(stampedContent)
 
     // 1. Simpan ke localStorage untuk akses instan di browser saat ini
     try {
-      localStorage.setItem('landing_page_content', JSON.stringify(newContent))
+      localStorage.setItem('landing_page_content', JSON.stringify(stampedContent))
     } catch (err: unknown) {
       console.warn('LocalStorage quota warning, mencoba optimasi gambar...', err)
       try {
-        const { items, compressedCount } = await sanitizePortfolioStorage(newContent.portfolioItems)
+        const { items, compressedCount } = await sanitizePortfolioStorage(stampedContent.portfolioItems)
         if (compressedCount > 0) {
-          const sanitizedContent = { ...newContent, portfolioItems: items }
+          const sanitizedContent = { ...stampedContent, portfolioItems: items }
           setContent(sanitizedContent)
           localStorage.setItem('landing_page_content', JSON.stringify(sanitizedContent))
           console.info(`[Teknoflase] Berhasil mengompresi ${compressedCount} gambar untuk menghemat kuota localStorage.`)
@@ -509,12 +532,11 @@ function App() {
     }
 
     // 2. Simpan permanen ke Server VPS (/api/content)
-    // Ini menjamin seluruh pengunjung, perangkat lain, dan sesi baru melihat update ini secara permanen
     try {
       await fetch('/api/content', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newContent),
+        body: JSON.stringify(stampedContent),
       })
     } catch (serverErr) {
       console.warn('Gagal sinkronisasi langsung ke server API:', serverErr)
@@ -535,21 +557,17 @@ function App() {
   // ── Admin Route ─────────────────────────────────────────────────────────────
   if (currentRoute === 'admin') {
     if (!isAdminAuthenticated) {
-      return <AdminLogin onLogin={handleLogin} brandName={content.brandName} />
+      return <div className="admin-app-root admin-auth-screen min-h-screen bg-slate-950 text-white flex items-center justify-center"><AdminLogin onLogin={handleLogin} brandName={content.brandName} /></div>
     }
     return (
-      <AdminPanel
-        content={content}
-        onUpdateContent={handleUpdateContent}
-        onLogout={handleLogout}
-      />
+      <div className="admin-app-root admin-panel-screen min-h-screen bg-slate-950 text-slate-100"><AdminPanel content={content} onUpdateContent={handleUpdateContent} onLogout={handleLogout} /></div>
     )
   }
 
   // ── Privacy Policy Route ───────────────────────────────────────────────────
   if (currentRoute === 'privacy') {
     return (
-      <div className="app-layout min-h-screen bg-white text-slate-900 transition-colors duration-200">
+      <div className="app-root privacy-app-root app-layout min-h-screen bg-white text-slate-900 transition-colors duration-200">
         <SEO content={content} />
         <PrivacyPolicy
           content={content}
@@ -564,14 +582,16 @@ function App() {
 
   // ── Landing Page Route (Lighting Aesthetic) ─────────────────────────────────
   return (
-    <div className="app-layout min-h-screen bg-white text-slate-900 transition-colors duration-200">
+    <div className="app-root landing-app-root app-layout min-h-screen bg-white text-slate-900 transition-colors duration-200">
       <SEO content={content} />
       <Navbar brandName={content.brandName} />
-      <Hero content={content} />
-      <About content={content} />
-      <Services content={content} />
-      <FAQ content={content} />
-      <Contact content={content} />
+      <main className="landing-main-content">
+        <Hero content={content} />
+        <About content={content} />
+        <Services content={content} />
+        <FAQ content={content} />
+        <Contact content={content} />
+      </main>
       <Footer content={content} />
     </div>
   )

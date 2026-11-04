@@ -341,33 +341,35 @@ function ModalMediaGallery({
 
   if (images.length <= 1) {
     return (
-      <img
-        key={images[0]}
-        src={images[0]}
-        alt={project.title}
-        className="w-full h-full object-cover"
-        referrerPolicy="no-referrer"
-        onError={(e) => {
-          const target = e.currentTarget
-          const fallback = getFallbackImage(project.category, realIndex)
-          if (target.src !== fallback) {
-            target.src = fallback
-          }
-        }}
-      />
+      <div className="services-modal-gallery-single rounded-xl overflow-hidden aspect-[16/10] bg-slate-950">
+        <img
+          key={images[0]}
+          src={images[0]}
+          alt={project.title}
+          className="services-modal-gallery-img w-full h-full object-cover"
+          referrerPolicy="no-referrer"
+          onError={(e) => {
+            const target = e.currentTarget
+            const fallback = getFallbackImage(project.category, realIndex)
+            if (target.src !== fallback) {
+              target.src = fallback
+            }
+          }}
+        />
+      </div>
     )
   }
 
   const safeIdx = currentIdx >= images.length ? 0 : currentIdx
 
   return (
-    <div className="relative w-full h-full overflow-hidden select-none bg-slate-950">
+    <div className="services-modal-gallery-wrapper relative w-full aspect-[16/10] overflow-hidden select-none bg-slate-950 rounded-xl">
       {images.map((img, i) => (
         <img
           key={`${img}-${i}`}
           src={img}
           alt={`${project.title} - Gambar ${i + 1}`}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+          className={`services-modal-gallery-img absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
             i === safeIdx ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
           }`}
           referrerPolicy="no-referrer"
@@ -386,7 +388,7 @@ function ModalMediaGallery({
           e.stopPropagation()
           setCurrentIdx((prev) => (prev - 1 + images.length) % images.length)
         }}
-        className="absolute left-2.5 top-1/2 -translate-y-1/2 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm hover:bg-black/90 cursor-pointer transition-transform hover:scale-110"
+        className="services-modal-gallery-prev-btn absolute left-2.5 top-1/2 -translate-y-1/2 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm hover:bg-black/90 cursor-pointer transition-transform hover:scale-110"
         aria-label="Gambar sebelumnya"
       >
         ‹
@@ -397,14 +399,14 @@ function ModalMediaGallery({
           e.stopPropagation()
           setCurrentIdx((prev) => (prev + 1) % images.length)
         }}
-        className="absolute right-2.5 top-1/2 -translate-y-1/2 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm hover:bg-black/90 cursor-pointer transition-transform hover:scale-110"
+        className="services-modal-gallery-next-btn absolute right-2.5 top-1/2 -translate-y-1/2 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm hover:bg-black/90 cursor-pointer transition-transform hover:scale-110"
         aria-label="Gambar selanjutnya"
       >
         ›
       </button>
 
       {/* Stepper Dots & Cover Indicator */}
-      <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-sm">
+      <div className="services-modal-gallery-dots absolute bottom-2.5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-sm">
         {images.map((_, dotIdx) => (
           <button
             key={dotIdx}
@@ -413,7 +415,7 @@ function ModalMediaGallery({
               e.stopPropagation()
               setCurrentIdx(dotIdx)
             }}
-            className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+            className={`services-modal-gallery-dot h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
               safeIdx === dotIdx ? 'w-5 bg-white' : 'w-1.5 bg-white/40 hover:bg-white/80'
             }`}
             aria-label={`Slide foto ${dotIdx + 1}`}
@@ -421,13 +423,13 @@ function ModalMediaGallery({
         ))}
       </div>
 
-      <div className="absolute top-2.5 right-2.5 z-20 flex items-center gap-1.5 pointer-events-none">
+      <div className="services-modal-gallery-counter absolute top-2.5 right-2.5 z-20 flex items-center gap-1.5 pointer-events-none">
         {safeIdx === 0 && (
-          <span className="px-2 py-0.5 rounded-md bg-emerald-500/90 text-slate-950 text-[10px] font-mono font-bold shadow-sm">
+          <span className="services-modal-gallery-cover-badge px-2 py-0.5 rounded-md bg-emerald-500/90 text-slate-950 text-[10px] font-mono font-bold shadow-sm">
             ★ Cover
           </span>
         )}
-        <div className="px-2 py-0.5 rounded-md bg-black/60 text-white text-[10px] font-mono">
+        <div className="services-modal-gallery-counter-pill px-2 py-0.5 rounded-md bg-black/60 text-white text-[10px] font-mono">
           {safeIdx + 1}/{images.length}
         </div>
       </div>
@@ -624,10 +626,10 @@ export default function Services({ content }: { content: LandingPageContent }) {
 
                               {/* Highlight Deliverable Scope Box */}
                               <div className="services-card-scope-box mt-5 p-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
-                                <span className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono mb-0.5">
+                                <span className="services-card-scope-heading block text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono mb-0.5">
                                   Standar Implementasi:
                                 </span>
-                                <p className="text-xs text-slate-600 leading-relaxed font-sans">
+                                <p className="services-card-scope-desc text-xs text-slate-600 leading-relaxed font-sans">
                                   {project.deliverables || 'Dibuat dengan kode bersih, optimasi kecepatan Core Web Vitals, tampilan responsif di seluruh gadget, dan 100% kepemilikan source code klien.'}
                                 </p>
                               </div>
@@ -746,12 +748,12 @@ export default function Services({ content }: { content: LandingPageContent }) {
           <div className="absolute inset-0 cursor-default" onClick={() => setSelectedDetailIdx(null)} />
           <div className="services-modal-container relative w-full max-w-xl bg-white rounded-2xl border border-slate-200 shadow-2xl z-10 max-h-[85vh] flex flex-col overflow-hidden text-slate-900">
             <div className="services-modal-header p-6 border-b border-slate-300/80 relative pr-16 shrink-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-semibold text-blue-700 uppercase tracking-wider font-mono">
+              <div className="services-modal-badge-group flex flex-wrap items-center gap-2">
+                <span className="services-modal-category-badge text-xs font-semibold text-blue-700 uppercase tracking-wider font-mono">
                   Solusi {activeDetail.category}
                 </span>
                 {activeDetail.duration && (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-mono font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                  <span className="services-modal-duration-badge inline-flex items-center gap-1 text-[11px] font-mono font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                     ⏱️ {activeDetail.duration}
                   </span>
                 )}
@@ -774,19 +776,19 @@ export default function Services({ content }: { content: LandingPageContent }) {
             <div className="services-modal-body p-6 space-y-5 overflow-y-auto flex-1">
               <ModalMediaGallery project={activeDetail} realIndex={selectedDetailIdx ?? 0} />
 
-              <div>
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2 font-mono">Deskripsi Layanan</h4>
-                <p className="text-sm text-slate-600 leading-relaxed">{activeDetail.description}</p>
+              <div className="services-modal-desc-box">
+                <h4 className="services-modal-desc-heading text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2 font-mono">Deskripsi Layanan</h4>
+                <p className="services-modal-desc-text text-sm text-slate-600 leading-relaxed">{activeDetail.description}</p>
               </div>
 
               {activeDetail.features && activeDetail.features.length > 0 && (
-                <div>
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2 font-mono">Fitur yang Diterapkan</h4>
-                  <ul className="space-y-2">
+                <div className="services-modal-features-box">
+                  <h4 className="services-modal-features-heading text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2 font-mono">Fitur yang Diterapkan</h4>
+                  <ul className="services-modal-features-list space-y-2">
                     {activeDetail.features.map((feat, i) => (
-                      <li key={i} className="flex gap-2.5 items-start text-sm text-slate-700">
-                        <span className="text-emerald-500 font-bold font-mono">✓</span>
-                        <span>{feat}</span>
+                      <li key={i} className="services-modal-feature-item flex gap-2.5 items-start text-sm text-slate-700">
+                        <span className="services-modal-feature-check text-emerald-500 font-bold font-mono">✓</span>
+                        <span className="services-modal-feature-text">{feat}</span>
                       </li>
                     ))}
                   </ul>
@@ -795,12 +797,12 @@ export default function Services({ content }: { content: LandingPageContent }) {
             </div>
 
             <div className="services-modal-footer p-5 border-t border-slate-100 bg-slate-50/70 flex flex-col sm:flex-row gap-3 items-center justify-between shrink-0">
-              <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+              <div className="services-modal-actions flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
                 <a
                   href={`https://wa.me/${whatsappNumber}?text=Halo%20${encodeURIComponent(brandName)}%2C%20kami%20tertarik%20dengan%20layanan%20${encodeURIComponent(activeDetail.title)}%20dan%20ingin%20konsultasi%20pembuatan%20website%20serupa.`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full sm:w-auto inline-flex justify-center items-center gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white py-2.5 px-5 font-semibold text-sm shadow-sm transition-all"
+                  className="services-modal-cta-btn w-full sm:w-auto inline-flex justify-center items-center gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white py-2.5 px-5 font-semibold text-sm shadow-sm transition-all"
                 >
                   Konsultasi Layanan Ini
                 </a>
@@ -809,7 +811,7 @@ export default function Services({ content }: { content: LandingPageContent }) {
                     href={activeDetail.demoUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full sm:w-auto inline-flex justify-center items-center gap-1.5 rounded-xl border border-blue-300 bg-blue-50 text-blue-700 hover:bg-blue-100 py-2.5 px-4 font-semibold text-xs shadow-xs transition-all"
+                    className="services-modal-demo-btn w-full sm:w-auto inline-flex justify-center items-center gap-1.5 rounded-xl border border-blue-300 bg-blue-50 text-blue-700 hover:bg-blue-100 py-2.5 px-4 font-semibold text-xs shadow-xs transition-all"
                   >
                     <span>Kunjungi Live Demo</span>
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -821,7 +823,7 @@ export default function Services({ content }: { content: LandingPageContent }) {
               <button
                 type="button"
                 onClick={() => setSelectedDetailIdx(null)}
-                className="w-full sm:w-auto rounded-xl border border-slate-200 bg-white py-2.5 px-5 font-semibold text-sm text-slate-600 hover:bg-slate-100 transition-all cursor-pointer"
+                className="services-modal-close-action-btn w-full sm:w-auto rounded-xl border border-slate-200 bg-white py-2.5 px-5 font-semibold text-sm text-slate-600 hover:bg-slate-100 transition-all cursor-pointer"
               >
                 Tutup
               </button>
