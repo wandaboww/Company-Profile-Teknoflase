@@ -13,7 +13,7 @@ import PrivacyPolicy, { DEFAULT_PRIVACY_POLICY } from './components/PrivacyPolic
 import type { LandingPageContent } from './components/AdminPanel'
 import { sanitizePortfolioStorage } from './utils/imageOptimizer'
 
-const DEFAULT_CONTENT: LandingPageContent = {
+export const DEFAULT_CONTENT: LandingPageContent = {
   brandName: 'TEKNOFLASE',
   heroTitle: 'Jasa Pembuatan Website Profesional &',
   heroHighlight: 'Platform Web Modern Berkinerja Tinggi',
@@ -255,134 +255,69 @@ function App() {
       const saved = localStorage.getItem('landing_page_content')
       if (saved) {
         try {
-          let parsed = JSON.parse(saved)
-          // Auto-migrate: if they have older content, update to new high-converting website service content
-          if (
-            parsed.heroTitle === 'Merakit Logika' || 
-            parsed.heroHighlight === 'Membangun Realita' ||
-            parsed.heroTitle === 'Jasa Pembuatan E-Commerce' ||
-            parsed.heroTitle === 'Rekayasa Perangkat Lunak,' ||
-            !parsed.heroTitle?.includes('Website')
-          ) {
-            localStorage.setItem('landing_page_content', JSON.stringify(DEFAULT_CONTENT))
-            return DEFAULT_CONTENT
-          }
-          // Strips the tech credit suffix from older client configurations immediately
-          if (parsed.footer?.copyrightSuffix?.includes('Dibuat menggunakan React')) {
-            parsed.footer.copyrightSuffix = 'Hak cipta dilindungi.'
-            localStorage.setItem('landing_page_content', JSON.stringify(parsed))
-          }
-          // Auto-migrate legacy brand names (trinova..., jasaweb...) to TEKNOFLASE in existing localStorage
-          let contentString = JSON.stringify(parsed)
-          if (/trinova|jasaweb/i.test(contentString)) {
-            contentString = contentString
-              .replace(/demo\.jasaweb\.digital/gi, 'demo.teknoflase.com')
-              .replace(/jasaweb\.digital/gi, 'TEKNOFLASE')
-              .replace(/jasaweb/gi, 'teknoflase')
-              .replace(/demo\.trinovagroup\.com/gi, 'demo.teknoflase.com')
-              .replace(/trinovagroup\.com/gi, 'teknoflase.com')
-              .replace(/trinovadigital\.com/gi, 'teknoflase.com')
-              .replace(/Trinovagroup/g, 'TEKNOFLASE')
-              .replace(/trinovagroup/g, 'teknoflase')
-              .replace(/Trinova Group/gi, 'TEKNOFLASE')
-              .replace(/Trinova Digital/gi, 'TEKNOFLASE')
-              .replace(/trinovadigital/g, 'teknoflase')
-            parsed = JSON.parse(contentString)
+          const parsed = JSON.parse(saved)
+          if (parsed && typeof parsed === 'object') {
+            // Strips the tech credit suffix from older client configurations immediately
+            if (parsed.footer?.copyrightSuffix?.includes('Dibuat menggunakan React')) {
+              parsed.footer.copyrightSuffix = 'Hak cipta dilindungi.'
+            }
+
             if (parsed.brandName && (/jasaweb/i.test(parsed.brandName) || /trinova/i.test(parsed.brandName))) {
               parsed.brandName = 'TEKNOFLASE'
             }
-            localStorage.setItem('landing_page_content', JSON.stringify(parsed))
-          }
-          // Migrate: update footerServices to easy-to-understand profit-focused copy
-          if (
-            !parsed.footerServices ||
-            parsed.footerServices.length < 6 ||
-            parsed.footerServices.some((s: Record<string, unknown>) => 
-              s.name === 'Audit & Optimasi Website' || 
-              s.name === 'Website Perusahaan (Company Profile)' ||
-              (typeof s.title === 'string' && s.title.includes('Pembuatan Website Company Profile & Korporat')) ||
-              (typeof s.title === 'string' && s.title.includes('Membangun Kredibilitas & Reputasi Bisnis'))
-            )
-          ) {
-            parsed.footerServices = DEFAULT_CONTENT.footerServices
-            localStorage.setItem('landing_page_content', JSON.stringify(parsed))
-          }
-          // Migrate: ensure existing saved portfolio items have images array and coverImage
-          if (parsed.portfolioItems && Array.isArray(parsed.portfolioItems)) {
-            let hasImageUpdates = false
-            parsed.portfolioItems = parsed.portfolioItems.map((item: Record<string, unknown>, idx: number) => {
-              let updated = { ...item }
-              if (!updated.image) {
-                hasImageUpdates = true
+
+            // Migrate: ensure existing saved portfolio items have images array and coverImage
+            if (parsed.portfolioItems && Array.isArray(parsed.portfolioItems)) {
+              parsed.portfolioItems = parsed.portfolioItems.map((item: Record<string, unknown>, idx: number) => {
+                const updated = { ...item }
+                if (!updated.image) {
+                  const defaultItem = DEFAULT_CONTENT.portfolioItems[idx]
+                  updated.image = defaultItem?.image || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80'
+                }
                 const defaultItem = DEFAULT_CONTENT.portfolioItems[idx]
-                updated.image = defaultItem?.image || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80'
-              }
-              const defaultItem = DEFAULT_CONTENT.portfolioItems[idx]
-              if (!Array.isArray(updated.images) || updated.images.length === 0) {
-                hasImageUpdates = true
-                updated.images = defaultItem?.images || (updated.image ? [updated.image as string] : [])
-              }
-              if (!updated.coverImage && updated.image) {
-                hasImageUpdates = true
-                updated.coverImage = updated.image
-              }
-              return updated
-            })
-            if (hasImageUpdates) {
-              localStorage.setItem('landing_page_content', JSON.stringify(parsed))
+                if (!Array.isArray(updated.images) || updated.images.length === 0) {
+                  updated.images = defaultItem?.images || (updated.image ? [updated.image as string] : [])
+                }
+                if (!updated.coverImage && updated.image) {
+                  updated.coverImage = updated.image
+                }
+                return updated
+              })
             }
-          }
 
-          // Migrate: ensure privacyPolicy exists
-          if (!parsed.privacyPolicy || !Array.isArray(parsed.privacyPolicy.sections)) {
-            parsed.privacyPolicy = DEFAULT_CONTENT.privacyPolicy
-            localStorage.setItem('landing_page_content', JSON.stringify(parsed))
-          }
-
-          // Migrate: ensure footer.privacyLink points to #privacy
-          if (parsed.footer && (parsed.footer.privacyLink === '#' || !parsed.footer.privacyLink)) {
-            parsed.footer.privacyLink = '#privacy'
-            localStorage.setItem('landing_page_content', JSON.stringify(parsed))
-          }
-
-          // Migrate: update old default ctaButtonText to 'WhatsApp Sekarang'
-          if (parsed.ctaButtonText === 'Mulai Percakapan WhatsApp Sekarang') {
-            parsed.ctaButtonText = 'WhatsApp Sekarang'
-            localStorage.setItem('landing_page_content', JSON.stringify(parsed))
-          }
-
-          // Migrate: merge missing keys from DEFAULT_CONTENT so new fields populate
-          return {
-            ...DEFAULT_CONTENT,
-            ...parsed,
-            privacyPolicy: (parsed.privacyPolicy && Array.isArray(parsed.privacyPolicy.sections) && parsed.privacyPolicy.sections.length > 0)
-              ? parsed.privacyPolicy
-              : DEFAULT_CONTENT.privacyPolicy,
-            footer: {
-              ...DEFAULT_CONTENT.footer,
-              ...(parsed.footer || {}),
-              privacyLink: (parsed.footer?.privacyLink && parsed.footer.privacyLink !== '#')
-                ? parsed.footer.privacyLink
-                : '#privacy',
-            },
-            footerServices: (Array.isArray(parsed.footerServices) && parsed.footerServices.length > 0)
-              ? parsed.footerServices
-              : DEFAULT_CONTENT.footerServices,
-            featuresItems: (Array.isArray(parsed.featuresItems) && parsed.featuresItems.length > 0)
-              ? parsed.featuresItems
-              : DEFAULT_CONTENT.featuresItems,
-            faqItems: (Array.isArray(parsed.faqItems) && parsed.faqItems.length > 0)
-              ? parsed.faqItems
-              : DEFAULT_CONTENT.faqItems,
-            aboutStats: (Array.isArray(parsed.aboutStats) && parsed.aboutStats.length > 0)
-              ? parsed.aboutStats
-              : DEFAULT_CONTENT.aboutStats,
-            teamMembers: (Array.isArray(parsed.teamMembers) && parsed.teamMembers.length > 0)
-              ? parsed.teamMembers
-              : DEFAULT_CONTENT.teamMembers,
-            portfolioItems: (Array.isArray(parsed.portfolioItems) && parsed.portfolioItems.length > 0)
-              ? parsed.portfolioItems
-              : DEFAULT_CONTENT.portfolioItems,
+            // Merge safely with DEFAULT_CONTENT so newly added config keys always exist
+            return {
+              ...DEFAULT_CONTENT,
+              ...parsed,
+              privacyPolicy: (parsed.privacyPolicy && Array.isArray(parsed.privacyPolicy.sections) && parsed.privacyPolicy.sections.length > 0)
+                ? parsed.privacyPolicy
+                : DEFAULT_CONTENT.privacyPolicy,
+              footer: {
+                ...DEFAULT_CONTENT.footer,
+                ...(parsed.footer || {}),
+                privacyLink: (parsed.footer?.privacyLink && parsed.footer.privacyLink !== '#')
+                  ? parsed.footer.privacyLink
+                  : '#privacy',
+              },
+              footerServices: (Array.isArray(parsed.footerServices) && parsed.footerServices.length > 0)
+                ? parsed.footerServices
+                : DEFAULT_CONTENT.footerServices,
+              featuresItems: (Array.isArray(parsed.featuresItems) && parsed.featuresItems.length > 0)
+                ? parsed.featuresItems
+                : DEFAULT_CONTENT.featuresItems,
+              faqItems: (Array.isArray(parsed.faqItems) && parsed.faqItems.length > 0)
+                ? parsed.faqItems
+                : DEFAULT_CONTENT.faqItems,
+              aboutStats: (Array.isArray(parsed.aboutStats) && parsed.aboutStats.length > 0)
+                ? parsed.aboutStats
+                : DEFAULT_CONTENT.aboutStats,
+              teamMembers: (Array.isArray(parsed.teamMembers) && parsed.teamMembers.length > 0)
+                ? parsed.teamMembers
+                : DEFAULT_CONTENT.teamMembers,
+              portfolioItems: (Array.isArray(parsed.portfolioItems) && parsed.portfolioItems.length > 0)
+                ? parsed.portfolioItems
+                : DEFAULT_CONTENT.portfolioItems,
+            }
           }
         } catch (e) {
           console.error('Failed to parse saved content', e)
@@ -467,20 +402,77 @@ function App() {
     window.addEventListener('hashchange', handleHashChange)
     window.addEventListener('storage', handleStorageChange)
 
+    // ── Sinkronisasi Otomatis Konten Master dari Server (VPS) ──
+    let isMounted = true
+    const syncServerContent = async () => {
+      try {
+        // Ambil data konten terbaru dari server VPS (/api/content atau fallback /content.json)
+        let res = await fetch('/api/content?t=' + Date.now()).catch(() => null)
+        if (!res || !res.ok) {
+          res = await fetch('/content.json?t=' + Date.now()).catch(() => null)
+        }
+
+        if (res && res.ok) {
+          const serverData = await res.json()
+          if (serverData && typeof serverData === 'object' && serverData.brandName) {
+            if (isMounted) {
+              const merged: LandingPageContent = {
+                ...DEFAULT_CONTENT,
+                ...serverData,
+                footer: { ...DEFAULT_CONTENT.footer, ...(serverData.footer || {}) },
+                contact: { ...DEFAULT_CONTENT.contact, ...(serverData.contact || {}) },
+              }
+              setContent(merged)
+              try {
+                localStorage.setItem('landing_page_content', JSON.stringify(merged))
+              } catch {
+                // Abaikan jika kuota localStorage penuh
+              }
+            }
+            return
+          }
+        }
+
+        // Jika server belum memiliki data (misal saat instalasi awal),
+        // otomatis kirimkan data lokal yang sudah disesuaikan ke server sebagai data master!
+        const localSaved = localStorage.getItem('landing_page_content')
+        if (localSaved) {
+          try {
+            const localParsed = JSON.parse(localSaved)
+            if (localParsed && localParsed.brandName) {
+              await fetch('/api/content', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: localSaved,
+              }).catch(() => {})
+            }
+          } catch {
+            // Abaikan jika parsing gagal
+          }
+        }
+      } catch (err) {
+        console.warn('Gagal sinkronisasi konten server:', err)
+      }
+    }
+
+    syncServerContent()
+
     // Auto-optimize existing oversized base64 images in localStorage from legacy uploads
     try {
       const rawSaved = localStorage.getItem('landing_page_content')
       if (rawSaved && rawSaved.length > 400_000) {
         sanitizePortfolioStorage(content.portfolioItems).then(({ items, compressedCount }) => {
-          if (compressedCount > 0) {
-            const optimized = { ...content, portfolioItems: items }
-            setContent(optimized)
-            try {
-              localStorage.setItem('landing_page_content', JSON.stringify(optimized))
-              console.info(`[Teknoflase] Otomatis mengoptimalkan ${compressedCount} aset gambar lokal (${(rawSaved.length / 1024 / 1024).toFixed(2)} MB ➔ ${(JSON.stringify(optimized).length / 1024 / 1024).toFixed(2)} MB)`)
-            } catch (e) {
-              console.warn('Could not auto-save optimized images:', e)
-            }
+          if (compressedCount > 0 && isMounted) {
+            setContent(prev => {
+              const optimized = { ...prev, portfolioItems: items }
+              try {
+                localStorage.setItem('landing_page_content', JSON.stringify(optimized))
+                console.info(`[Teknoflase] Otomatis mengoptimalkan ${compressedCount} aset gambar lokal (${(rawSaved.length / 1024 / 1024).toFixed(2)} MB ➔ ${(JSON.stringify(optimized).length / 1024 / 1024).toFixed(2)} MB)`)
+              } catch (e) {
+                console.warn('Could not auto-save optimized images:', e)
+              }
+              return optimized
+            })
           }
         })
       }
@@ -489,6 +481,7 @@ function App() {
     }
 
     return () => {
+      isMounted = false
       window.removeEventListener('hashchange', handleHashChange)
       window.removeEventListener('storage', handleStorageChange)
     }
@@ -496,10 +489,12 @@ function App() {
 
   const handleUpdateContent = async (newContent: LandingPageContent) => {
     setContent(newContent)
+
+    // 1. Simpan ke localStorage untuk akses instan di browser saat ini
     try {
       localStorage.setItem('landing_page_content', JSON.stringify(newContent))
     } catch (err: unknown) {
-      console.warn('LocalStorage quota exceeded, attempting automatic image optimization...', err)
+      console.warn('LocalStorage quota warning, mencoba optimasi gambar...', err)
       try {
         const { items, compressedCount } = await sanitizePortfolioStorage(newContent.portfolioItems)
         if (compressedCount > 0) {
@@ -507,13 +502,22 @@ function App() {
           setContent(sanitizedContent)
           localStorage.setItem('landing_page_content', JSON.stringify(sanitizedContent))
           console.info(`[Teknoflase] Berhasil mengompresi ${compressedCount} gambar untuk menghemat kuota localStorage.`)
-          return
         }
       } catch (sanitizeErr) {
         console.error('Failed to auto-sanitize portfolio storage:', sanitizeErr)
       }
+    }
 
-      alert('Kapasitas penyimpanan lokal browser (localStorage) penuh (~5MB). Silakan gunakan tautan URL gambar (Google Drive/Dropbox/Unsplash) atau kurangi jumlah foto agar perubahan tersimpan permanen.')
+    // 2. Simpan permanen ke Server VPS (/api/content)
+    // Ini menjamin seluruh pengunjung, perangkat lain, dan sesi baru melihat update ini secara permanen
+    try {
+      await fetch('/api/content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newContent),
+      })
+    } catch (serverErr) {
+      console.warn('Gagal sinkronisasi langsung ke server API:', serverErr)
     }
   }
 

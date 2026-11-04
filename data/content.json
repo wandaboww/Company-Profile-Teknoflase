@@ -1,0 +1,417 @@
+{
+  "brandName": "TEKNOFLASE",
+  "heroTitle": "Jasa Pembuatan Website Profesional &",
+  "heroHighlight": "Platform Web Modern Berkinerja Tinggi",
+  "heroHighlightColor": "#2563eb",
+  "heroFontSize": "normal",
+  "heroHighlightFontSize": "same",
+  "showHeroHeadline": true,
+  "showHeroHighlight": true,
+  "heroDescription": "Kami membantu bisnis, perusahaan, dan profesional memiliki website berkecepatan tinggi, ramah SEO, dan berdesain kredibel. Bukan sekadar template, setiap website dibangun dengan standar kode bersih untuk menarik prospek dan meningkatkan pertumbuhan bisnis Anda.",
+  "heroSlides": [
+    {
+      "title": "Website Perusahaan & Company Profile",
+      "highlight": "Membangun Kredibilitas & Kepercayaan Klien",
+      "desc": "Tampilkan citra profesional bisnis Anda melalui website elegan yang responsif di seluruh perangkat. Struktur halaman terencana rapi untuk mempermudah calon klien mempelajari layanan Anda.",
+      "ctaText": "Konsultasi Pembuatan Website",
+      "ctaLink": "#contact",
+      "learnText": "Lihat Layanan Website",
+      "learnLink": "#services"
+    },
+    {
+      "title": "Landing Page Penjualan & Promosi Terarah",
+      "highlight": "Optimasi Kecepatan & Penangkapan Leads WhatsApp",
+      "desc": "Maksimalkan hasil kampanye iklan dan promosi Anda dengan landing page yang cepat dimuat dan mudah dipahami. Terhubung langsung dengan tombol WhatsApp dan sistem formulir prospek.",
+      "ctaText": "Pesan Landing Page",
+      "ctaLink": "#contact",
+      "learnText": "Pelajari Keunggulan Kami",
+      "learnLink": "#about"
+    },
+    {
+      "title": "Aplikasi Web Kustom & Portal Sistem",
+      "highlight": "Solusi Portal Bisnis, SaaS & Manajemen Data",
+      "desc": "Mulai dari sistem pemesanan online, katalog produk interaktif, hingga dashboard internal perusahaan dengan hak akses terenkripsi dan 100% kepemilikan source code di tangan Anda.",
+      "ctaText": "Diskusikan Kebutuhan Sistem",
+      "ctaLink": "#contact",
+      "learnText": "Tanya Jawab (FAQ)",
+      "learnLink": "#faq"
+    }
+  ],
+  "heroBadges": [
+    "Support UMKM & Bisnis Lokal",
+    "Berbasis di Bogor, Jabar",
+    "Loading Cepat & Bebas Bloatware",
+    "100% Source Code Milik Anda"
+  ],
+  "aboutTitle": "Standar Pembuatan Website yang Berorientasi pada Hasil Nyata",
+  "aboutDescription": "Pendekatan pembuatan website di TEKNOFLASE memprioritaskan tiga pilar utama: kecepatan loading di bawah dua detik, desain profesional yang meyakinkan calon pelanggan, serta kemudahan pengelolaan konten secara mandiri.",
+  "aboutStats": [
+    {
+      "label": "Rata-rata Waktu Muat (Load Time)",
+      "value": "< 1.8 Detik"
+    },
+    {
+      "label": "Skor Performa Core Web Vitals",
+      "value": "95+"
+    },
+    {
+      "label": "Kepemilikan Source Code Klien",
+      "value": "100%"
+    },
+    {
+      "label": "Jaminan Uptime Server & SLA",
+      "value": "99.9%"
+    }
+  ],
+  "portfolioHeading": "Layanan Pembuatan Website & Solusi Digital",
+  "portfolioDescription": "Pilihan solusi website perusahaan, landing page konversi, portal katalog, dan platform web kustom yang dibangun dengan standar performa tinggi.",
+  "servicesCtaTitle": "Ingin Mengembangkan Website Serupa dengan Spesifikasi Kustom?",
+  "servicesCtaDesc": "Diskusikan referensi desain dan target fitur bisnis Anda. Tim TEKNOFLASE siap menyusun arsitektur sistem dan estimasi pengerjaan yang transparan.",
+  "servicesCtaButton": "Konsultasi Sekarang",
+  "faqHeading": "Tanya Jawab Seputar Layanan Pembuatan Website",
+  "faqDescription": "Temukan jawaban lengkap seputar estimasi waktu pengerjaan, kepemilikan source code, optimasi SEO Google, hingga kemudahan pengelolaan website Anda di TEKNOFLASE.",
+  "contactHeading": "Mulai Wujudkan Website Profesional untuk Bisnis Anda",
+  "contactDescription": "Diskusikan tujuan, kebutuhan fitur, dan target peluncuran website Anda. Tim kami siap memberikan rekomendasi struktur, estimasi waktu, dan penawaran transparan.",
+  "featuresDescription": "Pendekatan pembuatan website di TEKNOFLASE memprioritaskan tiga pilar utama: kecepatan loading di bawah dua detik, desain profesional yang meyakinkan calon pelanggan, serta kemudahan pengelolaan konten secara mandiri.",
+  "featuresItems": [
+    {
+      "icon": "🏢",
+      "title": "Company Profile & Branding Korporat",
+      "description": "Membangun reputasi dan kredibilitas bisnis Anda melalui website profesional yang responsif, terstruktur rapi, dan meyakinkan calon klien.",
+      "gradient": "from-blue-600 to-indigo-600"
+    },
+    {
+      "icon": "📈",
+      "title": "Landing Page Penjualan & Konversi",
+      "description": "Halaman penawaran terarah untuk memaksimalkan hasil iklan dan promosi, terhubung langsung ke kontak WhatsApp dan sistem penangkap prospek.",
+      "gradient": "from-sky-500 to-blue-600"
+    },
+    {
+      "icon": "⚙️",
+      "title": "Panel Admin CMS Mandiri",
+      "description": "Kemudahan memperbarui teks, foto portofolio, dan informasi kontak kapan saja secara mandiri tanpa harus bergantung pada pihak ketiga.",
+      "gradient": "from-slate-700 to-slate-900"
+    },
+    {
+      "icon": "🛡️",
+      "title": "Kode Bersih & Ramah SEO Google",
+      "description": "Struktur HTML semantik, optimasi kecepatan Core Web Vitals, dan sitemap otomatis agar website ringan diakses serta mudah terindeks mesin pencari.",
+      "gradient": "from-indigo-600 to-violet-600"
+    }
+  ],
+  "ctaTitle": "Konsultasi Langsung via WhatsApp",
+  "ctaDescription": "Diskusikan rencana dan kebutuhan fitur website Anda langsung dengan tim teknis kami. Kami siap memberikan rekomendasi solusi, estimasi biaya, dan jadwal pengerjaan secara transparan.",
+  "ctaButtonText": "WhatsApp Sekarang",
+  "teamMembers": [
+    {
+      "name": "Muhammad Farhan",
+      "role": "Project Director & Lead Strategist",
+      "initials": "MF",
+      "desc": "Mengarahkan strategi pengembangan web, arsitektur solusi bisnis, dan kepuasan hasil proyek klien.",
+      "linkedin": "https://linkedin.com"
+    },
+    {
+      "name": "William Wirakarya",
+      "role": "Operations & Delivery Lead",
+      "initials": "WW",
+      "desc": "Memastikan timeline pengerjaan tepat waktu, pengujian kualitas (QA), dan kelancaran serah terima sistem.",
+      "linkedin": "https://linkedin.com"
+    },
+    {
+      "name": "Rahadian Indra",
+      "role": "Lead Full-Stack Web Engineer",
+      "initials": "RI",
+      "desc": "Memimpin implementasi kode backend, integrasi basis data, dan optimalisasi keamanan website.",
+      "linkedin": "https://linkedin.com"
+    },
+    {
+      "name": "Ferdinand Kurnia",
+      "role": "UI/UX Designer & Frontend Engineer",
+      "initials": "FK",
+      "desc": "Merancang antarmuka visual yang estetik, pengalaman pengguna yang nyaman, serta tata letak responsif.",
+      "linkedin": "https://linkedin.com"
+    }
+  ],
+  "portfolioItems": [
+    {
+      "title": "Website Perusahaan Konsultasi & Bisnis Korporat",
+      "category": "Company Profile",
+      "tag": "Corporate Profile",
+      "description": "Website resmi profil perusahaan dengan tata letak kredibel, navigasi cepat, dan integrasi formulir penawaran kerja sama.",
+      "features": [
+        "Waktu Muat < 1.5 Detik",
+        "Panel CMS Kelola Konten",
+        "Struktur SEO Terindeks Google"
+      ],
+      "image": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80"
+      ]
+    },
+    {
+      "title": "Landing Page Penjualan Produk & Jasa Premium",
+      "category": "Landing Page",
+      "tag": "High-Conversion Page",
+      "description": "Halaman penawaran terfokus dengan narasi persuasif dan alur tindakan terarah langsung ke kontak WhatsApp resmi tim sales.",
+      "features": [
+        "Direct WhatsApp Leads",
+        "Mobile-First Responsive Layout",
+        "Piksel Analitik Terpasang"
+      ],
+      "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80"
+      ]
+    },
+    {
+      "title": "Website Toko Online Fashion & Katalog WhatsApp",
+      "category": "Toko Online (E-Commerce)",
+      "tag": "E-Commerce Store",
+      "description": "Platform toko online modern dengan etalase produk responsif, kalkulasi ongkir, dan checkout langsung ke chat WhatsApp kasir.",
+      "features": [
+        "Checkout WhatsApp Cepat",
+        "Manajemen Stok Produk",
+        "Tampilan Mobile Optimal"
+      ],
+      "image": "https://images.unsplash.com/photo-1556742049-0a67c5574f73?auto=format&fit=crop&w=1200&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1556742049-0a67c5574f73?auto=format&fit=crop&w=1200&q=80"
+      ]
+    },
+    {
+      "title": "Portal Web Katalog Interaktif & Sistem Pemesanan",
+      "category": "Web Portal & Katalog",
+      "tag": "Web Portal",
+      "description": "Website katalog produk dengan pencarian cepat, filter kategori multi-level, dan alur permohonan penawaran harga instan.",
+      "features": [
+        "Filter Produk Real-Time",
+        "Dashboard Manajemen Katalog",
+        "Desain Modern & Ringan"
+      ],
+      "image": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80"
+      ]
+    },
+    {
+      "title": "Aplikasi Web SaaS & Dashboard Internal Bisnis",
+      "category": "Aplikasi Web (Web App)",
+      "tag": "Custom Web Application",
+      "description": "Sistem berbasis web dengan otentikasi login pengguna, hak akses peran (RBAC), serta pencatatan data operasional terpadu.",
+      "features": [
+        "Keamanan Enkripsi Akun",
+        "Laporan Data Terpusat",
+        "Arsitektur Siap Berkembang"
+      ],
+      "image": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=80"
+      ]
+    },
+    {
+      "title": "Portal Media Informasi & Website Publikasi Berita",
+      "category": "Blog & Portal Berita",
+      "tag": "News & Media Portal",
+      "description": "Website publikasi artikel dan media berita yang ringan, teroptimasi Google News, dan dilengkapi modul manajemen kontributor.",
+      "features": [
+        "Google Discover Ready",
+        "Pemuatan Halaman Kilat",
+        "Manajemen Kategori Artikel"
+      ],
+      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80",
+      "images": [
+        "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80"
+      ]
+    }
+  ],
+  "faqItems": [
+    {
+      "category": "Layanan & Solusi",
+      "question": "Jenis website apa saja yang dapat dibuat oleh TEKNOFLASE?",
+      "answer": "Kami melayani pembuatan website profil perusahaan (company profile), landing page penjualan, web portal katalog produk, aplikasi web internal bisnis, hingga platform SaaS kustom. Setiap website dibangun sesuai kebutuhan spesifik bisnis Anda tanpa menggunakan template pasaran yang kaku."
+    },
+    {
+      "category": "Waktu Pengerjaan",
+      "question": "Berapa lama estimasi waktu pembuatan website hingga siap online?",
+      "answer": "Untuk landing page dan website profil perusahaan standar, waktu pengerjaan berkisar antara 7 hingga 14 hari kerja. Untuk web portal atau aplikasi web dengan fitur kustom, pengerjaan berkisar antara 3 hingga 6 minggu dengan laporan kemajuan dan sesi demo berkala."
+    },
+    {
+      "category": "SEO & Tampilan Mobile",
+      "question": "Apakah website sudah dioptimasi untuk Google (SEO) dan nyaman dibuka di HP?",
+      "answer": "Ya. Kami menerapkan standar SEO on-page teknis mulai dari kode HTML semantik, optimasi kecepatan Core Web Vitals, sitemap otomatis, hingga meta tag media sosial. Seluruh tampilan juga dirancang dengan prinsip mobile-first agar ringan dan nyaman dibuka di smartphone, tablet, maupun laptop."
+    },
+    {
+      "category": "Pengelolaan Mandiri",
+      "question": "Apakah saya dapat mengedit teks dan foto website sendiri setelah selesai dibuat?",
+      "answer": "Tentu saja. Kami menyediakan panel admin (CMS) yang intuitif dan mudah digunakan. Anda dapat memperbarui tulisan, mengganti foto portofolio, mengubah kontak bisnis, dan mengelola konten kapan saja secara mandiri tanpa harus memahami kode pemrograman."
+    },
+    {
+      "category": "Hak Cipta & Source Code",
+      "question": "Apakah seluruh source code dan hak cipta website menjadi milik saya?",
+      "answer": "Ya. 100% kepemilikan source code, repositori, dan aset digital diserahkan kepada Anda setelah serah terima proyek selesai. Kami tidak menerapkan biaya sewa lisensi tahunan untuk kode sumber Anda (tanpa keterikatan vendor-lock)."
+    },
+    {
+      "category": "Domain & Hosting",
+      "question": "Bagaimana dengan kebutuhan nama domain dan server hosting website?",
+      "answer": "Kami dapat membantu pengurusan nama domain (.com, .id, .co.id, dll) serta konfigurasi server cloud berkecepatan tinggi, atau menghubungkan website langsung ke akun hosting dan domain yang sudah Anda miliki sebelumnya."
+    },
+    {
+      "category": "Wilayah & Dukungan UMKM",
+      "question": "Apakah TEKNOFLASE melayani pembuatan website untuk UMKM di wilayah Bogor dan sekitarnya?",
+      "answer": "Tentu saja. Kami berbasis di Bogor dan secara aktif mendampingi UMKM serta bisnis lokal di Kota Bogor, Kabupaten Bogor, Cibinong, Sentul, hingga Jabodetabek untuk memiliki website profesional dengan harga terjangkau, proses transparan, dan siap mendatangkan pembeli via WhatsApp."
+    },
+    {
+      "category": "Biaya & Paket UMKM",
+      "question": "Apakah biaya pembuatan website terjangkau untuk pelaku usaha kecil dan UMKM yang baru merintis?",
+      "answer": "Ya, kami menyediakan paket landing page dan website profil usaha yang sangat ramah kantong UMKM tanpa sistem bagi hasil atau biaya sewa bulanan tersembunyi. Sekali pengerjaan, seluruh website dan hak milik menjadi aset bisnis Anda 100%."
+    },
+    {
+      "category": "Garansi & SLA",
+      "question": "Apakah ada garansi jika terjadi kendala teknis setelah website online?",
+      "answer": "Kami memberikan masa garansi perbaikan bug dan pendampingan teknis gratis paska peluncuran. Kami juga menyediakan opsi paket pemeliharaan berkala (SLA) untuk memastikan website Anda selalu aman dan beroperasi optimal."
+    }
+  ],
+  "contact": {
+    "email": "diskusi@teknoflase.com",
+    "instagram": "https://instagram.com/teknoflase",
+    "instagramHandle": "teknoflase",
+    "whatsapp": "6281234567890",
+    "location": "Bogor, Indonesia"
+  },
+  "footer": {
+    "description": "TEKNOFLASE menyediakan layanan pembuatan website profesional, landing page konversi, dan aplikasi web custom. Kami membantu bisnis membangun kehadiran digital yang kredibel, cepat, dan terukur.",
+    "linkedin": "https://linkedin.com",
+    "instagram": "https://instagram.com/teknoflase",
+    "tiktok": "https://tiktok.com/@teknoflase",
+    "showSocialMedia": true,
+    "showLinkedin": true,
+    "showInstagram": true,
+    "showTiktok": true,
+    "faqLink": "#faq",
+    "privacyLink": "#privacy",
+    "termsLink": "#",
+    "copyrightSuffix": "Hak cipta dilindungi."
+  },
+  "footerServices": [
+    {
+      "name": "Company Profile",
+      "title": "Bikin Usaha Anda Terlihat Kredibel & Langsung Dipercaya Calon Pembeli",
+      "description": "Banyak calon pembeli atau rekan bisnis ragu bertransaksi kalau usaha Anda belum punya website resmi. Dengan website profil yang rapi, usaha Anda langsung terlihat terpercaya, profesional, dan siap menerima orderan besar.",
+      "features": [
+        "Calon pembeli langsung yakin dan tidak ragu mentransfer pembayaran",
+        "Profil usaha buka 24 jam nonstop, bisa dipelajari pelanggan kapan saja",
+        "Tampil jauh lebih meyakinkan dibanding saingan yang cuma modal media sosial",
+        "Dilengkapi tombol yang menghubungkan pembeli langsung ke WhatsApp Anda"
+      ],
+      "mvp": "Keuntungan Langsung: Sekali buat untuk selamanya. Menjadi aset yang terus mendatangkan kepercayaan pembeli tanpa perlu bayar biaya sewa bulanan.",
+      "demoActive": false
+    },
+    {
+      "name": "Landing Page",
+      "title": "Ubah Orang yang Lewat di Iklan Jadi Pembeli yang Langsung Chat WhatsApp",
+      "description": "Sering pasang iklan tapi yang beli sedikit? Masalahnya biasanya karena halaman promosi lambat dibuka atau bikin orang bingung. Kami buatkan halaman promosi yang ringan dan memikat agar orang langsung tertarik chat untuk membeli.",
+      "features": [
+        "Halaman langsung terbuka cepat di HP, calon pembeli tidak keburu kabur",
+        "Kata-kata dan tata letak dirancang khusus agar pembeli mantap untuk beli",
+        "Calon pembeli langsung diarahkan chat WhatsApp dengan sekali tekan tombol",
+        "Uang yang Anda keluarkan untuk iklan jadi tidak terbuang sia-sia"
+      ],
+      "mvp": "Keuntungan Langsung: Biaya promosi yang sama menghasilkan pembeli berkali lipat lebih banyak karena pengunjung tidak kabur di tengah jalan.",
+      "demoActive": false
+    },
+    {
+      "name": "Toko Online (E-Commerce)",
+      "title": "Jual Produk Anda Sendiri Tanpa Dipotong Komisi Marketplace Sepeser Pun",
+      "description": "Jualan di marketplace makin berat karena potongan biaya admin makin tinggi dan sering perang banting harga. Dengan toko online sendiri, semua hasil penjualan 100% utuh masuk ke kantong Anda sendiri.",
+      "features": [
+        "Hasil penjualan 100% masuk ke rekening Anda tanpa potongan per transaksi",
+        "Nomor WhatsApp dan data pembeli jadi milik Anda untuk ditawari produk lagi",
+        "Bebas dari perang harga dan aturan sepihak yang merugikan di marketplace",
+        "Pembeli gampang pilih produk di HP lalu langsung checkout ke WhatsApp Anda"
+      ],
+      "mvp": "Keuntungan Langsung: Makin banyak barang laku, makin besar uang yang Anda kantongi karena tidak ada potongan komisi dari pihak luar.",
+      "demoActive": false
+    },
+    {
+      "name": "Web Portal & Katalog",
+      "title": "Pajang Ratusan Produk dengan Rapi Biar Pembeli Gampang Memilih & Memesan",
+      "description": "Capek kirim foto produk satu per satu dan berulang kali jawab pertanyaan harga di chat? Taruh semua produk Anda di katalog digital ini. Calon pembeli bisa lihat foto, pilihan warna, dan harga sendiri secara praktis.",
+      "features": [
+        "Hemat waktu Anda dan karyawan dari membalas pertanyaan barang yang sama berulang kali",
+        "Calon pembeli bisa cari dan pilih barang sendiri dengan mudah tanpa bingung",
+        "Tampilan rapi bikin produk Anda terlihat lebih berkelas dan layak dijual lebih mahal",
+        "Calon pembeli yang menghubungi WhatsApp Anda adalah orang yang sudah siap beli"
+      ],
+      "mvp": "Keuntungan Langsung: Proses jualan jadi jauh lebih cepat, melayani lebih banyak pembeli tanpa harus menambah banyak karyawan baru.",
+      "demoActive": false
+    },
+    {
+      "name": "Aplikasi Web (Web App)",
+      "title": "Rapikan Catatan Pesanan & Keuangan Usaha Biar Tidak Ada Uang yang Bocor",
+      "description": "Usaha mulai ramai tapi sering pusing karena catatan pesanan tercecer di buku atau chat WhatsApp? Kami buatkan sistem sederhana lewat HP atau laptop agar pesanan, stok barang, dan laporan keuangan tercatat rapi secara otomatis.",
+      "features": [
+        "Mencegah pesanan terlewat, barang salah kirim, atau selisih uang kas usaha",
+        "Bisa Anda pantau langsung dari HP kapan saja, bahkan saat Anda di luar toko",
+        "Tugas karyawan lebih tertata dan catatan penjualan tidak bisa diubah sembarangan",
+        "Hemat waktu berjam-jam setiap minggu, Anda bisa fokus membesarkan usaha"
+      ],
+      "mvp": "Keuntungan Langsung: Menutup celah kerugian dan kebocoran uang kas yang sering kali jauh lebih besar daripada biaya pembuatan sistem.",
+      "demoActive": false
+    },
+    {
+      "name": "Blog & Portal Berita",
+      "title": "Datangkan Calon Pembeli dari Pencarian Google Tanpa Perlu Bayar Iklan",
+      "description": "Setiap hari ada ribuan orang mencari produk atau jasa di Google. Kalau usaha Anda tidak muncul di sana, calon pembeli itu lari ke tempat lain. Kami buatkan website yang mudah ditemukan di Google agar pembeli datang sendiri ke usaha Anda.",
+      "features": [
+        "Menjaring pembeli yang memang sedang butuh dan siap transaksi saat itu juga",
+        "Mendatangkan calon pembeli secara gratis setiap hari tanpa biaya iklan harian",
+        "Usaha Anda otomatis dianggap sebagai pilihan nomor satu yang paling terpercaya",
+        "Artikel dan informasi yang dipasang menjadi tenaga sales yang bekerja siang malam"
+      ],
+      "mvp": "Keuntungan Langsung: Menjadi sumber pelanggan baru yang terus berdatangan tanpa perlu mengeluarkan biaya promosi harian terus-menerus.",
+      "demoActive": false
+    }
+  ],
+  "privacyPolicy": {
+    "title": "Kebijakan Privasi",
+    "subtitle": "Komitmen Perlindungan Privasi & Keamanan Data Pengunjung serta Klien TEKNOFLASE",
+    "lastUpdated": "15 Oktober 2026",
+    "intro": "Selamat datang di TEKNOFLASE. Kami sangat menghargai kepercayaan Anda dan berkomitmen penuh untuk melindungi informasi serta data pribadi yang Anda berikan saat menjelajahi website ini, berkonsultasi, maupun mempercayakan pembuatan website dan platform digital Anda kepada kami.",
+    "sections": [
+      {
+        "title": "1. Informasi & Data yang Kami Kumpulkan",
+        "content": "Kami hanya mengumpulkan informasi yang Anda berikan secara sukarela demi kelancaran konsultasi dan pengerjaan proyek, antara lain:\n\n• Data Kontak: Nama, alamat email, nomor telepon/WhatsApp, dan nama instansi atau bisnis Anda saat menghubungi kami atau mengisi formulir konsultasi.\n• Rincian Proyek: Referensi desain, spesifikasi fitur website, materi konten, dan preferensi teknis yang Anda bagikan selama sesi diskusi.\n• Data Teknis Pengunjung: Data log anonim seperti alamat protokol internet (IP), tipe peramban (browser), penyedia layanan internet, dan durasi kunjungan semata-mata untuk optimasi Core Web Vitals dan performa server."
+      },
+      {
+        "title": "2. Tujuan Penggunaan Informasi",
+        "content": "Data dan informasi yang kami peroleh digunakan semata-mata untuk keperluan profesional dan operasional berikut:\n\n• Memproses permintaan konsultasi dan menyusun rancangan anggaran biaya (RAB) serta proposal teknis yang akurat.\n• Melaksanakan pengerjaan, pengujian, dan serah terima website sesuai kesepakatan spesifikasi proyek.\n• Menghubungi Anda terkait pembaruan perkembangan proyek, masa aktif hosting/domain, atau bantuan pemeliharaan teknis (maintenance).\n• Meningkatkan kualitas tampilan antarmuka, keamanan sistem, dan kenyamanan penjelajahan di website kami."
+      },
+      {
+        "title": "3. Kerahasiaan & Keamanan Data Tingkat Tinggi",
+        "content": "Kami memperlakukan setiap data Anda dengan standar keamanan ketat. Seluruh transmisi data di website kami diamankan dengan enkripsi SSL/TLS 256-bit standar industri.\n\nKami MENJAMIN 100% tidak akan pernah menjual, menyewakan, memperdagangkan, atau menyebarluaskan data kontak dan data proyek Anda kepada pihak ketiga mana pun tanpa persetujuan tertulis eksplisit dari Anda, kecuali jika diwajibkan oleh peraturan hukum yang berlaku di Republik Indonesia."
+      },
+      {
+        "title": "4. Kepemilikan Penuh Aset & Source Code Klien (100% Client Ownership)",
+        "content": "Di TEKNOFLASE, seluruh materi digital (logo, teks, foto, dokumen) yang Anda berikan untuk pembuatan website tetap merupakan hak cipta dan kepemilikan Anda sepenuhnya.\n\nSetelah serah terima proyek dan pelunasan selesai, seluruh source code, berkas aset, dan hak akses dashboard admin sepenuhnya menjadi milik Anda tanpa penguncian sistem (vendor lock-in) tersembunyi."
+      },
+      {
+        "title": "5. Kebijakan Cookie & Teknologi Pelacak Analitik",
+        "content": "Website kami dapat menggunakan cookie sesi dan teknologi analitik untuk:\n\n• Menyimpan preferensi tampilan sementara demi kenyamanan browsing Anda.\n• Mengukur metrik kecepatan muat halaman dan mendeteksi kesalahan teknis.\n\nAnda berhak menonaktifkan cookie melalui pengaturan peramban (browser) Anda kapan saja tanpa kehilangan akses terhadap informasi utama website kami."
+      },
+      {
+        "title": "6. Hak Pengguna atas Data Pribadi (UU PDP No. 27/2022)",
+        "content": "Sesuai dengan ketentuan Undang-Undang Republik Indonesia Nomor 27 Tahun 2022 tentang Perlindungan Data Pribadi (UU PDP), Anda memiliki hak untuk:\n\n• Meminta konfirmasi dan salinan data pribadi Anda yang tersimpan di sistem kami.\n• Meminta pembaruan atau perbaikan jika terdapat kekeliruan data.\n• Meminta penghapusan permanen data kontak atau riwayat diskusi Anda dari database kami kapan saja."
+      },
+      {
+        "title": "7. Pembaruan Kebijakan Privasi",
+        "content": "Kami dapat memperbarui dokumen Kebijakan Privasi ini dari waktu ke waktu guna menyesuaikan dengan perkembangan teknologi, regulasi hukum terbaru, atau penambahan fitur layanan kami. Tanggal pembaruan terkini akan selalu kami cantumkan secara transparan di bagian atas halaman ini."
+      },
+      {
+        "title": "8. Kontak & Saluran Pengaduan Privasi",
+        "content": "Apabila Anda memiliki pertanyaan, saran, atau ingin mengajukan permohonan terkait perlindungan data pribadi Anda, silakan hubungi tim kami melalui saluran resmi berikut:\n\n• Email Resmi: diskusi@teknoflase.com\n• WhatsApp Resmi: Melalui tombol konsultasi di website kami\n• Lokasi Operasional: Bogor, Jawa Barat, Indonesia"
+      }
+    ]
+  }
+}

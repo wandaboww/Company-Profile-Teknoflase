@@ -463,7 +463,45 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
 
   const flashSaved = () => {
     setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
+    setTimeout(() => setSaved(false), 2500)
+  }
+
+  const handleManualSave = () => {
+    onUpdateContent(content)
+    flashSaved()
+  }
+
+  const handleExportBackup = () => {
+    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(content, null, 2))
+    const downloadAnchor = document.createElement('a')
+    const dateStr = new Date().toISOString().slice(0, 10)
+    downloadAnchor.setAttribute('href', dataStr)
+    downloadAnchor.setAttribute('download', `teknoflase-konten-${dateStr}.json`)
+    document.body.appendChild(downloadAnchor)
+    downloadAnchor.click()
+    downloadAnchor.remove()
+  }
+
+  const handleImportBackup = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      try {
+        const parsed = JSON.parse(event.target?.result as string)
+        if (parsed && typeof parsed === 'object' && parsed.brandName) {
+          onUpdateContent(parsed)
+          flashSaved()
+          alert('Konten berhasil dipulihkan dari file cadangan dan disinkronkan ke server!')
+        } else {
+          alert('Format file JSON tidak sesuai.')
+        }
+      } catch {
+        alert('Gagal membaca file JSON.')
+      }
+    }
+    reader.readAsText(file)
+    e.target.value = ''
   }
 
   // ── Dynamic Brand Name Cascading Update ────────────────────────────────────
@@ -1135,15 +1173,51 @@ export default function AdminPanel({ content, onUpdateContent, onLogout }: Admin
               </h1>
               <p className="text-xs text-slate-400 mt-0.5">Kelola dan sesuaikan konten landing page secara langsung</p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5 flex-wrap">
               <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-500 ${
                 saved
                   ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                   : 'bg-slate-950 text-slate-400 border-slate-800'
               }`}>
                 <span className={`w-1.5 h-1.5 rounded-full ${saved ? 'bg-emerald-400 animate-pulse' : 'bg-slate-600'}`} />
-                {saved ? 'Tersimpan ✓' : 'Autosave aktif'}
+                {saved ? 'Tersimpan di Server ✓' : 'Autosave Server Aktif'}
               </span>
+
+              {/* Tombol Simpan ke Server */}
+              <button
+                type="button"
+                onClick={handleManualSave}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-xl transition-all cursor-pointer shadow-sm shadow-blue-600/20"
+                title="Simpan seluruh perubahan ke server VPS sekarang"
+              >
+                <span>💾</span>
+                <span className="hidden sm:inline">Simpan ke Server</span>
+              </button>
+
+              {/* Tombol Cadangkan JSON */}
+              <button
+                type="button"
+                onClick={handleExportBackup}
+                className="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl transition-all cursor-pointer"
+                title="Unduh file cadangan konten (JSON) ke komputer Anda"
+              >
+                <span>📥</span> Cadangkan
+              </button>
+
+              {/* Tombol Pulihkan JSON */}
+              <label
+                className="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl transition-all cursor-pointer"
+                title="Pulihkan konten dari file cadangan JSON"
+              >
+                <span>📤</span> Pulihkan
+                <input
+                  type="file"
+                  accept=".json,application/json"
+                  className="hidden"
+                  onChange={handleImportBackup}
+                />
+              </label>
+
               <button
                 type="button"
                 onClick={onLogout}

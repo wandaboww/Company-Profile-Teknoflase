@@ -14,7 +14,7 @@ Berikut adalah detail informasi peluncuran lokal, kredensial akses admin panel, 
 | **URL Akses Admin CMS** | [http://localhost:5173/#admin](http://localhost:5173/#admin) |
 | **Username Akses** | `admin` |
 | **Password Akses** | `teknoflase2025` *(kompatibel juga dengan `jasaweb2025` & `trinova2025`)* |
-| **Penyimpanan Data** | `localStorage` (Autosave aktif pada CMS) |
+| **Penyimpanan Data** | Server Disk Persistent (`data/content.json` & `/api/content`) + `localStorage` Hybrid Sync |
 | **Mode Tampilan** | Lighting Professional Theme (Luminous White `#ffffff`, Slate `#0f172a`, Aksen Blue `#2563eb`) |
 
 ---
@@ -670,3 +670,30 @@ Jika proses review selesai dan ingin mematikan server dev di terminal:
     * Ukuran font di desktop tampil tepat sesuai nilai pt yang dipilih.
     * Pada layar smartphone sempit, ukuran teks otomatis berskala proporsional agar tidak mengalami teks overflow / wrap berlebih.
   * Kotak pratinjau slide di Admin Panel langsung memperbarui ukuran font secara *real-time* saat dropdown atau input angka kustom diubah.
+
+### 45. Arsitektur Persistensi Server (Server-Side Persistence API), Auto-Sync Multi-Device & Resolusi Total Reset Konten
+
+* **Analisis Akar Masalah (Mengapa Konten Kembali ke Tampilan Bawaan Setelah Beberapa Jam)**:
+  * **Masalah 1 — Keterbatasan Penyimpanan Lokal (`localStorage`)**:
+    * Sebelumnya, seluruh modifikasi teks dan gambar dari Admin Panel hanya disimpan di memori browser lokal (`localStorage.setItem('landing_page_content', ...)`).
+    * Data ini tidak terkirim ke server VPS, sehingga setiap kali website dibuka oleh pengunjung lain, diakses dari perangkat berbeda (smartphone, laptop lain), diakses melalui mode *Incognito*, atau saat cache browser admin dibersihkan/daluwarsa setelah beberapa jam, aplikasi membaca file build statis bawaan (`DEFAULT_CONTENT`).
+  * **Masalah 2 — Logika Auto-Reset Destruktif di Runtime ([`src/App.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/App.tsx))**:
+    * Ditemukan kondisi hardcoded pada blok inisialisasi: `if (!parsed.heroTitle?.includes('Website'))`. Jika admin mengubah judul hero menjadi kalimat yang tidak mengandung kata persis `"Website"`, aplikasi secara sepihak mengeksekusi `localStorage.setItem('landing_page_content', JSON.stringify(DEFAULT_CONTENT))`, memicu *hard-reset* ke setelan awal.
+    * Kondisi `parsed.footerServices.length < 6` juga berpotensi menimpa modifikasi footer.
+
+* **Solusi & Penguatan Arsitektur Persistensi**:
+  * **Endpoint REST API Persistensi Server ([`vite.config.ts`](file:///D:/Website/Company%20Profile%20Teknoflase/vite.config.ts) & [`server.cjs`](file:///D:/Website/Company%20Profile%20Teknoflase/server.cjs))**:
+    * Mengimplementasikan plugin Vite Connect Middleware (`contentApiPlugin`) pada siklus `configureServer` (development) dan `configurePreviewServer` (produksi via `vite preview` / PM2).
+    * **`GET /api/content`**: Menyajikan data konten mutakhir dari file fisik server (`data/content.json` -> `dist/content.json` -> `public/content.json`).
+    * **`POST /api/content`**: Menerima payload JSON dari Admin Panel, memvalidasinya, dan menyimpannya secara atomik ke disk server (`data/content.json`, `dist/content.json`, dan `public/content.json`).
+    * Menyediakan [`server.cjs`](file:///D:/Website/Company%20Profile%20Teknoflase/server.cjs) sebagai server mandiri berbasis Node.js murni tanpa dependensi eksternal (port 5173 / port dinamis) sebagai alternatif *production runtime*.
+  * **Sinkronisasi Otomatis Multi-Device ([`src/App.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/App.tsx))**:
+    * Menghapus seluruh logika auto-reset destruktif (`!parsed.heroTitle?.includes('Website')` dan pengecekan footer kaku).
+    * Menambahkan *lifecycle hook* `syncServerContent()` yang secara asinkron mengambil data `/api/content` (dengan *fallback* ke `/content.json`) saat halaman pertama kali dimuat.
+    * Jika server belum memiliki data simpanan tetapi browser admin memiliki data `localStorage`, aplikasi secara otomatis melakukan *auto-seed* (mengirimkan data admin ke server).
+    * Setiap kali admin melakukan perubahan konten atau mengunggah gambar, handler `handleUpdateContent()` langsung melakukan sinkronisasi ganda: memperbarui state UI & `localStorage`, serta mengirimkan `POST /api/content` ke server di latar belakang tanpa mengganggu alur kerja pengguna.
+  * **Fitur Manajemen & Pemulihan di Admin Panel ([`src/components/AdminPanel.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/components/AdminPanel.tsx))**:
+    * Menambahkan tombol **"💾 Simpan ke Server"** di bilah atas Admin Panel dengan notifikasi status visual (*"Tersimpan di Server ✓"*).
+    * Menambahkan tombol **"📥 Cadangkan"** untuk mengunduh seluruh konten & gambar menjadi berkas `backup-teknoflase-YYYY-MM-DD.json`.
+    * Menambahkan tombol **"📤 Pulihkan"** untuk mengunggah dan menerapkan berkas cadangan JSON sewaktu-waktu.
+    * Dengan arsitektur ini, seluruh perubahan konten yang disimpan admin kini bersifat permanen di disk server VPS, sinkron secara *real-time* ke seluruh pengunjung, dan kebal terhadap pembersihan cache browser.
