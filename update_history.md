@@ -724,3 +724,20 @@ Jika proses review selesai dan ingin mematikan server dev di terminal:
   * Menambahkan mekanisme stempel waktu `_updatedAt: Date.now()` pada setiap perubahan konten di `handleUpdateContent`.
   * Memperbaiki `syncServerContent`: mencegah fallback file statis `/content.json` menimpa data kustom yang tersimpan di `localStorage` peramban.
   * Jika server memiliki data lebih baru, konten diperbarui; jika data lokal admin lebih baru, data otomatis diunggah ke server untuk menjaga integritas data tanpa pernah kembali ke setelan bawaan.
+
+
+### 47. Penyesuaian Dimensi Vertikal Card Media Layanan (~30% Lebih Ringkas) & Harmonisasi Proporsional Komponen
+
+* **Optimalisasi Dimensi Vertikal Card Media ([`src/components/Services.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/components/Services.tsx))**:
+  * Mengurangi rasio tinggi vertikal kontainer `.services-card-media` dan `.services-card-media-slider` sekitar **30%**:
+    * Pada tampilan seluler/tablet: dari rasio boxy `aspect-[4/3]` (75% tinggi terhadap lebar) dipangkas menjadi rasio sinematik modern `aspect-[16/9]` (56.25% tinggi terhadap lebar, pengurangan tinggi vertikal tepat ~25%–30%).
+    * Mengoptimalkan orientasi gambar menjadi `object-cover object-top lg:object-center` agar area header & mockup website selalu terlihat jelas dan elegan.
+    * Mengompakkan tombol navigasi slide (`.services-media-nav-prev` & `.services-media-nav-next`) dari `h-9 w-9` menjadi `h-8 w-8` serta merapikan posisi dots & counter pill.
+* **Penyelarasan Proporsi & Keseimbangan Konten Kartu Layanan ([`src/components/Services.tsx`](file:///D:/Website/Company%20Profile%20Teknoflase/src/components/Services.tsx))**:
+  * Menyesuaikan ritme vertikal kolom konten (`.services-card-content`) agar simetris, estetik, dan proporsional dengan tinggi media baru:
+    * **Padding Kontainer**: Dioptimalkan dari `p-7 sm:p-9` menjadi `p-5 sm:p-7 lg:p-6 xl:p-7`.
+    * **Header & Ikon**: Mengubah kotak ikon layanan menjadi `h-10 w-10` dengan margin bawah `mb-3`.
+    * **Tipografi Judul & Deskripsi**: Judul diselaraskan menjadi `text-lg sm:text-xl font-extrabold` dengan jarak deskripsi `mt-2`.
+    * **Fitur Utama Layanan**: Spacing dipadatkan menjadi `mt-4 pt-3.5` dengan grid `gap-x-3 gap-y-2` dan ikon checklist `h-3.5 w-3.5`.
+    * **Kotak Standar Implementasi**: Disesuaikan menjadi `mt-3.5 p-3` dengan tipografi `text-[11px]`.
+    * **Bilah Tombol Aksi**: Diatur menjadi `mt-5 pt-4` dengan tombol CTA & Demo setinggi `min-h-[40px] px-4 py-2.5` yang lebih proporsional.

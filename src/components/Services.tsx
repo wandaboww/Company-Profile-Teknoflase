@@ -216,12 +216,12 @@ function ServiceCardMediaGallery({
 
   if (images.length <= 1) {
     return (
-      <div className="services-card-media lg:col-span-5 relative w-full aspect-[4/3] lg:aspect-auto lg:h-full lg:min-h-full bg-slate-100 overflow-hidden flex items-center justify-center group">
+      <div className="services-card-media lg:col-span-5 relative w-full aspect-[16/9] lg:aspect-auto lg:h-full lg:min-h-full bg-slate-100 overflow-hidden flex items-center justify-center group">
         <img
           key={images[0]}
           src={images[0]}
           alt={project.title}
-          className="services-card-image w-full h-full object-cover object-center aspect-[4/3] lg:aspect-auto transition-transform duration-700 ease-out group-hover:scale-105"
+          className="services-card-image w-full h-full object-cover object-top lg:object-center aspect-[16/9] lg:aspect-auto transition-transform duration-700 ease-out group-hover:scale-105"
           loading="lazy"
           referrerPolicy="no-referrer"
           onError={(e) => {
@@ -240,7 +240,7 @@ function ServiceCardMediaGallery({
     <div
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
-      className="services-card-media services-card-media-slider lg:col-span-5 relative w-full aspect-[4/3] lg:aspect-auto lg:h-full lg:min-h-full bg-slate-900 overflow-hidden flex items-center justify-center group select-none"
+      className="services-card-media services-card-media-slider lg:col-span-5 relative w-full aspect-[16/9] lg:aspect-auto lg:h-full lg:min-h-full bg-slate-900 overflow-hidden flex items-center justify-center group select-none"
     >
       {/* Slider Viewport with crossfade transition */}
       <div className="relative w-full h-full overflow-hidden">
@@ -249,7 +249,7 @@ function ServiceCardMediaGallery({
             key={`${img}-${i}`}
             src={img}
             alt={`${project.title} - Gambar ${i + 1}`}
-            className={`services-card-image absolute inset-0 w-full h-full object-cover object-center aspect-[4/3] lg:aspect-auto transition-all duration-500 ease-in-out ${
+            className={`services-card-image absolute inset-0 w-full h-full object-cover object-top lg:object-center aspect-[16/9] lg:aspect-auto transition-all duration-500 ease-in-out ${
               i === safeIdx
                 ? 'opacity-100 scale-100 z-10'
                 : 'opacity-0 scale-95 z-0 pointer-events-none'
@@ -271,10 +271,10 @@ function ServiceCardMediaGallery({
       <button
         type="button"
         onClick={prevImage}
-        className="services-media-nav-prev absolute left-3 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-slate-900/60 hover:bg-slate-900 text-white backdrop-blur-md transition-all duration-200 hover:scale-110 shadow-md cursor-pointer border border-white/20"
+        className="services-media-nav-prev absolute left-2.5 top-1/2 -translate-y-1/2 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-slate-900/60 hover:bg-slate-900 text-white backdrop-blur-md transition-all duration-200 hover:scale-110 shadow-md cursor-pointer border border-white/20"
         aria-label="Gambar sebelumnya"
       >
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
         </svg>
       </button>
@@ -283,16 +283,16 @@ function ServiceCardMediaGallery({
       <button
         type="button"
         onClick={nextImage}
-        className="services-media-nav-next absolute right-3 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-slate-900/60 hover:bg-slate-900 text-white backdrop-blur-md transition-all duration-200 hover:scale-110 shadow-md cursor-pointer border border-white/20"
+        className="services-media-nav-next absolute right-2.5 top-1/2 -translate-y-1/2 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-slate-900/60 hover:bg-slate-900 text-white backdrop-blur-md transition-all duration-200 hover:scale-110 shadow-md cursor-pointer border border-white/20"
         aria-label="Gambar selanjutnya"
       >
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
         </svg>
       </button>
 
       {/* Stepper Dots Indicator */}
-      <div className="services-media-dots absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/70 backdrop-blur-md border border-white/10">
+      <div className="services-media-dots absolute bottom-2.5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/70 backdrop-blur-md border border-white/10">
         {images.map((_, dotIdx) => (
           <button
             key={dotIdx}
@@ -310,13 +310,13 @@ function ServiceCardMediaGallery({
       </div>
 
       {/* Counter Pill & Cover Badge */}
-      <div className="services-media-counter absolute top-3 right-3 z-20 flex items-center gap-1.5 pointer-events-none">
+      <div className="services-media-counter absolute top-2.5 right-2.5 z-20 flex items-center gap-1.5 pointer-events-none">
         {safeIdx === 0 && (
           <span className="services-badge-cover px-2 py-0.5 rounded-md bg-emerald-500/95 backdrop-blur-md text-[10px] font-mono font-bold text-slate-950 shadow-sm border border-emerald-400/40">
             ★ Cover
           </span>
         )}
-        <div className="px-2.5 py-0.5 rounded-md bg-slate-950/70 backdrop-blur-md text-[11px] font-mono font-medium text-white border border-white/10 shadow-sm">
+        <div className="px-2 py-0.5 rounded-md bg-slate-950/70 backdrop-blur-md text-[10px] font-mono font-medium text-white border border-white/10 shadow-sm">
           {safeIdx + 1}/{images.length}
         </div>
       </div>
@@ -576,11 +576,11 @@ export default function Services({ content }: { content: LandingPageContent }) {
                           <ServiceCardMediaGallery project={project} realIndex={realIndex} />
 
                           {/* ─── Kolom Kanan: 7/12 (Seluruh Konten Layanan, Fitur & Aksi) ─── */}
-                          <div className="services-card-content lg:col-span-7 p-7 sm:p-9 flex flex-col justify-between bg-white flex-1">
+                          <div className="services-card-content lg:col-span-7 p-5 sm:p-7 lg:p-6 xl:p-7 flex flex-col justify-between bg-white flex-1">
                             <div>
                               {/* Icon & Category Badge Header */}
-                              <div className="services-card-header flex items-start justify-between gap-4 mb-4">
-                                <div className="services-card-icon-box flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-50 border border-slate-200/90 shadow-xs">
+                              <div className="services-card-header flex items-start justify-between gap-4 mb-3">
+                                <div className="services-card-icon-box flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-50 border border-slate-200/90 shadow-xs">
                                   <div>
                                     {getServiceIcon(project.category, realIndex)}
                                   </div>
@@ -598,23 +598,23 @@ export default function Services({ content }: { content: LandingPageContent }) {
                               </div>
 
                               {/* Title & Description */}
-                              <h3 className="services-card-title text-xl sm:text-2xl font-extrabold text-slate-900 leading-snug">
+                              <h3 className="services-card-title text-lg sm:text-xl font-extrabold text-slate-900 leading-snug">
                                 {project.title}
                               </h3>
-                              <p className="services-card-description mt-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                              <p className="services-card-description mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
                                 {project.description}
                               </p>
 
                               {/* Fitur Utama & Keunggulan Layanan */}
-                              <div className="services-card-features-box mt-5 pt-4 border-t border-slate-100">
-                                <span className="services-card-features-heading block text-xs font-bold text-slate-900 uppercase tracking-wider font-mono mb-3">
+                              <div className="services-card-features-box mt-4 pt-3.5 border-t border-slate-100">
+                                <span className="services-card-features-heading block text-[11px] font-bold text-slate-900 uppercase tracking-wider font-mono mb-2.5">
                                   Fitur Utama & Keunggulan Layanan:
                                 </span>
                                 {project.features && project.features.length > 0 && (
-                                  <ul className="services-card-features-list grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                  <ul className="services-card-features-list grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-2">
                                     {project.features.map((feature, fIdx) => (
-                                      <li key={fIdx} className="services-card-feature-item flex items-start gap-2.5 text-xs text-slate-700">
-                                        <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold mt-0.5">
+                                      <li key={fIdx} className="services-card-feature-item flex items-start gap-2 text-xs text-slate-700">
+                                        <span className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 text-[9px] font-bold mt-0.5">
                                           ✓
                                         </span>
                                         <span className="leading-snug font-medium">{feature}</span>
@@ -625,7 +625,7 @@ export default function Services({ content }: { content: LandingPageContent }) {
                               </div>
 
                               {/* Highlight Deliverable Scope Box */}
-                              <div className="services-card-scope-box mt-5 p-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
+                              <div className="services-card-scope-box mt-3.5 p-3 rounded-xl bg-slate-50 border border-slate-200/80">
                                 <span className="services-card-scope-heading block text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono mb-0.5">
                                   Standar Implementasi:
                                 </span>
@@ -636,12 +636,12 @@ export default function Services({ content }: { content: LandingPageContent }) {
                             </div>
 
                             {/* Bottom Action Buttons (Konsultasi & Detail / Demo) */}
-                            <div className="services-card-actions mt-7 pt-5 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                            <div className="services-card-actions mt-5 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
                               <a
                                 href={consultationUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="services-card-cta-btn w-full sm:w-auto sm:flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white px-5 py-3 text-sm font-semibold shadow-sm transition-all duration-200 cursor-pointer min-h-[44px] focus-visible:outline-2 focus-visible:outline-blue-600"
+                                className="services-card-cta-btn w-full sm:w-auto sm:flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 text-xs sm:text-sm font-semibold shadow-sm transition-all duration-200 cursor-pointer min-h-[40px] focus-visible:outline-2 focus-visible:outline-blue-600"
                               >
                                 <span>Konsultasi Layanan Ini</span>
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -650,12 +650,12 @@ export default function Services({ content }: { content: LandingPageContent }) {
                               </a>
 
                               {project.demoUrl ? (
-                                <div className="services-card-secondary-actions flex flex-row items-center gap-2.5 w-full sm:w-auto">
+                                <div className="services-card-secondary-actions flex flex-row items-center gap-2 w-full sm:w-auto">
                                   <a
                                     href={project.demoUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="services-card-demo-btn flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl border border-blue-200 bg-blue-50/80 hover:bg-blue-100 text-blue-700 text-xs font-semibold transition-colors cursor-pointer min-h-[44px] whitespace-nowrap focus-visible:outline-2 focus-visible:outline-blue-600"
+                                    className="services-card-demo-btn flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-blue-200 bg-blue-50/80 hover:bg-blue-100 text-blue-700 text-xs font-semibold transition-colors cursor-pointer min-h-[40px] whitespace-nowrap focus-visible:outline-2 focus-visible:outline-blue-600"
                                     title="Buka Website Demo"
                                   >
                                     <span>Demo</span>
@@ -667,7 +667,7 @@ export default function Services({ content }: { content: LandingPageContent }) {
                                   <button
                                     type="button"
                                     onClick={() => setSelectedDetailIdx(realIndex)}
-                                    className="services-card-detail-btn flex-1 sm:flex-initial inline-flex items-center justify-center px-5 py-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold transition-colors cursor-pointer min-h-[44px] whitespace-nowrap focus-visible:outline-2 focus-visible:outline-blue-600"
+                                    className="services-card-detail-btn flex-1 sm:flex-initial inline-flex items-center justify-center px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold transition-colors cursor-pointer min-h-[40px] whitespace-nowrap focus-visible:outline-2 focus-visible:outline-blue-600"
                                     aria-label={`Rincian layanan ${project.title}`}
                                   >
                                     Detail Layanan
@@ -677,7 +677,7 @@ export default function Services({ content }: { content: LandingPageContent }) {
                                 <button
                                   type="button"
                                   onClick={() => setSelectedDetailIdx(realIndex)}
-                                  className="services-card-detail-btn w-full sm:w-auto inline-flex items-center justify-center px-5 py-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold transition-colors cursor-pointer min-h-[44px] whitespace-nowrap focus-visible:outline-2 focus-visible:outline-blue-600"
+                                  className="services-card-detail-btn w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold transition-colors cursor-pointer min-h-[40px] whitespace-nowrap focus-visible:outline-2 focus-visible:outline-blue-600"
                                   aria-label={`Rincian layanan ${project.title}`}
                                 >
                                   Detail Layanan
